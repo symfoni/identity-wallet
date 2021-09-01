@@ -1,0 +1,38 @@
+fastlane_version '2.53.1'
+fastlane_require 'dotenv'
+
+
+before_all do
+  Dotenv.overload('.env')
+  ensure_git_branch(branch:"main")
+#   ensure_git_status_clean
+  git_pull
+end
+
+platform :ios do
+   # iOS Lanes
+   desc 'Fetch certificates and provisioning profiles'
+	lane :certificates do
+	  match(app_identifier: 'com.app.bundle', type: 'development', readonly: true)
+	  match(app_identifier: 'com.app.bundle', type: 'appstore', readonly: true)
+	end
+end
+
+platform :android do
+  # Android Lanesdesc "RN Production App"
+  lane :distribute do
+    gradle(task: 'clean assembleRelease', project_dir: './android', print_command: false, properties: {
+      "MYAPP_UPLOAD_STORE_FILE" => ENV["MYAPP_UPLOAD_STORE_FILE"],
+      "MYAPP_UPLOAD_STORE_PASSWORD" => ENV["MYAPP_UPLOAD_STORE_PASSWORD"],
+      "MYAPP_UPLOAD_KEY_ALIAS" => ENV["MYAPP_UPLOAD_KEY_ALIAS"],
+      "MYAPP_UPLOAD_KEY_PASSWORD" => ENV["MYAPP_UPLOAD_KEY_PASSWORD"]
+    })
+
+    firebase_app_distribution(
+      app: "1:685349264827:android:e579c9f5353a57b5f8b89e",
+      testers: "ariddervold@gmail.com",
+      firebase_cli_token: ENV["FIREBASE_TOKEN"],
+      release_notes: "Lots of amazing new features to test out!"
+    )
+  end
+end

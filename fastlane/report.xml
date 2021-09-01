@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+  <testsuite name="fastlane.lanes">
+    
+    
+    
+      
+      <testcase classname="fastlane.lanes" name="0: Verifying fastlane version" time="0.000542">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="1: ensure_git_branch" time="0.027137">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="2: git_pull" time="3.203942">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="3: clean assembleRelease" time="140.156349">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="4: firebase_app_distribution" time="10.39978">
+        
+      </testcase>
+    
+  </testsuite>
+</testsuites>

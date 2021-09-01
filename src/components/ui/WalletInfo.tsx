@@ -15,7 +15,9 @@ export const WalletInfo = () => {
     const { accounts, provider, deleteVeramoData, identity } =
         useContext(Context);
     const [balance, setBalance] = useState<BigNumber>(ethers.constants.Zero);
-    const [address, setAddress] = useState(() => accounts[0].split(":").pop());
+    const [address, setAddress] = useState(() =>
+        accounts[0]?.split(":")?.pop()
+    );
 
     useEffect(() => {
         const doAsync = async () => {
