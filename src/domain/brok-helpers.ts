@@ -5,7 +5,9 @@ import axios, { AxiosResponse } from "axios";
 export const registerWithBankId = (
     vp: VerifiablePresentation
 ): Promise<AxiosResponse<string>> => {
-    const url = false ? "http://localhost:3004" : BROK_HELPERS_URL;
+    const url = !USE_LOCAL_ENVIROMENT
+        ? "http://localhost:3004"
+        : BROK_HELPERS_URL;
     console.log(url);
     return axios.post<string>(`${url}/brreg/entity/register`, {
         jwt: vp.proof.jwt,
@@ -17,7 +19,7 @@ export const registerWithBankId = (
 export const requestBoardDirectorVerifiableCredential = (
     vp: VerifiablePresentation
 ) => {
-    const url = USE_LOCAL_ENVIROMENT
+    const url = !USE_LOCAL_ENVIROMENT
         ? "http://localhost:3004"
         : BROK_HELPERS_URL;
     return axios.post<string>(`${url}/brreg/credential/board-director`, {
@@ -30,7 +32,7 @@ export const approveCaptable = (
     vp: VerifiablePresentation,
     options: { test?: false } = {}
 ) => {
-    const url = USE_LOCAL_ENVIROMENT
+    const url = !USE_LOCAL_ENVIROMENT
         ? "http://localhost:3004"
         : BROK_HELPERS_URL;
     return axios.post<string>(`${url}/brreg/captable/approve`, {

@@ -47,7 +47,16 @@ export const WalletInfo = () => {
         doAsync();
     }, [accounts, address, provider]);
 
+    const printAsyncStorage = async () => {
+        const stor = await AsyncStorage.getAllKeys();
+        stor.forEach(async (item) =>
+            console.log("async item", item, await AsyncStorage.getItem(item))
+        );
+    };
+
     const clearAsyncStorage = async () => {
+        await printAsyncStorage();
+        console.log("Clearing storage");
         AsyncStorage.clear();
     };
 

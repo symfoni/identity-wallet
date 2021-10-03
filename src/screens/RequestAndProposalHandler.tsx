@@ -1,4 +1,3 @@
-import { useTheme } from "@react-navigation/native";
 import React, { useContext, useEffect } from "react";
 import { StyleSheet, Text } from "react-native";
 import { ColorContext } from "../colorContext";

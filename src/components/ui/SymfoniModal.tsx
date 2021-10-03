@@ -44,7 +44,7 @@ export const SymfoniModal = (props: ModalProps) => {
                             {props.onDismissClick && (
                                 <Pressable
                                     style={styles.dismissButton}
-                                    onPress={props.onConfirmClick}>
+                                    onPress={props.onDismissClick}>
                                     <Text style={styles.buttonText}>Avslå</Text>
                                 </Pressable>
                             )}
