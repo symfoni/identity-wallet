@@ -89,7 +89,9 @@ export interface IContext {
         args: FindArgs<TCredentialColumns>
     ) => Promise<UniqueVerifiableCredential[]>;
     saveVP: (vp: VerifiablePresentation | string) => Promise<string>;
-    pair: (uri: string, requireTrustedIdentity: boolean) => Promise<void>;
+    pair: (uri: string) => Promise<void>;
+    pairCached: (uri: string) => Promise<void>;
+    hasTrustedIdentity: boolean;
 }
 
 export const Context = createContext<IContext>(undefined!);
@@ -114,9 +116,9 @@ export const ContextProvider = (props: any) => {
             })
     );
     const veramo = useVeramo(selectedChain);
-    const [hasTrustedIndentity, setHasTrustedIndentity] =
+    const [hasTrustedIdentity, setHasTrustedIdentity] =
         useState<boolean>(false);
-    const walletconnect = useWalletconnect(chains, veramo, hasTrustedIndentity);
+    const walletconnect = useWalletconnect(chains, veramo, hasTrustedIdentity);
 
     // Loading
     useEffect(() => {
@@ -155,9 +157,9 @@ export const ContextProvider = (props: any) => {
     //                         vc.verifiableCredential.credentialSubject
     //                     );
     //                 });
-    //                 console.info("hasTrustedIndentity", !!hasRegistered);
+    //                 console.info("hasTrustedIdentity", !!hasRegistered);
     //                 if (subscribed) {
-    //                     setHasTrustedIndentity(!!hasRegistered);
+    //                     setHasTrustedIdentity(!!hasRegistered);
     //                 }
     //             }
     //         }
@@ -197,9 +199,9 @@ export const ContextProvider = (props: any) => {
                             vc.verifiableCredential.credentialSubject
                         );
                     });
-                    console.info("hasTrustedIndentity", !!hasRegistered);
+                    console.info("hasTrustedIdentity", !!hasRegistered);
                     if (subscribed) {
-                        setHasTrustedIndentity(!!hasRegistered);
+                        setHasTrustedIdentity(!!hasRegistered);
                     }
                 }
             }
@@ -217,6 +219,7 @@ export const ContextProvider = (props: any) => {
         chains,
         provider,
         selectedChain,
+        hasTrustedIdentity,
         ...walletconnect,
         ...veramo,
     };

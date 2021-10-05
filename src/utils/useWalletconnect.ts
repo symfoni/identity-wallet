@@ -108,30 +108,24 @@ export const useWalletconnect = (
         }
     }, [requests, proposals]);
 
+    const pairCached = (uri: string) => {
+        const initiatedTime = Date.now();
+        const cachedPairing: CachedPairing = {
+            uri: uri,
+            timeInitiated: initiatedTime,
+        };
+
+        setCachedPairing(cachedPairing);
+        console.log("In Pair and cachedPairing is set");
+        console.log(cachedPairing);
+    };
+
     const pair = async (uri: string) => {
         console.log(`pair(): Uri: ${uri}`);
         console.log(`Has trusted identity: ${hasTrustedIdentity}`);
-        if (!hasTrustedIdentity) {
-            const initiatedTime = Date.now();
-            const cachedPairing: CachedPairing = {
-                uri: uri,
-                timeInitiated: initiatedTime,
-            };
-
-            setCachedPairing(cachedPairing);
-            console.log("In Pair and cachedPairing is set");
-            console.log(cachedPairing);
-            navigate("Bankid");
-        } else {
-            try {
-                const pairResult = await client?.pair({ uri: uri });
-                console.log("pari", pairResult);
-                navigate("Home");
-                console.log("PairResult", pairResult);
-            } catch (e: any) {
-                console.log(e);
-            }
-        }
+        const pairResult = await client?.pair({ uri: uri });
+        console.log("pari", pairResult);
+        console.log("PairResult", pairResult);
     };
 
     const handleRequest = useCallback(
@@ -385,5 +379,6 @@ export const useWalletconnect = (
         setRequests,
         cachedPairing,
         pair,
+        pairCached,
     };
 };

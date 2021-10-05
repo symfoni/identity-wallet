@@ -1,50 +1,56 @@
 import React, { useContext } from "react";
 import { StyleSheet, Text, TextInput } from "react-native";
 import QRCodeScanner from "react-native-qrcode-scanner";
+import { useLocalNavigation } from "../../hooks/useNavigation";
 import { Context } from "./../../context";
 
 export const Scanner = () => {
-    const { client, isTest, pair } = useContext(Context);
+    const { navigateBankID, navigateHome } = useLocalNavigation();
+    const { isTest, hasTrustedIdentity, pair, pairCached, client } =
+        useContext(Context);
 
-    async function onRead(data: any) {
-        console.log("onRead", data);
-        if (typeof data !== "string") {
+    async function onInput(maybeURI: any) {
+        maybeURI =
+            "wc:f164ac0d5020e5d61ea66fd6984dd29feb0152415b733b06651126c5089861c4@2?controller=false&publicKey=f863cebfebe3255b08c4697923fd3ced9d0f2bfecb1c22da48decb1e4cc0d81d&relay=%7B%22protocol%22%3A%22waku%22%7D";
+        console.log("onRead", maybeURI);
+        if (typeof maybeURI !== "string") {
+            console.warn("typeof maybeURI !== 'string': ", maybeURI);
             return;
         }
-        if (!data.startsWith("wc:")) {
+        if (!maybeURI.startsWith("wc:")) {
+            console.warn("!maybeURI.startsWith('wc:'): ", maybeURI);
             return;
         }
-        try {
-            if (typeof client === "undefined") {
+        if (!client) {
+            console.warn("WalletConnect client not initialized");
+            return;
+        }
+        const URI = maybeURI;
+
+        if (!hasTrustedIdentity) {
+            try {
+                await pairCached(URI);
+            } catch (err) {
+                console.warn("ERROR: await pairCached(URI): ", err);
                 return;
             }
-            await pair(data, true);
-        } catch (e) {
-            console.error(e);
+            navigateBankID();
             return;
         }
-    }
 
-    async function onTextInput(uri: string) {
-        console.log(onTextInput, uri);
         try {
-            if (!uri.startsWith("wc:")) {
-                return;
-            }
-            if (!client) {
-                throw Error("WalletConnect client not initialized");
-            }
-            const pairResult = await pair(uri);
-            console.debug("pairResult", pairResult);
-        } catch (error) {
-            throw error;
+            await pair(URI);
+        } catch (err) {
+            console.warn("ERROR: await pair(URI): ", err);
+            return;
         }
+        navigateHome();
     }
 
     return (
         <>
             <QRCodeScanner
-                onRead={(e: any) => onRead(e.data)}
+                onRead={(e: any) => onInput(e.data)}
                 fadeIn={false}
                 showMarker={true}
                 topContent={
@@ -57,7 +63,7 @@ export const Scanner = () => {
                 <TextInput
                     style={styles.inputText}
                     placeholder="Eller skriv WC kode her"
-                    onChangeText={(text: string) => onTextInput(text)}
+                    onChangeText={(text: string) => onInput(text)}
                     defaultValue={""}
                     showSoftInputOnFocus={false}
                 />
