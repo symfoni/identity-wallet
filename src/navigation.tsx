@@ -5,6 +5,7 @@ import { useContext } from "react";
 import { Icon, IconType } from "./assets/icons/Icon";
 import { ColorContext } from "./colorContext";
 import { Context } from "./context";
+import { SCREEN_BANKID, SCREEN_HOME } from "./hooks/useNavigation";
 import { BankId } from "./screens/BankId";
 import { Home } from "./screens/Home";
 import { Identity } from "./screens/Identity";
@@ -82,7 +83,7 @@ export const Navigation = () => {
     return (
         <Stack.Navigator>
             <Stack.Screen
-                name="Main"
+                name={SCREEN_HOME}
                 component={Tabs}
                 options={{ headerShown: false }}
             />
@@ -97,7 +98,7 @@ export const Navigation = () => {
                 }}
             />
             <Stack.Screen
-                name="Bankid"
+                name={SCREEN_BANKID}
                 component={BankId}
                 options={{ title: "BankID" }}
             />
