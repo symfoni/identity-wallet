@@ -69,7 +69,7 @@ export const useWalletconnect = (
             return;
         }
 
-        pair(cachedPairing.uri, true);
+        pair(cachedPairing.uri);
     }, [hasTrustedIdentity, cachedPairing]);
 
     // Init Walletconnect client
@@ -108,12 +108,10 @@ export const useWalletconnect = (
         }
     }, [requests, proposals]);
 
-    const pair = async (uri: string, requireTrustedIdentity: boolean) => {
-        console.log(
-            `In pair. Uri: ${uri}, requireTrustedIdentity: ${requireTrustedIdentity}`
-        );
+    const pair = async (uri: string) => {
+        console.log(`pair(): Uri: ${uri}`);
         console.log(`Has trusted identity: ${hasTrustedIdentity}`);
-        if (requireTrustedIdentity && !hasTrustedIdentity) {
+        if (!hasTrustedIdentity) {
             const initiatedTime = Date.now();
             const cachedPairing: CachedPairing = {
                 uri: uri,
@@ -125,7 +123,6 @@ export const useWalletconnect = (
             console.log(cachedPairing);
             navigate("Bankid");
         } else {
-            console.log("uri", uri);
             try {
                 const pairResult = await client?.pair({ uri: uri });
                 console.log("pari", pairResult);

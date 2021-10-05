@@ -34,7 +34,7 @@ export const Scanner = () => {
             if (!client) {
                 throw Error("WalletConnect client not initialized");
             }
-            const pairResult = await pair(uri, true);
+            const pairResult = await pair(uri);
             console.debug("pairResult", pairResult);
         } catch (error) {
             throw error;
