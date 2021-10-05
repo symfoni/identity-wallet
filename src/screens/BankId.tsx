@@ -70,7 +70,6 @@ export const BankId = () => {
                     setTimeout(() => resolve(true), 2000);
                 });
                 await sleep;
-                //checkCachedPairingsAndPair();
                 setLoading(false);
                 goBack();
             })
@@ -80,25 +79,6 @@ export const BankId = () => {
                 setLoading(false);
                 setBankidToken("");
             });
-    };
-
-    const checkCachedPairingsAndPair = () => {
-        if (!!cachedPairing) {
-            const initiatedPairingTime = cachedPairing.timeInitiated;
-            const now = Date.now();
-            const ellapsedTime = now - initiatedPairingTime;
-            // 5min
-            if (ellapsedTime > 300000) {
-                Toast.show({
-                    type: "info",
-                    text1: "Pairing request is outdated. Please pair again",
-                    topOffset: 100,
-                    position: "top",
-                });
-            } else {
-                pair(cachedPairing.uri, true);
-            }
-        }
     };
 
     // Use authVC to register
