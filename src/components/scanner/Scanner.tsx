@@ -10,12 +10,8 @@ export const Scanner = () => {
         useContext(Context);
 
     async function onInput(maybeURI: any) {
-        if (isTest) {
-            maybeURI =
-                "wc:f164ac0d5020e5d61ea66fd6984dd29feb0152415b733b06651126c5089861c4@2?controller=false&publicKey=f863cebfebe3255b08c4697923fd3ced9d0f2bfecb1c22da48decb1e4cc0d81d&relay=%7B%22protocol%22%3A%22waku%22%7D";
-        }
-
         console.log("onRead", maybeURI);
+
         if (typeof maybeURI !== "string") {
             console.warn("typeof maybeURI !== 'string': ", maybeURI);
             return;
@@ -38,16 +34,15 @@ export const Scanner = () => {
                 return;
             }
             navigateBankID();
-            return;
+        } else {
+            try {
+                await pair(URI);
+            } catch (err) {
+                console.warn("ERROR: await pair(URI): ", err);
+                return;
+            }
+            navigateHome();
         }
-
-        try {
-            await pair(URI);
-        } catch (err) {
-            console.warn("ERROR: await pair(URI): ", err);
-            return;
-        }
-        navigateHome();
     }
 
     return (
