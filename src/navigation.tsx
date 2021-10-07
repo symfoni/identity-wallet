@@ -2,7 +2,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import * as React from "react";
 import { useContext } from "react";
-import { Text } from "react-native";
+import { Text, TextInput } from "react-native";
 import { Icon, IconType } from "./assets/icons/Icon";
 import { ColorContext } from "./colorContext";
 import { Context } from "./context";
@@ -131,6 +131,7 @@ export const Navigation = () => {
                 options={{
                     title: "Vis legitimasjon",
                     headerLargeTitle: true,
+                    presentation: "modal",
                 }}
             />
         </Stack.Navigator>
