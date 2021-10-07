@@ -1,17 +1,18 @@
-import React, { useContext, useMemo } from "react";
+import React, { ReactNode, useContext, useMemo, useState } from "react";
+import { TextInput } from "react-native";
 import styled from "styled-components/native";
 import { Context } from "../context";
 
 export function PresentCredentialScreen() {
-    const { hasTrustedIdentity } = useContext(Context);
+    const [hasTrustedIdentity, setHasTrustedIdentity] = useState(false);
 
     const Card = useMemo(() => {
-        if (!hasTrustedIdentity) {
+        if (hasTrustedIdentity) {
             return (
                 <>
                     <BulletWithText>
-                        Du har allerede utstedt legitimasjon som kan brukes av{" "}
-                        <BoldText>Forvalt.no</BoldText>:
+                        Du har utstedt gyldig legitimasjon som{" "}
+                        <BoldText>Forvalt.no</BoldText> vil godta.
                     </BulletWithText>
                     <Credential />
                 </>
@@ -20,11 +21,12 @@ export function PresentCredentialScreen() {
             return (
                 <>
                     <BulletWithText>
-                        Før du kan vise legitimasjon til{" "}
-                        <BoldText>Forvalt.no</BoldText>, må du utstede gyldig
-                        legitimasjon. Trykk på kortet under for å komme i gang.
+                        Du har ingen gyldige legitimasjoner. Utsted ny
+                        legitimasjon ved å fylle inn feltene under.
                     </BulletWithText>
-                    <CredentialClickOn />
+                    <CredentialForm
+                        setHasTrustedIdentity={setHasTrustedIdentity}
+                    />
                 </>
             );
         }
@@ -35,19 +37,16 @@ export function PresentCredentialScreen() {
             <Content>
                 <BulletWithText>
                     For å kunne opprette aksjeeierbok, trenger{" "}
-                    <BoldText>Forvalt.no</BoldText> at du fremviser
+                    <BoldText>Forvalt.no</BoldText> at du fremviser gydlig
                     legitimasjon.
                 </BulletWithText>
                 <BulletWithText>
-                    Legitimasjonen må inneholde BankID-personnumer og epost.
+                    For at Legitimasjonen skal regnes som gyldig må den
+                    inneholde BankID-personnumer og epost.
                 </BulletWithText>
                 {Card}
             </Content>
-            {!hasTrustedIdentity && (
-                <SendButton>
-                    <SendButtonText>Vis</SendButtonText>
-                </SendButton>
-            )}
+            {hasTrustedIdentity && <SendButton>Vis</SendButton>}
         </Screen>
     );
 }
@@ -71,24 +70,6 @@ const HelpText = styled.Text`
 
 const BoldText = styled.Text`
     font-weight: 600;
-`;
-
-const SendButton = styled.TouchableOpacity`
-    background-color: rgb(0, 122, 255);
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    height: 44px;
-    margin-horizontal: 30px;
-    margin-top: 20px;
-    margin-bottom: 50px;
-    border-radius: 10px;
-`;
-const SendButtonText = styled.Text`
-    color: rgba(255, 255, 255, 0.5);
-    font-weight: 500;
-    font-size: 16px;
 `;
 
 /**
@@ -125,23 +106,12 @@ function Credential() {
             <WhiteText>Epost</WhiteText>
             <BigWhiteText>jonas@symfoni.solutions</BigWhiteText>
 
-            <TextRight>Ustedt: 12.09.2021</TextRight>
+            <TextRight>{new Date().toLocaleDateString()}</TextRight>
         </CredentialView>
     );
 }
-
-function CredentialClickOn() {
-    return (
-        <CredentialClickOnView>
-            <BigWeakText>
-                {"<Trykk her for å utstede gydlig legitimasjon>"}
-            </BigWeakText>
-        </CredentialClickOnView>
-    );
-}
-
 const CredentialView = styled.View`
-    background-color: rgb(0, 122, 255);
+    background-color: rgb(130, 130, 134);
     border-radius: 10px;
     margin-top: 30px;
     padding-horizontal: 15px;
@@ -149,17 +119,47 @@ const CredentialView = styled.View`
     padding-bottom: 15px;
 `;
 
-const CredentialClickOnView = styled.View`
+function CredentialForm({
+    setHasTrustedIdentity,
+}: {
+    setHasTrustedIdentity: (input: boolean) => void;
+}) {
+    const [bankID, setBankID] = useState(null);
+    const [email, setEmail] = useState("");
+    const onChangeText = (input: String) => setEmail(input.toLowerCase());
+
+    const valid = email !== "" && email.includes("@"); // || bankdID === null;
+
+    return (
+        <CredentialFormView>
+            <WhiteText>BankID-personnumer</WhiteText>
+            <BigWeakText>{"<Trykk for å hente>"}</BigWeakText>
+
+            <WhiteText>Epost</WhiteText>
+            <BigWeakInput
+                placeholder="example@symfoni.id"
+                placeholderTextColor="rgba(255, 255, 255, 0.5)"
+                keyboardType="email-address"
+                value={email}
+                onChangeText={onChangeText}
+            />
+
+            <UtstedButton
+                weak={!valid}
+                onPress={() => (valid ? setHasTrustedIdentity(true) : null)}>
+                Utsted
+            </UtstedButton>
+        </CredentialFormView>
+    );
+}
+
+const CredentialFormView = styled.View`
     background-color: rgb(0, 122, 255);
     border-radius: 10px;
     margin-top: 30px;
     padding-horizontal: 15px;
     padding-top: 20px;
-    padding-bottom: 15px;
-    height: 180px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    padding-bottom: 10px;
 `;
 
 const WhiteText = styled.Text`
@@ -181,4 +181,71 @@ const BigWeakText = styled.Text`
     font-weight: bold;
     font-size: 22px;
     padding-bottom: 20px;
+`;
+const BigWeakInput = styled(TextInput)`
+    color: rgb(255, 255, 255);
+    font-weight: bold;
+    font-size: 22px;
+    padding-bottom: 20px;
+`;
+
+function UtstedButton({
+    weak,
+    onPress,
+    children,
+}: {
+    onPress: () => void;
+    weak: boolean;
+    children: ReactNode;
+}) {
+    return (
+        <UtstedButtonView onPress={onPress} weak={weak}>
+            <UtstedButtonText weak={weak}>{children}</UtstedButtonText>
+        </UtstedButtonView>
+    );
+}
+const UtstedButtonView = styled.TouchableOpacity`
+    background-color: rgb(0, 122, 255);
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    height: 44px;
+    border-radius: 10px;
+    border: 1px solid
+        ${(props: { weak: boolean }) =>
+            props.weak ? "rgba(255,255,255,0.5)" : "white"};
+`;
+
+const UtstedButtonText = styled.Text`
+    color: ${(props: { weak: boolean }) =>
+        props.weak ? "rgba(255,255,255,0.5)" : "white"};
+    font-weight: 500;
+    font-size: 16px;
+`;
+
+function SendButton({ children }: { children: ReactNode }) {
+    return (
+        <SendButtonView>
+            <SendButtonText>{children}</SendButtonText>
+        </SendButtonView>
+    );
+}
+
+const SendButtonView = styled.TouchableOpacity`
+    background-color: rgb(0, 122, 255);
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    height: 44px;
+    margin-horizontal: 30px;
+    margin-top: 20px;
+    margin-bottom: 50px;
+    border-radius: 10px;
+`;
+const SendButtonText = styled.Text`
+    color: rgb(255, 255, 255);
+    font-weight: 500;
+    font-size: 16px;
 `;
