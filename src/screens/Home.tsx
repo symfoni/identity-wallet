@@ -1,4 +1,3 @@
-import { useNavigation } from "@react-navigation/native";
 import { CLIENT_EVENTS } from "@walletconnect/client";
 import { SessionTypes } from "@walletconnect/types";
 import React, { useContext, useEffect, useState } from "react";
@@ -10,11 +9,12 @@ import {
     View,
 } from "react-native";
 import { ColorContext, ColorSystem } from "../colorContext";
-import { Button, SymfoniButton } from "../components/ui/button";
+import { SymfoniButton } from "../components/ui/button";
 import { Context } from "../context";
+import { useLocalNavigation } from "../hooks/useLocalNavigation";
 
 export const Home = () => {
-    const { navigate } = useNavigation();
+    const { navigateScanner } = useLocalNavigation();
     const { loading, client, closeSession } = useContext(Context);
     const { colors } = useContext(ColorContext);
     const styles = makeStyles(colors);
@@ -57,7 +57,7 @@ export const Home = () => {
                             icon={"qr"}
                             type="primary"
                             text="Scan QR"
-                            onPress={() => navigate("Scanner")}
+                            onPress={navigateScanner}
                         />
                     </View>
                 )}

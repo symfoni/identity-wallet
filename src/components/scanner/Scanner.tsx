@@ -1,49 +1,14 @@
 import React, { useContext } from "react";
 import { StyleSheet, Text, TextInput } from "react-native";
 import QRCodeScanner from "react-native-qrcode-scanner";
-import { useLocalNavigation } from "../../hooks/useNavigation";
 import { Context } from "./../../context";
 
-export const Scanner = () => {
-    const { navigateBankID, navigateHome } = useLocalNavigation();
-    const { isTest, hasTrustedIdentity, pair, pairCached, client } =
-        useContext(Context);
-
-    async function onInput(maybeURI: any) {
-        console.log("onRead", maybeURI);
-
-        if (typeof maybeURI !== "string") {
-            console.warn("typeof maybeURI !== 'string': ", maybeURI);
-            return;
-        }
-        if (!maybeURI.startsWith("wc:")) {
-            console.warn("!maybeURI.startsWith('wc:'): ", maybeURI);
-            return;
-        }
-        if (!client) {
-            console.warn("WalletConnect client not initialized");
-            return;
-        }
-        const URI = maybeURI;
-
-        if (!hasTrustedIdentity) {
-            try {
-                await pairCached(URI);
-            } catch (err) {
-                console.warn("ERROR: await pairCached(URI): ", err);
-                return;
-            }
-            navigateBankID();
-        } else {
-            try {
-                await pair(URI);
-            } catch (err) {
-                console.warn("ERROR: await pair(URI): ", err);
-                return;
-            }
-            navigateHome();
-        }
-    }
+export const Scanner = ({
+    onInput,
+}: {
+    onInput: (maybeURI: String) => void;
+}) => {
+    const { isTest } = useContext(Context);
 
     return (
         <>

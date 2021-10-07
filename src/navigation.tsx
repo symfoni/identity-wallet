@@ -1,19 +1,31 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import * as React from "react";
 import { useContext } from "react";
+import { Text } from "react-native";
 import { Icon, IconType } from "./assets/icons/Icon";
 import { ColorContext } from "./colorContext";
 import { Context } from "./context";
-import { SCREEN_BANKID, SCREEN_HOME } from "./hooks/useNavigation";
+import {
+    SCREEN_BANKID,
+    SCREEN_DEMO,
+    SCREEN_HOME,
+    SCREEN_SCANNER,
+    SCREEN_PRESENT_CREDENTIAL,
+} from "./hooks/useLocalNavigation";
 import { BankId } from "./screens/BankId";
+import { Demo } from "./screens/Demo";
 import { Home } from "./screens/Home";
 import { Identity } from "./screens/Identity";
 import { ProfileNavigation } from "./screens/Profile/ProfileNavigation";
 import RequestAndProposalHandler from "./screens/RequestAndProposalHandler";
 import { ScannerScreen } from "./screens/ScannerScreen";
+import {
+    SendVerifiedPersonnummer,
+    ShowCredentialScreen,
+} from "./screens/ShowCredentialScreen";
 
-const Stack = createStackNavigator();
+const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 interface Route {
     routeId: string;
@@ -34,7 +46,9 @@ const PROFILE_ROUTE: Route = {
 };
 
 function Tabs() {
+    const { isTest } = useContext(Context);
     const { colors } = useContext(ColorContext);
+
     return (
         <Tab.Navigator
             screenOptions={({ route }) => ({
@@ -66,11 +80,13 @@ function Tabs() {
                 component={ProfileNavigation}
                 options={{ title: PROFILE_ROUTE.title, headerShown: false }}
             />
-            {/* <Tab.Screen
-                name="Settings"
-                component={Settings}
-                options={{ title: "Settings" }}
-            /> */}
+            {isTest && (
+                <Tab.Screen
+                    name={SCREEN_DEMO}
+                    component={Demo}
+                    options={{ title: "Demo" }}
+                />
+            )}
         </Tab.Navigator>
     );
 }
@@ -108,9 +124,17 @@ export const Navigation = () => {
                 options={{ headerShown: false }}
             />
             <Stack.Screen
-                name="Scanner"
+                name={SCREEN_SCANNER}
                 component={ScannerScreen}
                 options={{ title: "Scan QR" }}
+            />
+            <Stack.Screen
+                name={SCREEN_PRESENT_CREDENTIAL}
+                component={ShowCredentialScreen}
+                options={{
+                    title: "Vis legitimasjon",
+                    headerLargeTitle: true,
+                }}
             />
         </Stack.Navigator>
     );
