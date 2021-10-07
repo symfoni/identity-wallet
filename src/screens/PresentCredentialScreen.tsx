@@ -1,8 +1,35 @@
-import React from "react";
-import { Text } from "react-native";
+import React, { useContext, useMemo } from "react";
 import styled from "styled-components/native";
+import { Context } from "../context";
 
 export function PresentCredentialScreen() {
+    const { hasTrustedIdentity } = useContext(Context);
+
+    const Card = useMemo(() => {
+        if (!hasTrustedIdentity) {
+            return (
+                <>
+                    <BulletWithText>
+                        Du har allerede utstedt legitimasjon som kan brukes av{" "}
+                        <BoldText>Forvalt.no</BoldText>:
+                    </BulletWithText>
+                    <Credential />
+                </>
+            );
+        } else {
+            return (
+                <>
+                    <BulletWithText>
+                        Før du kan vise legitimasjon til{" "}
+                        <BoldText>Forvalt.no</BoldText>, må du utstede gyldig
+                        legitimasjon. Trykk på kortet under for å komme i gang.
+                    </BulletWithText>
+                    <CredentialClickOn />
+                </>
+            );
+        }
+    }, [hasTrustedIdentity]);
+
     return (
         <Screen>
             <Content>
@@ -14,15 +41,13 @@ export function PresentCredentialScreen() {
                 <BulletWithText>
                     Legitimasjonen må inneholde BankID-personnumer og epost.
                 </BulletWithText>
-                <BulletWithText>
-                    Du har allerede utstedt legitimasjon som kan brukes av{" "}
-                    <BoldText>Forvalt.no</BoldText>:
-                </BulletWithText>
-                <Credential />
+                {Card}
             </Content>
-            <SendButton>
-                <ButtonText>Vis</ButtonText>
-            </SendButton>
+            {!hasTrustedIdentity && (
+                <SendButton>
+                    <SendButtonText>Vis</SendButtonText>
+                </SendButton>
+            )}
         </Screen>
     );
 }
@@ -44,12 +69,6 @@ const HelpText = styled.Text`
     padding-vertical: 10px;
 `;
 
-const ButtonText = styled.Text`
-    color: rgba(255, 255, 255, 0.3);
-    font-weight: 500;
-    font-size: 16px;
-`;
-
 const BoldText = styled.Text`
     font-weight: 600;
 `;
@@ -65,6 +84,11 @@ const SendButton = styled.TouchableOpacity`
     margin-top: 20px;
     margin-bottom: 50px;
     border-radius: 10px;
+`;
+const SendButtonText = styled.Text`
+    color: rgba(255, 255, 255, 0.5);
+    font-weight: 500;
+    font-size: 16px;
 `;
 
 /**
@@ -106,6 +130,16 @@ function Credential() {
     );
 }
 
+function CredentialClickOn() {
+    return (
+        <CredentialClickOnView>
+            <BigWeakText>
+                {"<Trykk her for å utstede gydlig legitimasjon>"}
+            </BigWeakText>
+        </CredentialClickOnView>
+    );
+}
+
 const CredentialView = styled.View`
     background-color: rgb(0, 122, 255);
     border-radius: 10px;
@@ -114,6 +148,20 @@ const CredentialView = styled.View`
     padding-top: 20px;
     padding-bottom: 15px;
 `;
+
+const CredentialClickOnView = styled.View`
+    background-color: rgb(0, 122, 255);
+    border-radius: 10px;
+    margin-top: 30px;
+    padding-horizontal: 15px;
+    padding-top: 20px;
+    padding-bottom: 15px;
+    height: 180px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+`;
+
 const WhiteText = styled.Text`
     color: #fff;
 `;
@@ -124,6 +172,12 @@ const TextRight = styled.Text`
 
 const BigWhiteText = styled.Text`
     color: #fff;
+    font-weight: bold;
+    font-size: 22px;
+    padding-bottom: 20px;
+`;
+const BigWeakText = styled.Text`
+    color: rgba(255, 255, 255, 0.5);
     font-weight: bold;
     font-size: 22px;
     padding-bottom: 20px;
