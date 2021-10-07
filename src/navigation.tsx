@@ -20,10 +20,7 @@ import { Identity } from "./screens/Identity";
 import { ProfileNavigation } from "./screens/Profile/ProfileNavigation";
 import RequestAndProposalHandler from "./screens/RequestAndProposalHandler";
 import { ScannerScreen } from "./screens/ScannerScreen";
-import {
-    SendVerifiedPersonnummer,
-    ShowCredentialScreen,
-} from "./screens/ShowCredentialScreen";
+import { PresentCredentialScreen } from "./screens/PresentCredentialScreen";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -130,7 +127,7 @@ export const Navigation = () => {
             />
             <Stack.Screen
                 name={SCREEN_PRESENT_CREDENTIAL}
-                component={ShowCredentialScreen}
+                component={PresentCredentialScreen}
                 options={{
                     title: "Vis legitimasjon",
                     headerLargeTitle: true,
