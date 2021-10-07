@@ -96,7 +96,7 @@ function Credential() {
     return (
         <CredentialView>
             <WhiteText>BankID-personnumer</WhiteText>
-            <BigWhiteText>120391 42137</BigWhiteText>
+            <BigWhiteText>123456 098765</BigWhiteText>
 
             <WhiteText>Epost</WhiteText>
             <BigWhiteText>jonas@symfoni.solutions</BigWhiteText>
@@ -110,8 +110,9 @@ const CredentialView = styled.View`
     background-color: rgb(0, 122, 255);
     border-radius: 10px;
     margin-top: 30px;
-    padding-horizontal: 10px;
-    padding-vertical: 20px;
+    padding-horizontal: 15px;
+    padding-top: 20px;
+    padding-bottom: 15px;
 `;
 const WhiteText = styled.Text`
     color: #fff;
