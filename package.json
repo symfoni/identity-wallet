@@ -19,6 +19,7 @@
     "@react-native-community/masked-view": "^0.1.11",
     "@react-navigation/bottom-tabs": "^6.0.3",
     "@react-navigation/native": "^6.0.2",
+    "@react-navigation/native-stack": "^6.2.2",
     "@react-navigation/stack": "^6.0.4",
     "@veramo/core": "^2.1.0",
     "@veramo/credential-w3c": "^2.1.0",
@@ -60,7 +61,8 @@
     "react-native-toast-message": "^1.4.9",
     "react-native-typography": "^1.4.1",
     "react-native-url-polyfill": "^1.3.0",
-    "react-native-webview": "^11.13.0"
+    "react-native-webview": "^11.13.0",
+    "styled-components": "^5.3.1"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
