@@ -43,7 +43,6 @@ fi
 fi
 
 if [ "$BUILD_OS" == "ANDROID" ]; then
-i
 
 # ----- this code is only for Android App Builds only 
 rm "android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml"
