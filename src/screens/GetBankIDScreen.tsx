@@ -3,7 +3,7 @@ import { useNavigation } from "@react-navigation/native";
 import Toast from "react-native-toast-message";
 import styled from "styled-components/native";
 import { BankidWebview } from "../components/bankid/BankidWebview";
-import { ResultBankIDToken } from "../types/resultTypes";
+import { ParamBankIDToken } from "../types/paramTypes";
 
 export function GetBankIDScreen(props: {
     route: { params: { resultScreen: string } };
@@ -17,9 +17,9 @@ export function GetBankIDScreen(props: {
     useEffect(() => {
         if (bankIDToken !== null) {
             navigate(props.route.params.resultScreen, {
-                type: "RESULT_BANKID_TOKEN",
+                type: "PARAM_BANKID_TOKEN",
                 bankIDToken,
-            } as ResultBankIDToken);
+            } as ParamBankIDToken);
         }
     }, [bankIDToken, navigate, props.route.params.resultScreen]);
 

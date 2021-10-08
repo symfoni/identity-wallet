@@ -5,8 +5,7 @@ import { useLocalNavigation } from "../hooks/useLocalNavigation";
 import { Context } from "./../context";
 
 export const ScannerScreen = () => {
-    const { navigateHome, navigateSendVerifiedPersonnummer } =
-        useLocalNavigation();
+    const { navigateHome, navigatePresentCredential } = useLocalNavigation();
 
     const { isTest, hasTrustedIdentity, pair, pairCached, client } =
         useContext(Context);
@@ -24,7 +23,7 @@ export const ScannerScreen = () => {
         }
 
         const URI = maybeURI;
-        navigateSendVerifiedPersonnummer();
+        navigatePresentCredential();
     }
 
     return (

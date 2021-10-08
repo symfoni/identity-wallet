@@ -1,4 +1,5 @@
 import { useNavigation } from "@react-navigation/native";
+import { ParamPresentCredentialDemo } from "../types/paramTypes";
 
 export const SCREEN_BANKID = "Bankid";
 export const SCREEN_HOME = "Main";
@@ -12,8 +13,9 @@ export function useLocalNavigation() {
 
     const navigateBankID = () => navigation.navigate(SCREEN_BANKID);
     const navigateHome = () => navigation.navigate(SCREEN_HOME);
-    const navigateSendVerifiedPersonnummer = () =>
-        navigation.navigate(SCREEN_PRESENT_CREDENTIAL);
+    const navigatePresentCredential = (params?: ParamPresentCredentialDemo) => {
+        navigation.navigate(SCREEN_PRESENT_CREDENTIAL, params);
+    };
     const navigateScanner = () => navigation.navigate(SCREEN_SCANNER);
     const navigateDemo = () => navigation.navigate(SCREEN_DEMO);
     const navigateGetBankID = (resultScreen: string) =>
@@ -24,7 +26,7 @@ export function useLocalNavigation() {
         navigateHome,
         navigateScanner,
         navigateDemo,
-        navigateSendVerifiedPersonnummer,
+        navigatePresentCredential,
         navigateGetBankID,
     };
 }

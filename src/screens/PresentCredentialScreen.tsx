@@ -1,4 +1,10 @@
-import React, { ReactNode, useEffect, useMemo, useState } from "react";
+import React, {
+    ReactNode,
+    useContext,
+    useEffect,
+    useMemo,
+    useState,
+} from "react";
 import { ActivityIndicator, TextInput } from "react-native";
 import { decodeJWT } from "did-jwt";
 import styled from "styled-components/native";
@@ -7,44 +13,58 @@ import {
     useLocalNavigation,
 } from "../hooks/useLocalNavigation";
 import { BankidJWTPayload } from "../types/bankid.types";
-import { ResultBankIDToken } from "../types/resultTypes";
+import {
+    ParamBankIDToken,
+    ParamPresentCredentialDemo,
+} from "../types/paramTypes";
+import { Context } from "../context";
+import { BROK_HELPERS_VERIFIER } from "@env";
+import { registerWithBankId } from "../domain/brok-helpers";
 
 export function PresentCredentialScreen(props: {
-    route: { params?: ResultBankIDToken };
+    route: { params?: ParamBankIDToken | ParamPresentCredentialDemo };
 }) {
     const { navigateHome } = useLocalNavigation();
+    const { createVC, createVP, saveVP } = useContext(Context);
+
+    // Local data
     const [validBankIDPersonnummer, setValidBankIDPersonnummer] = useState<
         string | null
     >(null);
     const [validEmail, setValidEmail] = useState<string | null>(null);
     const [presentLoading, setPresentLoading] = useState(false);
-
+    const [saveLoading, setSaveLoading] = useState(false);
     const [bankIDToken, setBankIDToken] = useState<string | null>(null);
+    const [saveError, setSaveError] = useState<any>();
+
     const validCredential =
         validBankIDPersonnummer !== null && validEmail !== null;
 
-    const bankIDInput: BankidJWTPayload | null = useMemo(() => {
-        if (bankIDToken === null) {
-            return null;
-        }
-        return decodeJWT(bankIDToken).payload as BankidJWTPayload;
-    }, [bankIDToken]);
-
-    useEffect(() => {
-        switch (props.route.params?.type) {
-            case "RESULT_BANKID_TOKEN":
-                {
-                    const params = props.route.params as ResultBankIDToken;
-                    setBankIDToken(params.bankIDToken);
-                }
-                break;
-        }
-    }, [props.route.params]);
-
-    const onSaveCredential = (
+    // Local callbacks
+    const onSaveCredential = async (
         _validBankIDPersonnummer: string,
         _validEmail: string
     ) => {
+        const vc = await createVC({
+            email: validEmail,
+            streetAddress: null,
+            postalCode: null,
+            identityProof: bankIDToken,
+        });
+        const vp = await createVP(BROK_HELPERS_VERIFIER, [vc.proof.jwt]);
+
+        setSaveLoading(true);
+        try {
+            await registerWithBankId(vp);
+            await saveVP(vp);
+        } catch (err) {
+            setSaveError(err);
+            console.warn({ err });
+            return;
+        } finally {
+            setSaveLoading(false);
+        }
+
         setValidBankIDPersonnummer(_validBankIDPersonnummer);
         setValidEmail(_validEmail);
     };
@@ -54,13 +74,41 @@ export function PresentCredentialScreen(props: {
         setTimeout(() => navigateHome(), 2000);
     };
 
+    // UseEffects
+    useEffect(() => {
+        switch (props.route.params?.type) {
+            case "PARAM_BANKID_TOKEN":
+                setBankIDToken(props.route.params.bankIDToken);
+                break;
+            case "PARAM_PRESENT_CREDENTIAL_DEMO":
+                setValidBankIDPersonnummer(
+                    props.route.params.demoBankIDPersonnummer
+                );
+                setValidEmail(props.route.params.demoEmail);
+                break;
+        }
+    }, [props.route.params, props.route.params?.type]);
+
+    const bankIDInput: BankidJWTPayload | null = useMemo(() => {
+        if (bankIDToken === null) {
+            return null;
+        }
+        return decodeJWT(bankIDToken).payload as BankidJWTPayload;
+    }, [bankIDToken]);
+
+    useEffect(() => {
+        if (bankIDInput?.socialno) {
+            setValidBankIDPersonnummer(bankIDInput?.socialno);
+        }
+    }, [bankIDInput]);
+
     return (
         <Screen>
             <Content>
                 <SmallText>Til</SmallText>
                 <BigText>forvalt.no</BigText>
                 <CredentialForm
-                    bankIDInput={bankIDInput}
+                    saveLoading={saveLoading}
                     validEmail={validEmail}
                     validBankIDPersonnummer={validBankIDPersonnummer}
                     onSave={onSaveCredential}
@@ -80,7 +128,7 @@ export function PresentCredentialScreen(props: {
                     {!presentLoading ? (
                         "Vis"
                     ) : (
-                        <ActivityIndicator color="white" />
+                        <ActivityIndicator color="white" size="small" />
                     )}
                 </PresentButton>
             )}
@@ -135,12 +183,12 @@ const BulletText = styled.Text`
 `;
 
 function CredentialForm({
-    bankIDInput,
+    saveLoading,
     validBankIDPersonnummer,
     validEmail,
     onSave,
 }: {
-    bankIDInput: BankidJWTPayload | null;
+    saveLoading: boolean;
     validBankIDPersonnummer: string | null;
     validEmail: string | null;
     onSave: (validBankIDPersonnummer: string, validEmail: string) => void;
@@ -152,7 +200,7 @@ function CredentialForm({
     const validCredential = !!validBankIDPersonnummer && !!validEmail;
 
     const validInput =
-        !!bankIDInput?.socialno &&
+        !!validBankIDPersonnummer &&
         emailInput &&
         emailInput !== "" &&
         emailInput?.includes("@"); // || bankdID === null;
@@ -161,13 +209,13 @@ function CredentialForm({
         <CredentialFormView>
             <WhiteText>BankID-personnumer</WhiteText>
             <BigWhiteText
-                weak={!bankIDInput?.socialno}
+                weak={!validBankIDPersonnummer}
                 onPress={() =>
                     !validCredential
                         ? navigateGetBankID(SCREEN_PRESENT_CREDENTIAL)
                         : null
                 }>
-                {bankIDInput?.socialno ?? "123456 12345"}
+                {validBankIDPersonnummer ?? "123456 12345"}
             </BigWhiteText>
 
             <WhiteText>Epost</WhiteText>
@@ -186,10 +234,14 @@ function CredentialForm({
                     weak={!validInput}
                     onPress={() =>
                         validInput
-                            ? onSave(bankIDInput.socialno, emailInput)
+                            ? onSave(validBankIDPersonnummer, emailInput)
                             : null
                     }>
-                    Lagre
+                    {!saveLoading ? (
+                        "Lagre"
+                    ) : (
+                        <ActivityIndicator color="white" size="small" />
+                    )}
                 </SaveButton>
             )}
         </CredentialFormView>
