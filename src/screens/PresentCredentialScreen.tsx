@@ -1,6 +1,8 @@
 import React, { ReactNode, useContext, useMemo, useState } from "react";
 import { Text, TextInput } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import styled from "styled-components/native";
+import { useLocalNavigation } from "../hooks/useLocalNavigation";
 
 export function PresentCredentialScreen() {
     const [bankID, setBankID] = useState<string | null>(null);
@@ -26,7 +28,7 @@ export function PresentCredentialScreen() {
                     legitimasjon.
                 </BulletWithText>
                 <BulletWithText>
-                    For at Legitimasjonen skal regnes som gyldig må den
+                    For at legitimasjonen skal regnes som gyldig må den
                     inneholde BankID-personnumer og epost.
                 </BulletWithText>
             </Content>
@@ -90,6 +92,7 @@ function CredentialForm({
     email: string | null;
     onSave: (email: string) => void;
 }) {
+    const { navigateGetBankID } = useLocalNavigation();
     const [localBankID, setBankID] = useState(bankID);
     const [localEmail, setEmail] = useState(email);
     const onChangeText = (input: String) => setEmail(input.toLowerCase());
@@ -101,7 +104,9 @@ function CredentialForm({
     return (
         <CredentialFormView>
             <WhiteText>BankID-personnumer</WhiteText>
-            <BigWhiteText weak={true}>{"123456 098765"}</BigWhiteText>
+            <BigWhiteText weak={true} onPress={navigateGetBankID}>
+                {"123456 098765"}
+            </BigWhiteText>
 
             <WhiteText>Epost</WhiteText>
             <BigInput

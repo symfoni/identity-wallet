@@ -2,7 +2,6 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import * as React from "react";
 import { useContext } from "react";
-import { Text, TextInput } from "react-native";
 import { Icon, IconType } from "./assets/icons/Icon";
 import { ColorContext } from "./colorContext";
 import { Context } from "./context";
@@ -12,15 +11,17 @@ import {
     SCREEN_HOME,
     SCREEN_SCANNER,
     SCREEN_PRESENT_CREDENTIAL,
+    SCREEN_GET_BANKID,
 } from "./hooks/useLocalNavigation";
 import { BankId } from "./screens/BankId";
-import { Demo } from "./screens/Demo";
+import { DemoScreen } from "./screens/DemoScreen";
 import { Home } from "./screens/Home";
 import { Identity } from "./screens/Identity";
 import { ProfileNavigation } from "./screens/Profile/ProfileNavigation";
 import RequestAndProposalHandler from "./screens/RequestAndProposalHandler";
 import { ScannerScreen } from "./screens/ScannerScreen";
 import { PresentCredentialScreen } from "./screens/PresentCredentialScreen";
+import { GetBankIDScreen } from "./screens/GetBankIDScreen";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -80,7 +81,7 @@ function Tabs() {
             {isTest && (
                 <Tab.Screen
                     name={SCREEN_DEMO}
-                    component={Demo}
+                    component={DemoScreen}
                     options={{ title: "Demo" }}
                 />
             )}
@@ -130,6 +131,15 @@ export const Navigation = () => {
                 component={PresentCredentialScreen}
                 options={{
                     title: "Vis legitimasjon",
+                    headerLargeTitle: true,
+                    presentation: "modal",
+                }}
+            />
+            <Stack.Screen
+                name={SCREEN_GET_BANKID}
+                component={GetBankIDScreen}
+                options={{
+                    title: "Hent BankID",
                     headerLargeTitle: true,
                     presentation: "modal",
                 }}
