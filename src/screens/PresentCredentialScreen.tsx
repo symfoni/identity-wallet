@@ -3,24 +3,23 @@ import { Text, TextInput } from "react-native";
 import styled from "styled-components/native";
 
 export function PresentCredentialScreen() {
-    const [hasTrustedIdentity, setHasTrustedIdentity] = useState(false);
-
-    const Card = useMemo(() => {
-        if (hasTrustedIdentity) {
-            return <Credential />;
-        } else {
-            return (
-                <CredentialForm setHasTrustedIdentity={setHasTrustedIdentity} />
-            );
-        }
-    }, [hasTrustedIdentity]);
+    const [bankID, setBankID] = useState<string | null>(null);
+    const [email, setEmail] = useState<string | null>(null);
+    const hasTrustedIdentity =
+        email !== null && email !== "" && email.includes("@");
 
     return (
         <Screen>
             <Content>
                 <SmallText>Til</SmallText>
                 <BigText>forvalt.no</BigText>
-                {Card}
+                <CredentialForm
+                    bankID={bankID}
+                    email={email}
+                    onSave={(_email) => {
+                        setEmail(_email);
+                    }}
+                />
                 <BulletWithText>
                     For å kunne opprette aksjeeierbok, trenger{" "}
                     <BoldText>Forvalt.no</BoldText> at du fremviser gydlig
@@ -75,72 +74,120 @@ const BulletRow = styled.View`
     margin-top: 10px;
 `;
 const BulletView = styled.View`
-    width: 20;
+    width: 20px;
 `;
 const BulletText = styled.Text`
-    width: 20;
+    width: 20px;
     font-size: 30px;
 `;
 
-function Credential() {
-    return (
-        <CredentialView>
-            <WhiteText>BankID-personnumer</WhiteText>
-            <BigWhiteText>123456 098765</BigWhiteText>
-
-            <WhiteText>Epost</WhiteText>
-            <BigWhiteText>jonas@symfoni.solutions</BigWhiteText>
-
-            <DateSuccess>{new Date().toLocaleDateString()}</DateSuccess>
-        </CredentialView>
-    );
-}
-const CredentialView = styled.View`
-    background-color: rgb(130, 130, 134);
-    border-radius: 10px;
-    margin-top: 10px;
-    margin-bottom: 30px;
-    padding-horizontal: 15px;
-    padding-top: 20px;
-    padding-bottom: 15px;
-`;
-
 function CredentialForm({
-    setHasTrustedIdentity,
+    bankID,
+    email,
+    onSave,
 }: {
-    setHasTrustedIdentity: (input: boolean) => void;
+    bankID: string | null;
+    email: string | null;
+    onSave: (email: string) => void;
 }) {
-    const [bankID, setBankID] = useState(null);
-    const [email, setEmail] = useState("");
+    const [localBankID, setBankID] = useState(bankID);
+    const [localEmail, setEmail] = useState(email);
     const onChangeText = (input: String) => setEmail(input.toLowerCase());
 
-    const valid = email !== "" && email.includes("@"); // || bankdID === null;
+    const valid = email && email !== "" && email?.includes("@");
+    const localValid =
+        localEmail && localEmail !== "" && localEmail?.includes("@"); // || bankdID === null;
 
     return (
         <CredentialFormView>
             <WhiteText>BankID-personnumer</WhiteText>
-            <BigWeakText>{"123456 098765"}</BigWeakText>
+            <BigWhiteText weak={true}>{"123456 098765"}</BigWhiteText>
 
             <WhiteText>Epost</WhiteText>
-            <BigWeakInput
+            <BigInput
+                editable={!valid}
                 placeholder="example@symfoni.id"
-                placeholderTextColor="rgba(255, 255, 255, 0.5)"
+                placeholderTextColor="rgba(255, 255, 255, 0.2)"
                 keyboardType="email-address"
                 value={email}
                 onChangeText={onChangeText}
             />
-
-            <UtstedButton
-                weak={!valid}
-                onPress={() => (valid ? setHasTrustedIdentity(true) : null)}>
-                Lagre
-            </UtstedButton>
+            {valid ? (
+                <ValidButton>Gyldig</ValidButton>
+            ) : (
+                <SaveButton
+                    weak={!localValid}
+                    onPress={() => onSave(localEmail)}>
+                    Lagre
+                </SaveButton>
+            )}
         </CredentialFormView>
     );
 }
+function ValidButton({ children }: { children: ReactNode }) {
+    return (
+        <DateView>
+            <DateText localValid>{new Date().toLocaleDateString()}</DateText>
+            <StatusButtonTouchable color={"rgba(52, 199, 89, 0.9)"}>
+                <StatusButtonText>{children}</StatusButtonText>
+            </StatusButtonTouchable>
+        </DateView>
+    );
+}
+
+function SaveButton({
+    weak,
+    onPress,
+    children,
+}: {
+    weak: boolean;
+    onPress: () => void;
+    children: ReactNode;
+}) {
+    return (
+        <DateView>
+            <DateText weak>--/--/----</DateText>
+            <StatusButtonTouchable
+                onPress={onPress}
+                weak={weak}
+                color="rgba(0, 122, 255, 0.9)">
+                <StatusButtonText weak={weak}>{children}</StatusButtonText>
+            </StatusButtonTouchable>
+        </DateView>
+    );
+}
+const DateView = styled.View`
+    display: flex;
+    flex-direction: row;
+    align-self: flex-end;
+    align-items: center;
+`;
+const DateText = styled.Text`
+    margin-right: 10px;
+    color: ${(props: { weak: boolean }) =>
+        props.weak ? "rgba(255,255,255,0.3)" : "white"};
+`;
+const StatusButtonTouchable = styled.TouchableOpacity`
+    background-color: ${(props: { color: string }) => props.color};
+    border-radius: 10px;
+    height: 26px;
+    min-width: 80px;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+`;
+
+const StatusButtonText = styled.Text`
+    color: ${(props: { weak: boolean }) =>
+        props.weak ? "rgba(255,255,255,0.3)" : "white"};
+    font-weight: 600;
+    font-size: 13px;
+`;
 
 const CredentialFormView = styled.View`
-    background-color: rgb(0, 122, 255);
+    background-color: rgb(130, 130, 134);
     border-radius: 10px;
     margin-top: 10px;
     margin-bottom: 30px;
@@ -153,7 +200,8 @@ const WhiteText = styled.Text`
     color: #fff;
 `;
 const BigWhiteText = styled.Text`
-    color: #fff;
+    color: ${(props: { weak: boolean }) =>
+        props.weak ? "rgba(255,255,255,0.2)" : "white"};
     font-weight: bold;
     font-size: 22px;
     padding-bottom: 20px;
@@ -168,52 +216,11 @@ const BigText = styled.Text`
     margin-left: 5px;
 `;
 
-const BigWeakText = styled.Text`
-    color: rgba(255, 255, 255, 0.5);
-    font-weight: bold;
-    font-size: 22px;
-    padding-bottom: 20px;
-`;
-const BigWeakInput = styled(TextInput)`
+const BigInput = styled(TextInput)`
     color: rgb(255, 255, 255);
     font-weight: bold;
     font-size: 22px;
     padding-bottom: 20px;
-`;
-
-function UtstedButton({
-    weak,
-    onPress,
-    children,
-}: {
-    onPress: () => void;
-    weak: boolean;
-    children: ReactNode;
-}) {
-    return (
-        <UtstedButtonView onPress={onPress} weak={weak}>
-            <UtstedButtonText weak={weak}>{children}</UtstedButtonText>
-        </UtstedButtonView>
-    );
-}
-const UtstedButtonView = styled.TouchableOpacity`
-    background-color: rgb(0, 122, 255);
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    height: 44px;
-    border-radius: 10px;
-    border: 1px solid
-        ${(props: { weak: boolean }) =>
-            props.weak ? "rgba(255,255,255,0.5)" : "white"};
-`;
-
-const UtstedButtonText = styled.Text`
-    color: ${(props: { weak: boolean }) =>
-        props.weak ? "rgba(255,255,255,0.5)" : "white"};
-    font-weight: 500;
-    font-size: 16px;
 `;
 
 function SendButton({ children }: { children: ReactNode }) {
@@ -242,23 +249,4 @@ const SendButtonText = styled.Text`
     color: rgb(255, 255, 255);
     font-weight: 500;
     font-size: 16px;
-`;
-
-function DateSuccess({ children }: { children: ReactNode }) {
-    return (
-        <DateSuccessView>
-            <DateSuccessText>{children}</DateSuccessText>
-        </DateSuccessView>
-    );
-}
-const DateSuccessView = styled.View`
-    border-radius: 5px;
-    background-color: rgba(52, 199, 89, 0.8);
-    align-self: flex-end;
-    padding-horizontal: 4px;
-    padding-vertical: 2px;
-`;
-const DateSuccessText = styled.Text`
-    color: #fff;
-    font-size: 13px;
 `;
