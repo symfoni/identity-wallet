@@ -55,8 +55,8 @@ export function PresentCredentialScreen(props: {
 
         setSaveLoading(true);
         try {
-            await registerWithBankId(vp);
-            await saveVP(vp);
+            const { data: signedVP } = await registerWithBankId(vp);
+            await saveVP(signedVP);
         } catch (err) {
             setSaveError(err);
             console.warn({ err });
@@ -215,7 +215,7 @@ function CredentialForm({
                         ? navigateGetBankID(SCREEN_PRESENT_CREDENTIAL)
                         : null
                 }>
-                {validBankIDPersonnummer ?? "123456 12345"}
+                {validBankIDPersonnummer ?? "123456 54321"}
             </BigWhiteText>
 
             <WhiteText>Epost</WhiteText>
@@ -238,7 +238,7 @@ function CredentialForm({
                             : null
                     }>
                     {!saveLoading ? (
-                        "Lagre"
+                        "Utsted"
                     ) : (
                         <ActivityIndicator color="white" size="small" />
                     )}

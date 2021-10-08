@@ -11,13 +11,7 @@ export function DemoScreen() {
         <>
             <Button
                 title="Demo: Vis legitimasjon"
-                onPress={() =>
-                    navigatePresentCredential({
-                        type: "PARAM_PRESENT_CREDENTIAL_DEMO",
-                        demoBankIDPersonnummer: "120391 12345",
-                        demoEmail: "jonas@symfoni.solutions",
-                    } as ParamPresentCredentialDemo)
-                }
+                onPress={() => navigatePresentCredential()}
             />
             <Button
                 title="Demo: Vis legitimasjon med demodata"
