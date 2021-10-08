@@ -1,14 +1,58 @@
-import React, { ReactNode, useContext, useMemo, useState } from "react";
-import { Text, TextInput } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import React, { ReactNode, useEffect, useMemo, useState } from "react";
+import { ActivityIndicator, TextInput } from "react-native";
+import { decodeJWT } from "did-jwt";
 import styled from "styled-components/native";
-import { useLocalNavigation } from "../hooks/useLocalNavigation";
+import {
+    SCREEN_PRESENT_CREDENTIAL,
+    useLocalNavigation,
+} from "../hooks/useLocalNavigation";
+import { BankidJWTPayload } from "../types/bankid.types";
+import { ResultBankIDToken } from "../types/resultTypes";
 
-export function PresentCredentialScreen() {
-    const [bankID, setBankID] = useState<string | null>(null);
-    const [email, setEmail] = useState<string | null>(null);
-    const hasTrustedIdentity =
-        email !== null && email !== "" && email.includes("@");
+export function PresentCredentialScreen(props: {
+    route: { params?: ResultBankIDToken };
+}) {
+    const { navigateHome } = useLocalNavigation();
+    const [validBankIDPersonnummer, setValidBankIDPersonnummer] = useState<
+        string | null
+    >(null);
+    const [validEmail, setValidEmail] = useState<string | null>(null);
+    const [presentLoading, setPresentLoading] = useState(false);
+
+    const [bankIDToken, setBankIDToken] = useState<string | null>(null);
+    const validCredential =
+        validBankIDPersonnummer !== null && validEmail !== null;
+
+    const bankIDInput: BankidJWTPayload | null = useMemo(() => {
+        if (bankIDToken === null) {
+            return null;
+        }
+        return decodeJWT(bankIDToken).payload as BankidJWTPayload;
+    }, [bankIDToken]);
+
+    useEffect(() => {
+        switch (props.route.params?.type) {
+            case "RESULT_BANKID_TOKEN":
+                {
+                    const params = props.route.params as ResultBankIDToken;
+                    setBankIDToken(params.bankIDToken);
+                }
+                break;
+        }
+    }, [props.route.params]);
+
+    const onSaveCredential = (
+        _validBankIDPersonnummer: string,
+        _validEmail: string
+    ) => {
+        setValidBankIDPersonnummer(_validBankIDPersonnummer);
+        setValidEmail(_validEmail);
+    };
+
+    const onPresentCredential = () => {
+        setPresentLoading(true);
+        setTimeout(() => navigateHome(), 2000);
+    };
 
     return (
         <Screen>
@@ -16,11 +60,10 @@ export function PresentCredentialScreen() {
                 <SmallText>Til</SmallText>
                 <BigText>forvalt.no</BigText>
                 <CredentialForm
-                    bankID={bankID}
-                    email={email}
-                    onSave={(_email) => {
-                        setEmail(_email);
-                    }}
+                    bankIDInput={bankIDInput}
+                    validEmail={validEmail}
+                    validBankIDPersonnummer={validBankIDPersonnummer}
+                    onSave={onSaveCredential}
                 />
                 <BulletWithText>
                     For å kunne opprette aksjeeierbok, trenger{" "}
@@ -32,7 +75,15 @@ export function PresentCredentialScreen() {
                     inneholde BankID-personnumer og epost.
                 </BulletWithText>
             </Content>
-            {hasTrustedIdentity && <SendButton>Vis</SendButton>}
+            {validCredential && (
+                <PresentButton onPress={onPresentCredential}>
+                    {!presentLoading ? (
+                        "Vis"
+                    ) : (
+                        <ActivityIndicator color="white" />
+                    )}
+                </PresentButton>
+            )}
         </Screen>
     );
 }
@@ -84,45 +135,60 @@ const BulletText = styled.Text`
 `;
 
 function CredentialForm({
-    bankID,
-    email,
+    bankIDInput,
+    validBankIDPersonnummer,
+    validEmail,
     onSave,
 }: {
-    bankID: string | null;
-    email: string | null;
-    onSave: (email: string) => void;
+    bankIDInput: BankidJWTPayload | null;
+    validBankIDPersonnummer: string | null;
+    validEmail: string | null;
+    onSave: (validBankIDPersonnummer: string, validEmail: string) => void;
 }) {
     const { navigateGetBankID } = useLocalNavigation();
-    const [localBankID, setBankID] = useState(bankID);
-    const [localEmail, setEmail] = useState(email);
+    const [emailInput, setEmail] = useState(validEmail);
     const onChangeText = (input: String) => setEmail(input.toLowerCase());
 
-    const valid = email && email !== "" && email?.includes("@");
-    const localValid =
-        localEmail && localEmail !== "" && localEmail?.includes("@"); // || bankdID === null;
+    const validCredential = !!validBankIDPersonnummer && !!validEmail;
+
+    const validInput =
+        !!bankIDInput?.socialno &&
+        emailInput &&
+        emailInput !== "" &&
+        emailInput?.includes("@"); // || bankdID === null;
 
     return (
         <CredentialFormView>
             <WhiteText>BankID-personnumer</WhiteText>
-            <BigWhiteText weak={true} onPress={navigateGetBankID}>
-                {"123456 098765"}
+            <BigWhiteText
+                weak={!bankIDInput?.socialno}
+                onPress={() =>
+                    !validCredential
+                        ? navigateGetBankID(SCREEN_PRESENT_CREDENTIAL)
+                        : null
+                }>
+                {bankIDInput?.socialno ?? "123456 12345"}
             </BigWhiteText>
 
             <WhiteText>Epost</WhiteText>
             <BigInput
-                editable={!valid}
+                editable={!validCredential}
                 placeholder="example@symfoni.id"
                 placeholderTextColor="rgba(255, 255, 255, 0.2)"
                 keyboardType="email-address"
-                value={email}
+                value={validEmail}
                 onChangeText={onChangeText}
             />
-            {valid ? (
+            {validCredential ? (
                 <ValidButton>Gyldig</ValidButton>
             ) : (
                 <SaveButton
-                    weak={!localValid}
-                    onPress={() => onSave(localEmail)}>
+                    weak={!validInput}
+                    onPress={() =>
+                        validInput
+                            ? onSave(bankIDInput.socialno, emailInput)
+                            : null
+                    }>
                     Lagre
                 </SaveButton>
             )}
@@ -228,15 +294,21 @@ const BigInput = styled(TextInput)`
     padding-bottom: 20px;
 `;
 
-function SendButton({ children }: { children: ReactNode }) {
+function PresentButton({
+    children,
+    onPress,
+}: {
+    children: ReactNode;
+    onPress: () => void;
+}) {
     return (
-        <SendButtonView>
-            <SendButtonText>{children}</SendButtonText>
-        </SendButtonView>
+        <PresentButtonView onPress={onPress}>
+            <PresentButtonText>{children}</PresentButtonText>
+        </PresentButtonView>
     );
 }
 
-const SendButtonView = styled.TouchableOpacity`
+const PresentButtonView = styled.TouchableOpacity`
     background-color: rgb(52, 199, 89);
     display: flex;
     flex-direction: row;
@@ -250,7 +322,7 @@ const SendButtonView = styled.TouchableOpacity`
     width: 200px;
     align-self: center;
 `;
-const SendButtonText = styled.Text`
+const PresentButtonText = styled.Text`
     color: rgb(255, 255, 255);
     font-weight: 500;
     font-size: 16px;
