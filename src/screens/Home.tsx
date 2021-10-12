@@ -10,6 +10,7 @@ import {
     View,
 } from "react-native";
 import { ColorContext, ColorSystem } from "../colorContext";
+import { Scanner } from "../components/scanner";
 import { Button, SymfoniButton } from "../components/ui/button";
 import { Context } from "../context";
 
@@ -53,12 +54,7 @@ export const Home = () => {
                     <ActivityIndicator size="large" />
                 ) : (
                     <View style={styles.actionContainer}>
-                        <SymfoniButton
-                            icon={"qr"}
-                            type="primary"
-                            text="Scan QR"
-                            onPress={() => navigate("Scanner")}
-                        />
+                        <Scanner />
                     </View>
                 )}
             </SafeAreaView>
@@ -75,7 +71,6 @@ const makeStyles = (colors: ColorSystem) => {
             justifyContent: "center",
         },
         actionContainer: {
-            flexDirection: "row",
             alignSelf: "center",
         },
     });
