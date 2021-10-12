@@ -9,7 +9,7 @@ import { SCREEN_BANKID, SCREEN_HOME } from "./hooks/useNavigation";
 import { BankId } from "./screens/BankId";
 import { Home } from "./screens/Home";
 import { Identity } from "./screens/Identity";
-import { ProfileNavigation } from "./screens/Profile/profileNavigation";
+import { ProfileNavigation } from "./screens/Profile/ProfileNavigation";
 import RequestAndProposalHandler from "./screens/RequestAndProposalHandler";
 import { ScannerScreen } from "./screens/ScannerScreen";
 
