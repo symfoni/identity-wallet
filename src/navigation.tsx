@@ -11,7 +11,6 @@ import { Home } from "./screens/Home";
 import { Identity } from "./screens/Identity";
 import { ProfileNavigation } from "./screens/Profile/ProfileNavigation";
 import RequestAndProposalHandler from "./screens/RequestAndProposalHandler";
-import { ScannerScreen } from "./screens/ScannerScreen";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -106,11 +105,6 @@ export const Navigation = () => {
                 name="Modal"
                 component={RequestAndProposalHandler}
                 options={{ headerShown: false }}
-            />
-            <Stack.Screen
-                name="Scanner"
-                component={ScannerScreen}
-                options={{ title: "Scan QR" }}
             />
         </Stack.Navigator>
     );
