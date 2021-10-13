@@ -163,75 +163,92 @@ export const useWalletconnect = (
                             event.request.method
                     );
 
-                if (event.request.method === "eth_signTransaction") {
-                    const result = await veramo.signEthTreansaction(
-                        event.request.params[0]
-                    );
-                    response = formatJsonRpcResult(event.request.id, result);
-                }
-                if (event.request.method === "did_createVerifiableCredential") {
-                    if (!event.request.params[0].payload) {
-                        throw Error("Requires payload parameter");
-                    }
-                    if (!event.request.params[0].verifier) {
-                        throw Error("Requires verifier parameter");
-                    }
-                    const vc = await veramo.createVC(
-                        event.request.params[0].payload
-                    );
-                    const vp = await veramo.createVP(
-                        event.request.params[0].verifier,
-                        [vc]
-                    );
-                    // TODO @Asbjørn - Put the VP through User auth
-                    response = formatJsonRpcResult(
-                        event.request.id,
-                        vp.proof.jwt
-                    );
-                }
-                if (
-                    event.request.method === "did_requestVerifiableCredential"
-                ) {
-                    const params = event.request.params[0];
-                    console.log(
-                        "did_createVerifiableCredential params =>",
-                        params
-                    );
-                    if (params.type === "CapTableBoardDirector") {
-                        if (!params.orgnr) {
-                            throw Error("Requires orgnr parameter");
+                switch (event.request.method) {
+                    case "eth_signTransaction":
+                        {
+                            const result = await veramo.signEthTreansaction(
+                                event.request.params[0]
+                            );
+                            response = formatJsonRpcResult(
+                                event.request.id,
+                                result
+                            );
                         }
-                        if (!params.verifier) {
-                            throw Error("Requires verifier parameter");
+                        break;
+                    case "did_createVerifiableCredential":
+                        {
+                            if (!event.request.params[0].payload) {
+                                throw Error("Requires payload parameter");
+                            }
+                            if (!event.request.params[0].verifier) {
+                                throw Error("Requires verifier parameter");
+                            }
+                            const vc = await veramo.createVC(
+                                event.request.params[0].payload
+                            );
+                            const vp = await veramo.createVP(
+                                event.request.params[0].verifier,
+                                [vc]
+                            );
+                            // TODO @Asbjørn - Put the VP through User auth
+                            response = formatJsonRpcResult(
+                                event.request.id,
+                                vp.proof.jwt
+                            );
                         }
-                        const vc = await veramo.createVC({
-                            orgnr: params.orgnr,
-                        });
-                        const vp = await veramo.createVP(
-                            BROK_HELPERS_VERIFIER,
-                            [vc]
-                        );
-                        const res =
-                            await requestBoardDirectorVerifiableCredential(vp);
-                        veramo.saveVP(res.data);
+                        break;
+                    case "did_requestVerifiableCredential":
+                        {
+                            const params = event.request.params[0];
+                            console.log(
+                                "did_createVerifiableCredential params =>",
+                                params
+                            );
+                            switch (params.type) {
+                                case "CapTableBoardDirector": {
+                                    if (!params.orgnr) {
+                                        throw Error("Requires orgnr parameter");
+                                    }
+                                    if (!params.verifier) {
+                                        throw Error(
+                                            "Requires verifier parameter"
+                                        );
+                                    }
+                                    const vc = await veramo.createVC({
+                                        orgnr: params.orgnr,
+                                    });
+                                    const vp = await veramo.createVP(
+                                        BROK_HELPERS_VERIFIER,
+                                        [vc]
+                                    );
+                                    const res =
+                                        await requestBoardDirectorVerifiableCredential(
+                                            vp
+                                        );
+                                    veramo.saveVP(res.data);
 
-                        const reqVP = normalizePresentation(res.data);
-                        if (!reqVP.verifiableCredential) {
-                            throw Error("No VC in response");
+                                    const reqVP = normalizePresentation(
+                                        res.data
+                                    );
+                                    if (!reqVP.verifiableCredential) {
+                                        throw Error("No VC in response");
+                                    }
+
+                                    const approveVP = await veramo.createVP(
+                                        params.verifier,
+                                        reqVP.verifiableCredential?.map(
+                                            (vc) => vc.proof.jwt as string
+                                        )
+                                    );
+
+                                    response = formatJsonRpcResult(
+                                        event.request.id,
+                                        approveVP.proof.jwt
+                                    );
+                                }
+                            }
                         }
-
-                        const approveVP = await veramo.createVP(
-                            params.verifier,
-                            reqVP.verifiableCredential?.map(
-                                (vc) => vc.proof.jwt as string
-                            )
-                        );
-
-                        response = formatJsonRpcResult(
-                            event.request.id,
-                            approveVP.proof.jwt
-                        );
-                    }
+                        break;
                 }
 
                 await client.respond({

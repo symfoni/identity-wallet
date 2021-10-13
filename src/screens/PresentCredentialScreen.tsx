@@ -21,6 +21,7 @@ import {
 import { Context } from "../context";
 import { TermsOfUseVC } from "../verifiableCredentials/TermsOfUseVC";
 import { NationalIdentityVC } from "../verifiableCredentials/NationalIdentityVC";
+import { BROK_HELPERS_VERIFIER } from "@env";
 
 export function PresentCredentialScreen(props: {
     route: {
@@ -109,7 +110,7 @@ export function PresentCredentialScreen(props: {
         }
         setPresentLoading(true);
         const createCapTableVP = await createCreateCapTableVP(
-            "?",
+            BROK_HELPERS_VERIFIER,
             capTableTermsOfUseVC,
             nationalIdentityVC
         );
