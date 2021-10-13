@@ -78,7 +78,18 @@ export const Home = (props: {
         navigatePresentCredential(request);
     }
 
-    // UseEffects
+    // UseEffect() - On requests
+    useEffect(() => {
+        setOnRequestVP((request: CreateCapTableVPRequest | undefined) => {
+            switch (request?.type) {
+                case "CREATE_CAP_TABLE_VP_REQUEST":
+                    navigatePresentCredential(request);
+                    break;
+            }
+        });
+    }, [setOnRequestVP, navigatePresentCredential]);
+
+    // UseEffect() - On responses
     useEffect(() => {
         console.info({
             "Home.tsx: props.route.params?.type": props.route.params?.type,
@@ -92,6 +103,7 @@ export const Home = (props: {
         }
     }, [props.route.params]);
 
+    // useEffect() - On session change
     useEffect(() => {
         let subscribed = true;
         if (!client) {
@@ -115,16 +127,6 @@ export const Home = (props: {
             subscribed = false;
         };
     }, [client, client?.session]);
-
-    useEffect(() => {
-        setOnRequestVP((request: CreateCapTableVPRequest | undefined) => {
-            switch (request?.type) {
-                case "CREATE_CAP_TABLE_VP_REQUEST":
-                    navigatePresentCredential(request);
-                    break;
-            }
-        });
-    }, [setOnRequestVP, navigatePresentCredential]);
 
     if (createCapTableVP) {
         return <Text>{JSON.stringify(createCapTableVP)}</Text>;
