@@ -24,6 +24,8 @@ import { agent as _agent } from "./../utils/VeramoUtils";
 import { deleteVeramoData } from "./../utils/VeramoUtils";
 import { decodeJWT as decodeBankIDJWT } from "did-jwt";
 import { BankidJWTPayload } from "../types/bankid.types";
+import { TermsOfUseVC } from "../verifiableCredentials/TermsOfUseVC";
+import { NationalIdentityVC } from "../verifiableCredentials/NationalIdentityVC";
 
 export type Agent = TAgent<
     IDIDManager &
@@ -106,7 +108,7 @@ export const useVeramo = (chainId: string) => {
                     },
                 },
                 expirationDate: new Date(
-                    new Date().setFullYear(new Date().getFullYear() + 10)
+                    new Date().setFullYear(new Date().getFullYear() + 50)
                 ).toISOString(),
             },
         });
@@ -158,23 +160,44 @@ export const useVeramo = (chainId: string) => {
         return vc;
     };
 
+    const createCreateCapTableVP = async (
+        verifier: string,
+        capTableTermsOfUseVC: TermsOfUseVC,
+        nationalIdentityVC: NationalIdentityVC
+    ) => {
+        if (!identity) {
+            throw Error("Cant create VP, identity not initilized");
+        }
+        const vp = await agent.createVerifiablePresentation({
+            presentation: {
+                holder: identity.did,
+                verifier,
+                verifiableCredential: [
+                    capTableTermsOfUseVC,
+                    nationalIdentityVC,
+                ],
+            },
+            proofFormat: "jwt",
+        });
+
+        return vp;
+    };
+
     const createVC = async (data: Record<string, any>) => {
         if (!identity) {
             throw Error("Cant create VC, identity not initilized");
         }
         const vc = await agent.createVerifiableCredential({
-            proofFormat: "jwt",
-            save: true,
             credential: {
                 type: ["VerifiableCredential", "PersonCredential"],
                 credentialSubject: {
                     ...data,
                     id: identity?.did,
                 },
-                issuer: {
-                    id: identity.did,
-                },
+                issuer: identity.did,
             },
+            proofFormat: "jwt",
+            save: true,
         });
         return vc;
     };
@@ -398,5 +421,6 @@ export const useVeramo = (chainId: string) => {
         deleteVeramoData,
         createTermsOfUseVC,
         createNationalIdentityVC,
+        createCreateCapTableVP,
     };
 };

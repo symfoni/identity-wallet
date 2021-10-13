@@ -8,9 +8,10 @@ import { Context } from "./context";
 import {
     SCREEN_BANKID,
     SCREEN_DEMO,
-    SCREEN_HOME,
     SCREEN_PRESENT_CREDENTIAL,
     SCREEN_GET_BANKID,
+    NAVIGATOR_TABS,
+    SCREEN_HOME,
 } from "./hooks/useLocalNavigation";
 import { BankId } from "./screens/BankId";
 import { DemoScreen } from "./screens/DemoScreen";
@@ -41,7 +42,7 @@ const PROFILE_ROUTE: Route = {
     icon: "account",
 };
 
-function Tabs() {
+function TabNavigator() {
     const { isTest } = useContext(Context);
     const { colors } = useContext(ColorContext);
 
@@ -64,7 +65,7 @@ function Tabs() {
                 tabBarStyle: { backgroundColor: colors.surface },
             })}>
             <Tab.Screen
-                name={HOME_ROUTE.routeId}
+                name={SCREEN_HOME}
                 component={Home}
                 options={{
                     title: HOME_ROUTE.title,
@@ -88,15 +89,14 @@ function Tabs() {
 }
 
 export const Navigation = () => {
-    const { selectedChain, isTest } = useContext(Context);
-    const { colors, toggleDarkMode } = useContext(ColorContext);
+    const { colors } = useContext(ColorContext);
 
     // const { colors } = useTheme();
     return (
         <Stack.Navigator>
             <Stack.Screen
-                name={SCREEN_HOME}
-                component={Tabs}
+                name={NAVIGATOR_TABS}
+                component={TabNavigator}
                 options={{ headerShown: false }}
             />
             <Stack.Screen

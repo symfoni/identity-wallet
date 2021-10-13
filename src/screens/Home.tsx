@@ -6,20 +6,26 @@ import {
     SafeAreaView,
     StatusBar,
     StyleSheet,
+    Text,
     View,
 } from "react-native";
 import { ColorContext, ColorSystem } from "../colorContext";
 import { Scanner } from "../components/scanner";
 import { useSymfoniContext } from "../context";
 import { useLocalNavigation } from "../hooks/useLocalNavigation";
+import { ParamCreateCapTableVP } from "../types/paramTypes";
+import { CreateCapTableVP } from "../verifiablePresentations/CreateCapTableVP";
 
-export const Home = () => {
+export const Home = (props: { route: { params?: ParamCreateCapTableVP } }) => {
     const { pair, loading, client } = useSymfoniContext();
     const { colors } = useContext(ColorContext);
     const styles = makeStyles(colors);
     const [sessions, setSessions] = useState<SessionTypes.Settled[]>([]);
     const activeSessions = client?.session.values.length;
     const { navigatePresentCredential } = useLocalNavigation();
+
+    const [createCapTableVP, setCreateCapTableVP] =
+        useState<CreateCapTableVP | null>(null);
 
     async function onScanQR(maybeURI: any) {
         console.log("onRead", maybeURI);
@@ -47,6 +53,18 @@ export const Home = () => {
         navigatePresentCredential();
     }
 
+    // UseEffects
+    useEffect(() => {
+        console.info({
+            "Home.tsx: props.route.params?.type": props.route.params?.type,
+        });
+        switch (props.route.params?.type) {
+            case "PARAM_CREATE_CAP_TABLE_VP":
+                setCreateCapTableVP(props.route.params.createCapTableVP);
+                break;
+        }
+    }, [props.route.params]);
+
     useEffect(() => {
         let subscribed = true;
         if (!client) {
@@ -70,6 +88,10 @@ export const Home = () => {
             subscribed = false;
         };
     }, [client, client?.session]);
+
+    if (createCapTableVP) {
+        return <Text>{JSON.stringify(createCapTableVP)}</Text>;
+    }
 
     return (
         <>

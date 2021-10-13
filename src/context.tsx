@@ -46,6 +46,7 @@ import { useVeramo } from "./utils/useVeramo";
 import { useWalletconnect } from "./utils/useWalletconnect";
 import { NationalIdentityVC } from "./verifiableCredentials/NationalIdentityVC";
 import { TermsOfUseVC } from "./verifiableCredentials/TermsOfUseVC";
+import { CreateCapTableVP } from "./verifiablePresentations/CreateCapTableVP";
 
 export type Agent = TAgent<
     IDIDManager &
@@ -100,6 +101,11 @@ export interface IContext {
         nationalIdentityNumber: string,
         evidence: { type: "BankID"; jwt: string }
     ) => Promise<NationalIdentityVC>;
+    createCreateCapTableVP: (
+        verifier: string,
+        capTableTermsOfUseVC: TermsOfUseVC,
+        nationalIdentityVC: NationalIdentityVC
+    ) => Promise<CreateCapTableVP>;
 }
 
 export const Context = createContext<IContext>(undefined!);

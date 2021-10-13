@@ -18,8 +18,6 @@ import {
     ParamPresentCredentialDemo,
 } from "../types/paramTypes";
 import { Context } from "../context";
-import { BROK_HELPERS_VERIFIER } from "@env";
-import { registerWithBankId } from "../domain/brok-helpers";
 import { TermsOfUseVC } from "../verifiableCredentials/TermsOfUseVC";
 import { NationalIdentityVC } from "../verifiableCredentials/NationalIdentityVC";
 
@@ -27,8 +25,11 @@ export function PresentCredentialScreen(props: {
     route: { params?: ParamBankIDToken | ParamPresentCredentialDemo };
 }) {
     const { navigateHome } = useLocalNavigation();
-    const { createTermsOfUseVC, createNationalIdentityVC } =
-        useContext(Context);
+    const {
+        createTermsOfUseVC,
+        createNationalIdentityVC,
+        createCreateCapTableVP,
+    } = useContext(Context);
 
     // Local data
     const [nationalIdentityNumber, setNationalIdentityNumber] = useState<
@@ -58,6 +59,7 @@ export function PresentCredentialScreen(props: {
 
     const presentable = !!capTableTermsOfUseVC && !!nationalIdentityVC;
 
+    // createNationalIdentityVC
     const onSignNationalIdentityVC = async (
         _nationalIdentityNumber: string
     ) => {
@@ -77,6 +79,7 @@ export function PresentCredentialScreen(props: {
         }
     };
 
+    // createTermsOfUseVC
     const onSignCapTableTermsOfUse = async (readAndAcceptedID: string) => {
         try {
             setLoadingTermsOfUseVC(true);
@@ -89,10 +92,26 @@ export function PresentCredentialScreen(props: {
         }
     };
 
-    // CreateCapTableVP
-    const presentCreateCapTableVP = () => {
+    // createCreateCapTableVP
+    const presentCreateCapTableVP = async () => {
+        if (!presentable) {
+            console.error("presentCreateCapTableVP(): !presentable");
+            return;
+        }
         setPresentLoading(true);
-        setTimeout(() => navigateHome(), 2000);
+        const createCapTableVP = await createCreateCapTableVP(
+            "?",
+            capTableTermsOfUseVC,
+            nationalIdentityVC
+        );
+        setTimeout(
+            () =>
+                navigateHome({
+                    type: "PARAM_CREATE_CAP_TABLE_VP",
+                    createCapTableVP,
+                }),
+            1000
+        );
     };
 
     // UseEffects
