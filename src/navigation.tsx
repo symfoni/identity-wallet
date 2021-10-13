@@ -19,7 +19,6 @@ import { Home } from "./screens/Home";
 import { Identity } from "./screens/Identity";
 import { ProfileNavigation } from "./screens/Profile/ProfileNavigation";
 import RequestAndProposalHandler from "./screens/RequestAndProposalHandler";
-import { ScannerScreen } from "./screens/ScannerScreen";
 import { PresentCredentialScreen } from "./screens/PresentCredentialScreen";
 import { GetBankIDScreen } from "./screens/GetBankIDScreen";
 
@@ -120,11 +119,6 @@ export const Navigation = () => {
                 name="Modal"
                 component={RequestAndProposalHandler}
                 options={{ headerShown: false }}
-            />
-            <Stack.Screen
-                name={SCREEN_SCANNER}
-                component={ScannerScreen}
-                options={{ title: "Scan QR" }}
             />
             <Stack.Screen
                 name={SCREEN_PRESENT_CREDENTIAL}

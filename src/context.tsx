@@ -28,6 +28,7 @@ import { ethers } from "ethers";
 import React, {
     createContext,
     SetStateAction,
+    useContext,
     useEffect,
     useState,
 } from "react";
@@ -95,6 +96,9 @@ export interface IContext {
 }
 
 export const Context = createContext<IContext>(undefined!);
+export function useSymfoniContext() {
+    return useContext(Context);
+}
 
 console.log("APP_ENV:", APP_ENV);
 

@@ -9,17 +9,43 @@ import {
     View,
 } from "react-native";
 import { ColorContext, ColorSystem } from "../colorContext";
-import { SymfoniButton } from "../components/ui/button";
-import { Context } from "../context";
+import { Scanner } from "../components/scanner";
+import { useSymfoniContext } from "../context";
 import { useLocalNavigation } from "../hooks/useLocalNavigation";
 
 export const Home = () => {
-    const { navigateScanner } = useLocalNavigation();
-    const { loading, client, closeSession } = useContext(Context);
+    const { pair, loading, client } = useSymfoniContext();
     const { colors } = useContext(ColorContext);
     const styles = makeStyles(colors);
     const [sessions, setSessions] = useState<SessionTypes.Settled[]>([]);
     const activeSessions = client?.session.values.length;
+    const { navigatePresentCredential } = useLocalNavigation();
+
+    async function onScanQR(maybeURI: any) {
+        console.log("onRead", maybeURI);
+        maybeURI = "wc:hei";
+
+        // 1. Validate URI
+        if (typeof maybeURI !== "string") {
+            console.warn("typeof maybeURI !== 'string': ", maybeURI);
+            return;
+        }
+        if (!maybeURI.startsWith("wc:")) {
+            console.warn("!maybeURI.startsWith('wc:'): ", maybeURI);
+            return;
+        }
+
+        const URI = maybeURI;
+
+        // 2. Pair
+        try {
+            await pair(URI);
+        } catch (err) {
+            console.warn("ERROR: await pair(URI): ", err);
+            return;
+        }
+        navigatePresentCredential();
+    }
 
     useEffect(() => {
         let subscribed = true;
@@ -53,12 +79,7 @@ export const Home = () => {
                     <ActivityIndicator size="large" />
                 ) : (
                     <View style={styles.actionContainer}>
-                        <SymfoniButton
-                            icon={"qr"}
-                            type="primary"
-                            text="Scan QR"
-                            onPress={navigateScanner}
-                        />
+                        <Scanner onInput={onScanQR} />
                     </View>
                 )}
             </SafeAreaView>
@@ -75,7 +96,6 @@ const makeStyles = (colors: ColorSystem) => {
             justifyContent: "center",
         },
         actionContainer: {
-            flexDirection: "row",
             alignSelf: "center",
         },
     });
