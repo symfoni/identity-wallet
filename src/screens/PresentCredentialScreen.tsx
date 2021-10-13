@@ -122,7 +122,6 @@ export function PresentCredentialScreen(props: {
                 <SmallText>For å kunne</SmallText>
                 <BigText>Opprette aksjeeierbok</BigText>
 
-                <CapTableFormVC />
                 <CapTableTermsOfUseVC
                     vc={capTableTermsOfUseVC}
                     loading={loadingSigningTermsOfUse}
@@ -170,28 +169,28 @@ function NationalIdentityVC({
 }) {
     const { navigateGetBankID } = useLocalNavigation();
 
-    const validCredential = !!validBankIDPersonnummer;
+    const signed = !!validBankIDPersonnummer;
 
     const validInput = !!validBankIDPersonnummer;
-
+    console.log({ validInput, validBankIDPersonnummer });
     return (
         <NationalIdentityVCView>
-            <VCTitle>Nasjonal identitet</VCTitle>
             <VCBody>
                 <VCPropLabel>Fødselsnummer</VCPropLabel>
                 <VCPropText
                     placeholder={!validBankIDPersonnummer}
                     onPress={() =>
-                        !validCredential
+                        !signed
                             ? navigateGetBankID(SCREEN_PRESENT_CREDENTIAL)
                             : null
                     }>
                     {validBankIDPersonnummer ?? "123456 54321"}
                 </VCPropText>
                 <SignButton
-                    valid={!validInput}
+                    valid={validInput}
                     loading={saveLoading}
-                    signed={validCredential}
+                    signed={signed}
+                    expirationDate={null}
                     onPress={() =>
                         validInput ? onSign(validBankIDPersonnummer) : null
                     }
@@ -212,11 +211,12 @@ function CapTableTermsOfUseVC({
 }) {
     const termsOfUseID = "https://forvalt.brreg.no/brukervilkår";
     const signed = !!vc;
+    const expirationDate = vc?.expirationDate
+        ? new Date(vc?.expirationDate)
+        : null;
 
     return (
         <NationalIdentityVCView>
-            <VCTitle signed={signed}>Aksjeeierbok brukervilkår</VCTitle>
-
             <VCBody>
                 <VCPropLabel>Lest og akseptert</VCPropLabel>
                 <VCPropHyperlink onPress={() => Linking.openURL(termsOfUseID)}>
@@ -226,6 +226,7 @@ function CapTableTermsOfUseVC({
                     valid={true}
                     signed={signed}
                     loading={loading}
+                    expirationDate={expirationDate}
                     onPress={() => onSign(termsOfUseID)}
                 />
             </VCBody>
@@ -324,11 +325,13 @@ function SignButton({
     valid,
     loading,
     signed,
+    expirationDate,
     onPress,
 }: {
     valid: boolean;
     loading: boolean;
     signed: boolean;
+    expirationDate: Date | null;
     onPress: () => void;
 }) {
     const backgroundColor = useMemo(() => {
@@ -369,9 +372,17 @@ function SignButton({
         }
     }, [onPress, valid, signed]);
 
+    const expirationDateText = useMemo(() => {
+        if (!expirationDate) {
+            return "--/--/----";
+        } else {
+            return `Utløper ${expirationDate.toLocaleDateString()}`;
+        }
+    }, [expirationDate]);
+
     return (
         <DateView>
-            <DateText color={color}>--/--/----</DateText>
+            <DateText color={color}>{expirationDateText}</DateText>
             <StatusButtonTouchable
                 onPress={onPressWhenValidAndNotSigned}
                 backgroundColor={backgroundColor}>
