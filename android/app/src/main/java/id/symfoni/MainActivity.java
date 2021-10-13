@@ -1,4 +1,4 @@
-package com.identitywallet;
+package id.symfoni;
 import android.os.Bundle; // <- add this necessary import
 
 import com.facebook.react.ReactActivity;
@@ -16,6 +16,6 @@ public class MainActivity extends ReactActivity {
    */
   @Override
   protected String getMainComponentName() {
-    return "identityWallet";
+    return "SymfoniID";
   }
 }

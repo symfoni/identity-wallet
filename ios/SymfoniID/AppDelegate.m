@@ -47,7 +47,7 @@ static void InitializeFlipper(UIApplication *application) {
   // FIX END
 
   RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge
-                                                   moduleName:@"identityWallet"
+                                                   moduleName:@"SymfoniID"
                                             initialProperties:nil];
 
   if (@available(iOS 13.0, *)) {

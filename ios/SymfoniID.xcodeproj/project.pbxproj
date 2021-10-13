@@ -8,14 +8,14 @@
 
 /* Begin PBXBuildFile section */
 		00A7D0D626FB63620043F596 /* void.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00A7D0D526FB63620043F596 /* void.swift */; };
-		00E356F31AD99517003FC87E /* identityWalletTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* identityWalletTests.m */; };
+		00E356F31AD99517003FC87E /* SymfoniIDTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* SymfoniIDTests.m */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		1AC32F6226F493BE0020E573 /* BootSplash.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1AC32F6126F493BE0020E573 /* BootSplash.storyboard */; };
-		21FBC84FEEDEEB5938834591 /* libPods-identityWallet-identityWalletTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D6DA0966E9F89DCAD4FED90 /* libPods-identityWallet-identityWalletTests.a */; };
+		21FBC84FEEDEEB5938834591 /* libPods-SymfoniID-SymfoniIDTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D6DA0966E9F89DCAD4FED90 /* libPods-SymfoniID-SymfoniIDTests.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
-		F5A1C8726C2F7D5C538D2683 /* libPods-identityWallet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 160B8FCE4DA4670A7D63D133 /* libPods-identityWallet.a */; };
+		F5A1C8726C2F7D5C538D2683 /* libPods-SymfoniID.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 160B8FCE4DA4670A7D63D133 /* libPods-SymfoniID.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -24,30 +24,30 @@
 			containerPortal = 83CBB9F71A601CBA00E9B192 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 13B07F861A680F5B00A75B9A;
-			remoteInfo = identityWallet;
+			remoteInfo = SymfoniID;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		00A7D0D526FB63620043F596 /* void.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = void.swift; sourceTree = "<group>"; };
-		00E356EE1AD99517003FC87E /* identityWalletTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = identityWalletTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		00E356EE1AD99517003FC87E /* SymfoniIDTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SymfoniIDTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		00E356F21AD99517003FC87E /* identityWalletTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = identityWalletTests.m; sourceTree = "<group>"; };
-		0D6DA0966E9F89DCAD4FED90 /* libPods-identityWallet-identityWalletTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-identityWallet-identityWalletTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		13B07F961A680F5B00A75B9A /* identityWallet.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = identityWallet.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = identityWallet/AppDelegate.h; sourceTree = "<group>"; };
-		13B07FB01A68108700A75B9A /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = identityWallet/AppDelegate.m; sourceTree = "<group>"; };
-		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = identityWallet/Images.xcassets; sourceTree = "<group>"; };
-		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = identityWallet/Info.plist; sourceTree = "<group>"; };
-		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = identityWallet/main.m; sourceTree = "<group>"; };
-		160B8FCE4DA4670A7D63D133 /* libPods-identityWallet.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-identityWallet.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		1AC32F6126F493BE0020E573 /* BootSplash.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = BootSplash.storyboard; path = identityWallet/BootSplash.storyboard; sourceTree = "<group>"; };
-		52F8194CB53BD674A508E3B2 /* Pods-identityWallet-identityWalletTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-identityWallet-identityWalletTests.debug.xcconfig"; path = "Target Support Files/Pods-identityWallet-identityWalletTests/Pods-identityWallet-identityWalletTests.debug.xcconfig"; sourceTree = "<group>"; };
-		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = identityWallet/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		DC4252994CF896B943E3631B /* Pods-identityWallet-identityWalletTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-identityWallet-identityWalletTests.release.xcconfig"; path = "Target Support Files/Pods-identityWallet-identityWalletTests/Pods-identityWallet-identityWalletTests.release.xcconfig"; sourceTree = "<group>"; };
-		E691F031131523E33AE09654 /* Pods-identityWallet.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-identityWallet.release.xcconfig"; path = "Target Support Files/Pods-identityWallet/Pods-identityWallet.release.xcconfig"; sourceTree = "<group>"; };
+		00E356F21AD99517003FC87E /* SymfoniIDTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SymfoniIDTests.m; sourceTree = "<group>"; };
+		0D6DA0966E9F89DCAD4FED90 /* libPods-SymfoniID-SymfoniIDTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-SymfoniID-SymfoniIDTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		13B07F961A680F5B00A75B9A /* SymfoniID.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SymfoniID.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = SymfoniID/AppDelegate.h; sourceTree = "<group>"; };
+		13B07FB01A68108700A75B9A /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = SymfoniID/AppDelegate.m; sourceTree = "<group>"; };
+		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = SymfoniID/Images.xcassets; sourceTree = "<group>"; };
+		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = SymfoniID/Info.plist; sourceTree = "<group>"; };
+		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = SymfoniID/main.m; sourceTree = "<group>"; };
+		160B8FCE4DA4670A7D63D133 /* libPods-SymfoniID.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-SymfoniID.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		1AC32F6126F493BE0020E573 /* BootSplash.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = BootSplash.storyboard; path = SymfoniID/BootSplash.storyboard; sourceTree = "<group>"; };
+		52F8194CB53BD674A508E3B2 /* Pods-SymfoniID-SymfoniIDTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SymfoniID-SymfoniIDTests.debug.xcconfig"; path = "Target Support Files/Pods-SymfoniID-SymfoniIDTests/Pods-SymfoniID-SymfoniIDTests.debug.xcconfig"; sourceTree = "<group>"; };
+		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = SymfoniID/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		DC4252994CF896B943E3631B /* Pods-SymfoniID-SymfoniIDTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SymfoniID-SymfoniIDTests.release.xcconfig"; path = "Target Support Files/Pods-SymfoniID-SymfoniIDTests/Pods-SymfoniID-SymfoniIDTests.release.xcconfig"; sourceTree = "<group>"; };
+		E691F031131523E33AE09654 /* Pods-SymfoniID.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SymfoniID.release.xcconfig"; path = "Target Support Files/Pods-SymfoniID/Pods-SymfoniID.release.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
-		F677A9E686A9EB3258697F08 /* Pods-identityWallet.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-identityWallet.debug.xcconfig"; path = "Target Support Files/Pods-identityWallet/Pods-identityWallet.debug.xcconfig"; sourceTree = "<group>"; };
+		F677A9E686A9EB3258697F08 /* Pods-SymfoniID.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SymfoniID.debug.xcconfig"; path = "Target Support Files/Pods-SymfoniID/Pods-SymfoniID.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -55,7 +55,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				21FBC84FEEDEEB5938834591 /* libPods-identityWallet-identityWalletTests.a in Frameworks */,
+				21FBC84FEEDEEB5938834591 /* libPods-SymfoniID-SymfoniIDTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -63,20 +63,20 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F5A1C8726C2F7D5C538D2683 /* libPods-identityWallet.a in Frameworks */,
+				F5A1C8726C2F7D5C538D2683 /* libPods-SymfoniID.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		00E356EF1AD99517003FC87E /* identityWalletTests */ = {
+		00E356EF1AD99517003FC87E /* SymfoniIDTests */ = {
 			isa = PBXGroup;
 			children = (
-				00E356F21AD99517003FC87E /* identityWalletTests.m */,
+				00E356F21AD99517003FC87E /* SymfoniIDTests.m */,
 				00E356F01AD99517003FC87E /* Supporting Files */,
 			);
-			path = identityWalletTests;
+			path = SymfoniIDTests;
 			sourceTree = "<group>";
 		};
 		00E356F01AD99517003FC87E /* Supporting Files */ = {
@@ -87,7 +87,7 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		13B07FAE1A68108700A75B9A /* identityWallet */ = {
+		13B07FAE1A68108700A75B9A /* SymfoniID */ = {
 			isa = PBXGroup;
 			children = (
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
@@ -99,15 +99,15 @@
 				13B07FB71A68108700A75B9A /* main.m */,
 				00A7D0D526FB63620043F596 /* void.swift */,
 			);
-			name = identityWallet;
+			name = SymfoniID;
 			sourceTree = "<group>";
 		};
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				160B8FCE4DA4670A7D63D133 /* libPods-identityWallet.a */,
-				0D6DA0966E9F89DCAD4FED90 /* libPods-identityWallet-identityWalletTests.a */,
+				160B8FCE4DA4670A7D63D133 /* libPods-SymfoniID.a */,
+				0D6DA0966E9F89DCAD4FED90 /* libPods-SymfoniID-SymfoniIDTests.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -115,10 +115,10 @@
 		60C3FE384F4D607ABC31AE97 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				F677A9E686A9EB3258697F08 /* Pods-identityWallet.debug.xcconfig */,
-				E691F031131523E33AE09654 /* Pods-identityWallet.release.xcconfig */,
-				52F8194CB53BD674A508E3B2 /* Pods-identityWallet-identityWalletTests.debug.xcconfig */,
-				DC4252994CF896B943E3631B /* Pods-identityWallet-identityWalletTests.release.xcconfig */,
+				F677A9E686A9EB3258697F08 /* Pods-SymfoniID.debug.xcconfig */,
+				E691F031131523E33AE09654 /* Pods-SymfoniID.release.xcconfig */,
+				52F8194CB53BD674A508E3B2 /* Pods-SymfoniID-SymfoniIDTests.debug.xcconfig */,
+				DC4252994CF896B943E3631B /* Pods-SymfoniID-SymfoniIDTests.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -133,9 +133,9 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
-				13B07FAE1A68108700A75B9A /* identityWallet */,
+				13B07FAE1A68108700A75B9A /* SymfoniID */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
-				00E356EF1AD99517003FC87E /* identityWalletTests */,
+				00E356EF1AD99517003FC87E /* SymfoniIDTests */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				60C3FE384F4D607ABC31AE97 /* Pods */,
@@ -148,8 +148,8 @@
 		83CBBA001A601CBA00E9B192 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				13B07F961A680F5B00A75B9A /* identityWallet.app */,
-				00E356EE1AD99517003FC87E /* identityWalletTests.xctest */,
+				13B07F961A680F5B00A75B9A /* SymfoniID.app */,
+				00E356EE1AD99517003FC87E /* SymfoniIDTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -157,9 +157,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		00E356ED1AD99517003FC87E /* identityWalletTests */ = {
+		00E356ED1AD99517003FC87E /* SymfoniIDTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "identityWalletTests" */;
+			buildConfigurationList = 00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "SymfoniIDTests" */;
 			buildPhases = (
 				F9C82E2B4B9CFF1E76F6F936 /* [CP] Check Pods Manifest.lock */,
 				00E356EA1AD99517003FC87E /* Sources */,
@@ -173,14 +173,14 @@
 			dependencies = (
 				00E356F51AD99517003FC87E /* PBXTargetDependency */,
 			);
-			name = identityWalletTests;
-			productName = identityWalletTests;
-			productReference = 00E356EE1AD99517003FC87E /* identityWalletTests.xctest */;
+			name = SymfoniIDTests;
+			productName = SymfoniIDTests;
+			productReference = 00E356EE1AD99517003FC87E /* SymfoniIDTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		13B07F861A680F5B00A75B9A /* identityWallet */ = {
+		13B07F861A680F5B00A75B9A /* SymfoniID */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "identityWallet" */;
+			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "SymfoniID" */;
 			buildPhases = (
 				AEF5A0729C37E1A012034CD8 /* [CP] Check Pods Manifest.lock */,
 				FD10A7F022414F080027D42C /* Start Packager */,
@@ -195,9 +195,9 @@
 			);
 			dependencies = (
 			);
-			name = identityWallet;
-			productName = identityWallet;
-			productReference = 13B07F961A680F5B00A75B9A /* identityWallet.app */;
+			name = SymfoniID;
+			productName = SymfoniID;
+			productReference = 13B07F961A680F5B00A75B9A /* SymfoniID.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -217,7 +217,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "identityWallet" */;
+			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "SymfoniID" */;
 			compatibilityVersion = "Xcode 12.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -230,8 +230,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				13B07F861A680F5B00A75B9A /* identityWallet */,
-				00E356ED1AD99517003FC87E /* identityWalletTests */,
+				13B07F861A680F5B00A75B9A /* SymfoniID */,
+				00E356ED1AD99517003FC87E /* SymfoniIDTests */,
 			);
 		};
 /* End PBXProject section */
@@ -277,15 +277,15 @@
 			files = (
 			);
 			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-identityWallet-identityWalletTests/Pods-identityWallet-identityWalletTests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-SymfoniID-SymfoniIDTests/Pods-SymfoniID-SymfoniIDTests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-identityWallet-identityWalletTests/Pods-identityWallet-identityWalletTests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-SymfoniID-SymfoniIDTests/Pods-SymfoniID-SymfoniIDTests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-identityWallet-identityWalletTests/Pods-identityWallet-identityWalletTests-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SymfoniID-SymfoniIDTests/Pods-SymfoniID-SymfoniIDTests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		96966DFB1BD60F80B811C668 /* [CP] Copy Pods Resources */ = {
@@ -294,15 +294,15 @@
 			files = (
 			);
 			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-identityWallet/Pods-identityWallet-resources-${CONFIGURATION}-input-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-SymfoniID/Pods-SymfoniID-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
 			name = "[CP] Copy Pods Resources";
 			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-identityWallet/Pods-identityWallet-resources-${CONFIGURATION}-output-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-SymfoniID/Pods-SymfoniID-resources-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-identityWallet/Pods-identityWallet-resources.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SymfoniID/Pods-SymfoniID-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		A99C01354C4F2ABDC567859B /* [CP] Embed Pods Frameworks */ = {
@@ -311,15 +311,15 @@
 			files = (
 			);
 			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-identityWallet/Pods-identityWallet-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-SymfoniID/Pods-SymfoniID-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-identityWallet/Pods-identityWallet-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-SymfoniID/Pods-SymfoniID-frameworks-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-identityWallet/Pods-identityWallet-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SymfoniID/Pods-SymfoniID-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		AEF5A0729C37E1A012034CD8 /* [CP] Check Pods Manifest.lock */ = {
@@ -337,7 +337,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-identityWallet-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-SymfoniID-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -350,15 +350,15 @@
 			files = (
 			);
 			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-identityWallet-identityWalletTests/Pods-identityWallet-identityWalletTests-resources-${CONFIGURATION}-input-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-SymfoniID-SymfoniIDTests/Pods-SymfoniID-SymfoniIDTests-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
 			name = "[CP] Copy Pods Resources";
 			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-identityWallet-identityWalletTests/Pods-identityWallet-identityWalletTests-resources-${CONFIGURATION}-output-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-SymfoniID-SymfoniIDTests/Pods-SymfoniID-SymfoniIDTests-resources-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-identityWallet-identityWalletTests/Pods-identityWallet-identityWalletTests-resources.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SymfoniID-SymfoniIDTests/Pods-SymfoniID-SymfoniIDTests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		F9C82E2B4B9CFF1E76F6F936 /* [CP] Check Pods Manifest.lock */ = {
@@ -376,7 +376,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-identityWallet-identityWalletTests-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-SymfoniID-SymfoniIDTests-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -409,7 +409,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				00E356F31AD99517003FC87E /* identityWalletTests.m in Sources */,
+				00E356F31AD99517003FC87E /* SymfoniIDTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -428,7 +428,7 @@
 /* Begin PBXTargetDependency section */
 		00E356F51AD99517003FC87E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 13B07F861A680F5B00A75B9A /* identityWallet */;
+			target = 13B07F861A680F5B00A75B9A /* SymfoniID */;
 			targetProxy = 00E356F41AD99517003FC87E /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -436,7 +436,7 @@
 /* Begin XCBuildConfiguration section */
 		00E356F61AD99517003FC87E /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 52F8194CB53BD674A508E3B2 /* Pods-identityWallet-identityWalletTests.debug.xcconfig */;
+			baseConfigurationReference = 52F8194CB53BD674A508E3B2 /* Pods-SymfoniID-SymfoniIDTests.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -445,7 +445,7 @@
 					"DEBUG=1",
 					"$(inherited)",
 				);
-				INFOPLIST_FILE = identityWalletTests/Info.plist;
+				INFOPLIST_FILE = SymfoniIDTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -459,19 +459,19 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/identityWallet.app/identityWallet";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SymfoniID.app/SymfoniID";
 			};
 			name = Debug;
 		};
 		00E356F71AD99517003FC87E /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = DC4252994CF896B943E3631B /* Pods-identityWallet-identityWalletTests.release.xcconfig */;
+			baseConfigurationReference = DC4252994CF896B943E3631B /* Pods-SymfoniID-SymfoniIDTests.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
 				DEVELOPMENT_TEAM = B4397BK9J2;
-				INFOPLIST_FILE = identityWalletTests/Info.plist;
+				INFOPLIST_FILE = SymfoniIDTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -485,21 +485,22 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/identityWallet.app/identityWallet";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SymfoniID.app/SymfoniID";
 			};
 			name = Release;
 		};
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F677A9E686A9EB3258697F08 /* Pods-identityWallet.debug.xcconfig */;
+			baseConfigurationReference = F677A9E686A9EB3258697F08 /* Pods-SymfoniID.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = B4397BK9J2;
 				ENABLE_BITCODE = NO;
 				EXCLUDED_ARCHS = arm64;
-				INFOPLIST_FILE = identityWallet/Info.plist;
+				INFOPLIST_FILE = SymfoniID/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -509,8 +510,8 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.$(PRODUCT_NAME:rfc1034identifier)";
-				PRODUCT_NAME = identityWallet;
+				PRODUCT_BUNDLE_IDENTIFIER = id.symfoni;
+				PRODUCT_NAME = SymfoniID;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -519,14 +520,15 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = E691F031131523E33AE09654 /* Pods-identityWallet.release.xcconfig */;
+			baseConfigurationReference = E691F031131523E33AE09654 /* Pods-SymfoniID.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = B4397BK9J2;
 				EXCLUDED_ARCHS = arm64;
-				INFOPLIST_FILE = identityWallet/Info.plist;
+				INFOPLIST_FILE = SymfoniID/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -536,8 +538,8 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.$(PRODUCT_NAME:rfc1034identifier)";
-				PRODUCT_NAME = identityWallet;
+				PRODUCT_BUNDLE_IDENTIFIER = id.symfoni;
+				PRODUCT_NAME = SymfoniID;
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -669,7 +671,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "identityWalletTests" */ = {
+		00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "SymfoniIDTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				00E356F61AD99517003FC87E /* Debug */,
@@ -678,7 +680,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "identityWallet" */ = {
+		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "SymfoniID" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				13B07F941A680F5B00A75B9A /* Debug */,
@@ -687,7 +689,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "identityWallet" */ = {
+		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "SymfoniID" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				83CBBA201A601CBA00E9B192 /* Debug */,

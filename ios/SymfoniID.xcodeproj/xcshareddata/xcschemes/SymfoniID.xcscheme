@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-               BuildableName = "identityWallet.app"
-               BlueprintName = "identityWallet"
-               ReferencedContainer = "container:identityWallet.xcodeproj">
+               BuildableName = "SymfoniID.app"
+               BlueprintName = "SymfoniID"
+               ReferencedContainer = "container:SymfoniID.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "00E356ED1AD99517003FC87E"
-               BuildableName = "identityWalletTests.xctest"
-               BlueprintName = "identityWalletTests"
-               ReferencedContainer = "container:identityWallet.xcodeproj">
+               BuildableName = "SymfoniIDTests.xctest"
+               BlueprintName = "SymfoniIDTests"
+               ReferencedContainer = "container:SymfoniID.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -55,9 +55,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "identityWallet.app"
-            BlueprintName = "identityWallet"
-            ReferencedContainer = "container:identityWallet.xcodeproj">
+            BuildableName = "SymfoniID.app"
+            BlueprintName = "SymfoniID"
+            ReferencedContainer = "container:SymfoniID.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -72,9 +72,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "identityWallet.app"
-            BlueprintName = "identityWallet"
-            ReferencedContainer = "container:identityWallet.xcodeproj">
+            BuildableName = "SymfoniID.app"
+            BlueprintName = "SymfoniID"
+            ReferencedContainer = "container:SymfoniID.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

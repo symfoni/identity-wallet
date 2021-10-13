@@ -11,15 +11,15 @@ export const SCREEN_GET_BANKID = "GetBankID";
 export function useLocalNavigation() {
     const navigation = useNavigation();
 
-    const navigateBankID = () => navigation.navigate(SCREEN_BANKID);
-    const navigateHome = () => navigation.navigate(SCREEN_HOME);
+    const navigateBankID = () => navigation.navigate({ name: SCREEN_BANKID });
+    const navigateHome = () => navigation.navigate({ name: SCREEN_HOME });
     const navigatePresentCredential = (params?: ParamPresentCredentialDemo) => {
-        navigation.navigate(SCREEN_PRESENT_CREDENTIAL, params);
+        navigation.navigate({ name: SCREEN_PRESENT_CREDENTIAL }, params);
     };
-    const navigateScanner = () => navigation.navigate(SCREEN_SCANNER);
-    const navigateDemo = () => navigation.navigate(SCREEN_DEMO);
+    const navigateScanner = () => navigation.navigate({ name: SCREEN_SCANNER });
+    const navigateDemo = () => navigation.navigate({ name: SCREEN_DEMO });
     const navigateGetBankID = (resultScreen: string) =>
-        navigation.navigate(SCREEN_GET_BANKID, { resultScreen });
+        navigation.navigate({ name: SCREEN_GET_BANKID }, { resultScreen });
 
     return {
         navigateBankID,

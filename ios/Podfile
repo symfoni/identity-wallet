@@ -3,7 +3,7 @@ require_relative '../node_modules/@react-native-community/cli-platform-ios/nativ
 
 platform :ios, '10.0'
 
-target 'identityWallet' do
+target 'SymfoniID' do
   config = use_native_modules!
 
   use_react_native!(
@@ -15,7 +15,7 @@ target 'identityWallet' do
   permissions_path = '../node_modules/react-native-permissions/ios'
   pod 'Permission-Camera', :path => "#{permissions_path}/Camera"
 
-  target 'identityWalletTests' do
+  target 'SymfoniIDTests' do
     inherit! :complete
     # Pods for testing
   end

@@ -1,4 +1,4 @@
-package com.identitywallet;
+package id.symfoni;
 
 import android.app.Application;
 import android.content.Context;
