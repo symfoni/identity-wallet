@@ -12,11 +12,8 @@ import Client, { CLIENT_EVENTS } from "@walletconnect/client";
 import { SessionTypes } from "@walletconnect/types";
 import { normalizePresentation } from "did-jwt-vc";
 import { useCallback, useEffect, useState } from "react";
-import { SegmentedControlIOSComponent } from "react-native";
-import Toast from "react-native-toast-message";
 import { requestBoardDirectorVerifiableCredential } from "../domain/brok-helpers";
-import useInterval from "../hooks/useInterval";
-import { CachedPairing } from "../types/CachedPairing";
+
 import {
     DEFAULT_APP_METADATA,
     DEFAULT_EIP155_METHODS,
@@ -33,44 +30,6 @@ export const useWalletconnect = (
     const [client, setClient] = useState<Client | undefined>(undefined);
     const [proposals, setProposals] = useState<SessionTypes.Proposal[]>([]);
     const [requests, setRequests] = useState<SessionTypes.RequestEvent[]>([]);
-    const [cachedPairing, setCachedPairing] = useState<CachedPairing>();
-
-    useInterval(() => {
-        if (!!cachedPairing) {
-            const initiatedPairingTime = cachedPairing.timeInitiated;
-            const now = Date.now();
-            const ellapsedTime = now - initiatedPairingTime;
-            // 5min
-            if (ellapsedTime > 300000) {
-                console.log("Check outdated pairing. Is outdated!!");
-                Toast.show({
-                    type: "info",
-                    text1: "Tilkoblingsforespørsel er utgått. Vennligst start ny kobling fra nettside",
-                    text2: "Vennligst start ny kobling fra nettside",
-                    topOffset: 100,
-                    position: "top",
-                });
-                setCachedPairing(undefined);
-            }
-        }
-    }, 5000);
-
-    useEffect(() => {
-        console.log(
-            "useWalletConnect tryPair UE",
-            hasTrustedIdentity,
-            cachedPairing
-        );
-        if (!hasTrustedIdentity) {
-            return;
-        }
-
-        if (!cachedPairing) {
-            return;
-        }
-
-        pair(cachedPairing.uri);
-    }, [hasTrustedIdentity, cachedPairing]);
 
     // Init Walletconnect client
     useEffect(() => {
@@ -107,18 +66,6 @@ export const useWalletconnect = (
             navigate("Modal");
         }
     }, [requests, proposals]);
-
-    const pairCached = (uri: string) => {
-        const initiatedTime = Date.now();
-        const cachedPairing: CachedPairing = {
-            uri: uri,
-            timeInitiated: initiatedTime,
-        };
-
-        setCachedPairing(cachedPairing);
-        console.log("In Pair and cachedPairing is set");
-        console.log(cachedPairing);
-    };
 
     const pair = async (uri: string) => {
         console.log(`pair(): Uri: ${uri}`);
@@ -377,8 +324,6 @@ export const useWalletconnect = (
         onReject,
         setProposals,
         setRequests,
-        cachedPairing,
         pair,
-        pairCached,
     };
 };

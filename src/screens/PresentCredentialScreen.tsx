@@ -15,6 +15,7 @@ import {
 import { BankidJWTPayload } from "../types/bankid.types";
 import {
     ParamBankIDToken,
+    ParamInitialCreateCapTableVCs,
     ParamPresentCredentialDemo,
 } from "../types/paramTypes";
 import { Context } from "../context";
@@ -22,7 +23,12 @@ import { TermsOfUseVC } from "../verifiableCredentials/TermsOfUseVC";
 import { NationalIdentityVC } from "../verifiableCredentials/NationalIdentityVC";
 
 export function PresentCredentialScreen(props: {
-    route: { params?: ParamBankIDToken | ParamPresentCredentialDemo };
+    route: {
+        params?:
+            | ParamBankIDToken
+            | ParamPresentCredentialDemo
+            | ParamInitialCreateCapTableVCs;
+    };
 }) {
     const { navigateHome } = useLocalNavigation();
     const {
@@ -117,6 +123,12 @@ export function PresentCredentialScreen(props: {
     // UseEffects
     useEffect(() => {
         switch (props.route.params?.type) {
+            case "PARAM_CREATE_CAP_TABLE_VCS":
+                setCapTableTermsOfUseVC(
+                    props.route.params?.capTableTermsOfUseVC
+                );
+                setNationalIdentityVC(props.route.params?.nationalIdentityVC);
+                break;
             case "PARAM_BANKID_TOKEN":
                 setBankIDjwt(props.route.params.bankIDToken);
                 break;

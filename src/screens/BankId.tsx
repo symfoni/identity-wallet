@@ -22,8 +22,7 @@ import { BankidJWTPayload } from "../types/bankid.types";
 
 export const BankId = () => {
     const { goBack } = useNavigation();
-    const { createVC, createVP, saveVP, cachedPairing, pair } =
-        useContext(Context);
+    const { createVC, createVP, saveVP } = useContext(Context);
     const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState<string[]>([]);
     const [bankidToken, setBankidToken] = useState<string>(() => {

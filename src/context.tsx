@@ -39,7 +39,6 @@ import {
     DEFAULT_TEST_CHAINS,
 } from "./constants/default";
 import useInterval from "./hooks/useInterval";
-import { CachedPairing } from "./types/CachedPairing";
 import { JwtPayload } from "./types/JwtPayload";
 import { VerifyOptions } from "./types/VerifyOptions";
 import { useVeramo } from "./utils/useVeramo";
@@ -67,7 +66,6 @@ export interface IContext {
     proposals: SessionTypes.Proposal[];
     setProposals: Dispatch<SessionTypes.Proposal[]>;
     requests: SessionTypes.RequestEvent[];
-    cachedPairing: CachedPairing | undefined;
     setRequests: Dispatch<SessionTypes.RequestEvent[]>;
     closeSession: (topic: string) => Promise<void>;
     onApprove: (
@@ -94,8 +92,6 @@ export interface IContext {
     ) => Promise<UniqueVerifiableCredential[]>;
     saveVP: (vp: VerifiablePresentation | string) => Promise<string>;
     pair: (uri: string) => Promise<void>;
-    pairCached: (uri: string) => Promise<void>;
-    hasTrustedIdentity: boolean;
     createTermsOfUseVC: (readAndAcceptedId: string) => Promise<TermsOfUseVC>;
     createNationalIdentityVC: (
         nationalIdentityNumber: string,
@@ -185,7 +181,7 @@ export const ContextProvider = (props: any) => {
     //     return () => {
     //         subscribed = false;
     //     };
-    // }, [veramo, veramo.accounts, walletconnect.cachedPairing]);
+    // }, [veramo, veramo.accounts]);
 
     useInterval(() => {
         let subscribed = true;

@@ -1,3 +1,5 @@
+import { NationalIdentityVC } from "../verifiableCredentials/NationalIdentityVC";
+import { TermsOfUseVC } from "../verifiableCredentials/TermsOfUseVC";
 import { CreateCapTableVP } from "../verifiablePresentations/CreateCapTableVP";
 
 export type ParamBankIDToken = {
@@ -14,4 +16,10 @@ export type ParamPresentCredentialDemo = {
 export type ParamCreateCapTableVP = {
     type: "PARAM_CREATE_CAP_TABLE_VP";
     createCapTableVP: CreateCapTableVP;
+};
+
+export type ParamInitialCreateCapTableVCs = {
+    type: "PARAM_CREATE_CAP_TABLE_VCS";
+    nationalIdentityVC: NationalIdentityVC;
+    capTableTermsOfUseVC: TermsOfUseVC;
 };

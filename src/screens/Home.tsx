@@ -50,6 +50,9 @@ export const Home = (props: { route: { params?: ParamCreateCapTableVP } }) => {
             console.warn("ERROR: await pair(URI): ", err);
             return;
         }
+
+        // 3. Get existing VCs if exist.
+
         navigatePresentCredential();
     }
 
