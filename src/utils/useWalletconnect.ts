@@ -13,6 +13,7 @@ import { SessionTypes } from "@walletconnect/types";
 import { normalizePresentation } from "did-jwt-vc";
 import { useCallback, useEffect, useState } from "react";
 import { requestBoardDirectorVerifiableCredential } from "../domain/brok-helpers";
+import { CreateCapTableVPRequest } from "../types/paramTypes";
 
 import {
     DEFAULT_APP_METADATA,
@@ -30,6 +31,11 @@ export const useWalletconnect = (
     const [client, setClient] = useState<Client | undefined>(undefined);
     const [proposals, setProposals] = useState<SessionTypes.Proposal[]>([]);
     const [requests, setRequests] = useState<SessionTypes.RequestEvent[]>([]);
+
+    // Event-listeners
+    const [onRequestVP, setOnRequestVP] = useState<
+        (params: CreateCapTableVPRequest | undefined) => void
+    >(() => {});
 
     // Init Walletconnect client
     useEffect(() => {
@@ -249,6 +255,14 @@ export const useWalletconnect = (
                             }
                         }
                         break;
+                    case "did_requestVerifiablePresentation":
+                        {
+                            const params = event.request.params[0] as
+                                | CreateCapTableVPRequest
+                                | undefined;
+                            onRequestVP(params);
+                        }
+                        break;
                 }
 
                 await client.respond({
@@ -342,5 +356,6 @@ export const useWalletconnect = (
         setProposals,
         setRequests,
         pair,
+        setOnRequestVP,
     };
 };

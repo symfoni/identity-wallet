@@ -14,14 +14,22 @@ import { Scanner } from "../components/scanner";
 import { useSymfoniContext } from "../context";
 import { useLocalNavigation } from "../hooks/useLocalNavigation";
 import {
-    ParamCreateCapTableVP,
-    ParamCreateCapTableVCs,
-} from "../types/paramTypes";
+    CreateCapTableVPResponse,
+    CreateCapTableVPRequest,
+} from "../types/requestTypes";
 import { CreateCapTableVP } from "../verifiablePresentations/CreateCapTableVP";
 
-export const Home = (props: { route: { params?: ParamCreateCapTableVP } }) => {
-    const { pair, loading, client, findNationalIdentityVC, findTermsOfUseVC } =
-        useSymfoniContext();
+export const Home = (props: {
+    route: { params?: CreateCapTableVPResponse };
+}) => {
+    const {
+        pair,
+        loading,
+        client,
+        findNationalIdentityVC,
+        findTermsOfUseVC,
+        setOnRequestVP,
+    } = useSymfoniContext();
     const { colors } = useContext(ColorContext);
     const styles = makeStyles(colors);
     const [sessions, setSessions] = useState<SessionTypes.Settled[]>([]);
@@ -59,14 +67,15 @@ export const Home = (props: { route: { params?: ParamCreateCapTableVP } }) => {
         const capTableTermsOfUseVC = await findTermsOfUseVC();
         const nationalIdentityVC = await findNationalIdentityVC();
 
-        const params = {
-            type: "PARAM_CREATE_CAP_TABLE_VCS",
-            nationalIdentityVC,
-            capTableTermsOfUseVC,
-        } as ParamCreateCapTableVCs;
+        const request = {
+            type: "CREATE_CAP_TABLE_VP_REQUEST",
+            params: {
+                nationalIdentityVC,
+                capTableTermsOfUseVC,
+            },
+        } as CreateCapTableVPRequest;
 
-        console.log(params);
-        navigatePresentCredential(params);
+        navigatePresentCredential(request);
     }
 
     // UseEffects
@@ -75,8 +84,10 @@ export const Home = (props: { route: { params?: ParamCreateCapTableVP } }) => {
             "Home.tsx: props.route.params?.type": props.route.params?.type,
         });
         switch (props.route.params?.type) {
-            case "PARAM_CREATE_CAP_TABLE_VP":
-                setCreateCapTableVP(props.route.params.createCapTableVP);
+            case "CREATE_CAP_TABLE_VP_RESPONSE":
+                setCreateCapTableVP(
+                    props.route.params.payload.createCapTableVP
+                );
                 break;
         }
     }, [props.route.params]);
@@ -104,6 +115,16 @@ export const Home = (props: { route: { params?: ParamCreateCapTableVP } }) => {
             subscribed = false;
         };
     }, [client, client?.session]);
+
+    useEffect(() => {
+        setOnRequestVP((request: CreateCapTableVPRequest | undefined) => {
+            switch (request?.type) {
+                case "CREATE_CAP_TABLE_VP_REQUEST":
+                    navigatePresentCredential(request);
+                    break;
+            }
+        });
+    }, [setOnRequestVP, navigatePresentCredential]);
 
     if (createCapTableVP) {
         return <Text>{JSON.stringify(createCapTableVP)}</Text>;

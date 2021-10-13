@@ -25,7 +25,13 @@ import {
 import Client from "@walletconnect/client";
 import { SessionTypes } from "@walletconnect/types";
 import { ethers } from "ethers";
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, {
+    createContext,
+    SetStateAction,
+    useContext,
+    useEffect,
+    useState,
+} from "react";
 import {
     DEFAULT_MAIN_CHAINS,
     DEFAULT_RPC_PROVIDER_MAIN,
@@ -34,6 +40,7 @@ import {
 } from "./constants/default";
 import useInterval from "./hooks/useInterval";
 import { JwtPayload } from "./types/JwtPayload";
+import { CreateCapTableVPRequest } from "./types/requestTypes";
 import { VerifyOptions } from "./types/VerifyOptions";
 import { useVeramo } from "./utils/useVeramo";
 import { useWalletconnect } from "./utils/useWalletconnect";
@@ -98,6 +105,9 @@ export interface IContext {
         capTableTermsOfUseVC: TermsOfUseVC,
         nationalIdentityVC: NationalIdentityVC
     ) => Promise<CreateCapTableVP>;
+    setOnRequestVP: Dispatch<
+        SetStateAction<(request: CreateCapTableVPRequest | undefined) => void>
+    >;
 }
 
 export const Context = createContext<IContext>(undefined!);

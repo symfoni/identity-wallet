@@ -1,9 +1,9 @@
 import { useNavigation } from "@react-navigation/native";
+import { ParamPresentCredentialDemo } from "../types/paramTypes";
 import {
-    ParamCreateCapTableVP,
-    ParamInitialCreateCapTableVCs,
-    ParamPresentCredentialDemo,
-} from "../types/paramTypes";
+    CreateCapTableVPRequest,
+    CreateCapTableVPResponse,
+} from "../types/requestTypes";
 
 export const NAVIGATOR_TABS = "Tabs";
 
@@ -17,7 +17,7 @@ export const SCREEN_GET_BANKID = "GetBankID";
 export function useLocalNavigation() {
     const navigation = useNavigation();
 
-    const navigateHome = (params?: ParamCreateCapTableVP) =>
+    const navigateHome = (params?: CreateCapTableVPResponse) =>
         navigation.navigate(NAVIGATOR_TABS, {
             screen: SCREEN_HOME,
             params,
@@ -26,7 +26,7 @@ export function useLocalNavigation() {
     const navigateBankID = () => navigation.navigate(SCREEN_BANKID);
 
     const navigatePresentCredential = (
-        params?: ParamPresentCredentialDemo | ParamInitialCreateCapTableVCs
+        params?: ParamPresentCredentialDemo | CreateCapTableVPRequest
     ) => navigation.navigate(SCREEN_PRESENT_CREDENTIAL, params);
 
     const navigateScanner = () => navigation.navigate(SCREEN_SCANNER);

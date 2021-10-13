@@ -15,20 +15,20 @@ import {
 import { BankidJWTPayload } from "../types/bankid.types";
 import {
     ParamBankIDToken,
-    ParamCreateCapTableVCs,
     ParamPresentCredentialDemo,
 } from "../types/paramTypes";
 import { Context } from "../context";
 import { TermsOfUseVC } from "../verifiableCredentials/TermsOfUseVC";
 import { NationalIdentityVC } from "../verifiableCredentials/NationalIdentityVC";
 import { BROK_HELPERS_VERIFIER } from "@env";
+import { CreateCapTableVPRequest } from "../types/requestTypes";
 
 export function PresentCredentialScreen(props: {
     route: {
         params?:
             | ParamBankIDToken
             | ParamPresentCredentialDemo
-            | ParamCreateCapTableVCs;
+            | CreateCapTableVPRequest;
     };
 }) {
     const { navigateHome } = useLocalNavigation();
@@ -117,8 +117,10 @@ export function PresentCredentialScreen(props: {
         setTimeout(
             () =>
                 navigateHome({
-                    type: "PARAM_CREATE_CAP_TABLE_VP",
-                    createCapTableVP,
+                    type: "CREATE_CAP_TABLE_VP_RESPONSE",
+                    payload: {
+                        createCapTableVP,
+                    },
                 }),
             1000
         );
@@ -127,12 +129,12 @@ export function PresentCredentialScreen(props: {
     // UseEffects
     useEffect(() => {
         switch (props.route.params?.type) {
-            case "PARAM_CREATE_CAP_TABLE_VCS":
+            case "CREATE_CAP_TABLE_VP_REQUEST":
                 setCapTableTermsOfUseVC(
-                    props.route.params?.capTableTermsOfUseVC ?? null
+                    props.route.params?.params.capTableTermsOfUseVC ?? null
                 );
                 setNationalIdentityVC(
-                    props.route.params?.nationalIdentityVC ?? null
+                    props.route.params?.params.nationalIdentityVC ?? null
                 );
                 break;
             case "PARAM_BANKID_TOKEN":

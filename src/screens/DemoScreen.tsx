@@ -2,10 +2,8 @@ import React from "react";
 import { Button } from "react-native";
 import { useSymfoniContext } from "../context";
 import { SCREEN_DEMO, useLocalNavigation } from "../hooks/useLocalNavigation";
-import {
-    ParamCreateCapTableVCs,
-    ParamPresentCredentialDemo,
-} from "../types/paramTypes";
+import { ParamPresentCredentialDemo } from "../types/paramTypes";
+import { CreateCapTableVPRequest } from "../types/requestTypes";
 
 export function DemoScreen() {
     const { findTermsOfUseVC, findNationalIdentityVC } = useSymfoniContext();
@@ -24,14 +22,13 @@ export function DemoScreen() {
                     const capTableTermsOfUseVC = await findTermsOfUseVC();
                     const nationalIdentityVC = await findNationalIdentityVC();
 
-                    const params = {
-                        type: "PARAM_CREATE_CAP_TABLE_VCS",
-                        nationalIdentityVC,
-                        capTableTermsOfUseVC,
-                    } as ParamCreateCapTableVCs;
-
-                    console.log(params);
-                    navigatePresentCredential(params);
+                    navigatePresentCredential({
+                        type: "CREATE_CAP_TABLE_VP_REQUEST",
+                        params: {
+                            nationalIdentityVC,
+                            capTableTermsOfUseVC,
+                        },
+                    } as CreateCapTableVPRequest);
                 }}
             />
             <Button
