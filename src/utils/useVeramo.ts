@@ -22,6 +22,8 @@ import { JwtPayload } from "../types/JwtPayload";
 import { VerifyOptions } from "../types/VerifyOptions";
 import { agent as _agent } from "./../utils/VeramoUtils";
 import { deleteVeramoData } from "./../utils/VeramoUtils";
+import { decodeJWT as decodeBankIDJWT } from "did-jwt";
+import { BankidJWTPayload } from "../types/bankid.types";
 
 export type Agent = TAgent<
     IDIDManager &
@@ -104,13 +106,53 @@ export const useVeramo = (chainId: string) => {
                     },
                 },
                 expirationDate: new Date(
-                    new Date().setFullYear(new Date().getFullYear() + 100)
+                    new Date().setFullYear(new Date().getFullYear() + 10)
                 ).toISOString(),
             },
         });
 
         console.info(
             `useVeramo.ts: createTermsOfUseVC() -> vc: ${JSON.stringify(vc)}`
+        );
+
+        return vc;
+    };
+
+    const createNationalIdentityVC = async (
+        nationalIdentityNumber: string,
+        evidence: { type: "BankID"; jwt: string }
+    ) => {
+        if (!identity) {
+            throw Error("Cant create VC, identity not initilized");
+        }
+        const bankID = decodeBankIDJWT(evidence.jwt)
+            .payload as BankidJWTPayload;
+
+        const vc = await agent.createVerifiableCredential({
+            proofFormat: "jwt",
+            save: true,
+            credential: {
+                "@context": [
+                    "https://www.w3.org/2018/credentials/v1",
+                    "https://www.symfoni.dev/credentials/v1",
+                ],
+                type: ["VerifiableCredential", "NationalIdentityVC"],
+                issuer: {
+                    id: identity.did,
+                },
+                credentialSubject: {
+                    id: identity.did,
+                    nationalIdentityNumber,
+                },
+                evidence: [evidence],
+                expirationDate: new Date(bankID.exp * 1000).toISOString(),
+            },
+        });
+
+        console.info(
+            `useVeramo.ts: createNationalIdentityVC() -> vc: ${JSON.stringify(
+                vc
+            )}`
         );
 
         return vc;
@@ -355,5 +397,6 @@ export const useVeramo = (chainId: string) => {
         signEthTreansaction,
         deleteVeramoData,
         createTermsOfUseVC,
+        createNationalIdentityVC,
     };
 };

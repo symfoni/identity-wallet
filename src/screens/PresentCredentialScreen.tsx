@@ -21,73 +21,75 @@ import { Context } from "../context";
 import { BROK_HELPERS_VERIFIER } from "@env";
 import { registerWithBankId } from "../domain/brok-helpers";
 import { TermsOfUseVC } from "../verifiableCredentials/TermsOfUseVC";
+import { NationalIdentityVC } from "../verifiableCredentials/NationalIdentityVC";
 
 export function PresentCredentialScreen(props: {
     route: { params?: ParamBankIDToken | ParamPresentCredentialDemo };
 }) {
     const { navigateHome } = useLocalNavigation();
-    const { createVC, createVP, saveVP, createTermsOfUseVC } =
+    const { createTermsOfUseVC, createNationalIdentityVC } =
         useContext(Context);
 
     // Local data
-    const [validBankIDPersonnummer, setValidBankIDPersonnummer] = useState<
+    const [nationalIdentityNumber, setNationalIdentityNumber] = useState<
         string | null
     >(null);
     const [presentLoading, setPresentLoading] = useState(false);
-    const [saveLoading, setSaveLoading] = useState(false);
-    const [saveError, setSaveError] = useState<any>();
+    const [bankIDjwt, setBankIDjwt] = useState<string | null>(null);
 
-    const [bankIDToken, setBankIDToken] = useState<string | null>(null);
-
-    const validCredential = validBankIDPersonnummer !== null;
-
-    const bankIDPayload = useMemo(() => {
-        if (bankIDToken === null) {
+    const bankID = useMemo(() => {
+        if (bankIDjwt === null) {
             return null;
         }
-        return decodeJWT(bankIDToken).payload as BankidJWTPayload;
-    }, [bankIDToken]);
+        return decodeJWT(bankIDjwt).payload as BankidJWTPayload;
+    }, [bankIDjwt]);
 
-    // Local callbacks
-    const onSignNationalIdentityVC = async (
-        _validBankIDPersonnummer: string
-    ) => {
-        const vc = await createVC({
-            identityProof: bankIDToken,
-        });
-        const vp = await createVP(BROK_HELPERS_VERIFIER, [vc.proof.jwt]);
-
-        setSaveLoading(true);
-        try {
-            const { data: signedVP } = await registerWithBankId(vp);
-            await saveVP(signedVP);
-        } catch (err) {
-            setSaveError(err);
-            console.warn({ err });
-            return;
-        } finally {
-            setSaveLoading(false);
-        }
-
-        setValidBankIDPersonnummer(_validBankIDPersonnummer);
-    };
-
+    // TermsOfUseVC
     const [capTableTermsOfUseVC, setCapTableTermsOfUseVC] =
         useState<TermsOfUseVC | null>(null);
-    const [loadingSigningTermsOfUse, setLoadingTermsOfUse] = useState(false);
+    const [loadingSigningTermsOfUseVC, setLoadingTermsOfUseVC] =
+        useState(false);
+
+    // NationalIdentityVC
+    const [nationalIdentityVC, setNationalIdentityVC] =
+        useState<NationalIdentityVC | null>(null);
+    const [loadingNationalIdentityVC, setLoadingNationalIdentityVC] =
+        useState(false);
+
+    const presentable = !!capTableTermsOfUseVC && !!nationalIdentityVC;
+
+    const onSignNationalIdentityVC = async (
+        _nationalIdentityNumber: string
+    ) => {
+        if (bankIDjwt === null) {
+            console.error("onSignNationalIdentityVC(): bankIDjwt === null");
+            return;
+        }
+        try {
+            setLoadingNationalIdentityVC(true);
+            const vc = await createNationalIdentityVC(_nationalIdentityNumber, {
+                type: "BankID",
+                jwt: bankIDjwt,
+            });
+            setNationalIdentityVC(vc);
+        } finally {
+            setLoadingNationalIdentityVC(false);
+        }
+    };
 
     const onSignCapTableTermsOfUse = async (readAndAcceptedID: string) => {
-        setLoadingTermsOfUse(true);
         try {
+            setLoadingTermsOfUseVC(true);
             const _capTableTermsOfUseVC = await createTermsOfUseVC(
                 readAndAcceptedID
             );
             setCapTableTermsOfUseVC(_capTableTermsOfUseVC);
         } finally {
-            setLoadingTermsOfUse(false);
+            setLoadingTermsOfUseVC(false);
         }
     };
 
+    // CreateCapTableVP
     const presentCreateCapTableVP = () => {
         setPresentLoading(true);
         setTimeout(() => navigateHome(), 2000);
@@ -97,10 +99,10 @@ export function PresentCredentialScreen(props: {
     useEffect(() => {
         switch (props.route.params?.type) {
             case "PARAM_BANKID_TOKEN":
-                setBankIDToken(props.route.params.bankIDToken);
+                setBankIDjwt(props.route.params.bankIDToken);
                 break;
             case "PARAM_PRESENT_CREDENTIAL_DEMO":
-                setValidBankIDPersonnummer(
+                setNationalIdentityNumber(
                     props.route.params.demoBankIDPersonnummer
                 );
                 break;
@@ -108,10 +110,10 @@ export function PresentCredentialScreen(props: {
     }, [props.route.params]);
 
     useEffect(() => {
-        if (bankIDPayload?.socialno) {
-            setValidBankIDPersonnummer(bankIDPayload?.socialno);
+        if (bankID?.socialno) {
+            setNationalIdentityNumber(bankID?.socialno);
         }
-    }, [bankIDPayload]);
+    }, [bankID]);
 
     return (
         <Screen>
@@ -122,18 +124,20 @@ export function PresentCredentialScreen(props: {
                 <SmallText>For å kunne</SmallText>
                 <BigText>Opprette aksjeeierbok</BigText>
 
-                <CapTableTermsOfUseVC
+                <TermsOfUseVCCard
                     vc={capTableTermsOfUseVC}
-                    loading={loadingSigningTermsOfUse}
+                    loading={loadingSigningTermsOfUseVC}
+                    termsOfUseID="https://forvalt.brreg.no/brukervilkår"
                     onSign={onSignCapTableTermsOfUse}
                 />
-                <NationalIdentityVC
-                    saveLoading={saveLoading}
-                    validBankIDPersonnummer={validBankIDPersonnummer}
+                <NationalIdentityVCCard
+                    vc={nationalIdentityVC}
+                    loading={loadingNationalIdentityVC}
+                    nationalIdentityNumber={nationalIdentityNumber}
                     onSign={onSignNationalIdentityVC}
                 />
             </Content>
-            {validCredential && (
+            {presentable && (
                 <PresentButton onPress={presentCreateCapTableVP}>
                     {!presentLoading ? (
                         "Vis"
@@ -158,113 +162,86 @@ const Content = styled.View`
     padding-vertical: 30px;
 `;
 
-function NationalIdentityVC({
-    saveLoading,
-    validBankIDPersonnummer,
+function NationalIdentityVCCard({
+    vc,
+    nationalIdentityNumber,
+    loading,
     onSign,
 }: {
-    saveLoading: boolean;
-    validBankIDPersonnummer: string | null;
-    onSign: (validBankIDPersonnummer: string) => void;
+    vc: NationalIdentityVC | null;
+    nationalIdentityNumber: string | null;
+    loading: boolean;
+    onSign: (nationalIdentityNumber: string) => void;
 }) {
     const { navigateGetBankID } = useLocalNavigation();
 
-    const signed = !!validBankIDPersonnummer;
+    const signed = !!vc;
+    const valid = !!nationalIdentityNumber;
 
-    const validInput = !!validBankIDPersonnummer;
-    console.log({ validInput, validBankIDPersonnummer });
     return (
-        <NationalIdentityVCView>
-            <VCBody>
-                <VCPropLabel>Fødselsnummer</VCPropLabel>
-                <VCPropText
-                    placeholder={!validBankIDPersonnummer}
-                    onPress={() =>
-                        !signed
-                            ? navigateGetBankID(SCREEN_PRESENT_CREDENTIAL)
-                            : null
-                    }>
-                    {validBankIDPersonnummer ?? "123456 54321"}
-                </VCPropText>
-                <SignButton
-                    valid={validInput}
-                    loading={saveLoading}
-                    signed={signed}
-                    expirationDate={null}
-                    onPress={() =>
-                        validInput ? onSign(validBankIDPersonnummer) : null
-                    }
-                />
-            </VCBody>
-        </NationalIdentityVCView>
+        <VCCard>
+            <VCPropLabel>Fødselsnummer</VCPropLabel>
+            <VCPropText
+                placeholder={!valid}
+                onPress={() =>
+                    !valid ? navigateGetBankID(SCREEN_PRESENT_CREDENTIAL) : null
+                }>
+                {valid ? nationalIdentityNumber : "123456 54321"}
+            </VCPropText>
+            <SignButton
+                valid={valid}
+                loading={loading}
+                signed={signed}
+                expirationDate={vc?.expirationDate}
+                onPress={() => (valid ? onSign(nationalIdentityNumber) : null)}
+            />
+        </VCCard>
     );
 }
 
-function CapTableTermsOfUseVC({
+function TermsOfUseVCCard({
     vc,
     loading,
+    termsOfUseID,
     onSign,
 }: {
     vc: TermsOfUseVC | null;
     loading: boolean;
+    termsOfUseID: string;
     onSign: (termsOfUse: string) => {};
 }) {
-    const termsOfUseID = "https://forvalt.brreg.no/brukervilkår";
     const signed = !!vc;
-    const expirationDate = vc?.expirationDate
-        ? new Date(vc?.expirationDate)
-        : null;
 
     return (
-        <NationalIdentityVCView>
-            <VCBody>
-                <VCPropLabel>Lest og akseptert</VCPropLabel>
-                <VCPropHyperlink onPress={() => Linking.openURL(termsOfUseID)}>
-                    {termsOfUseID}
-                </VCPropHyperlink>
-                <SignButton
-                    valid={true}
-                    signed={signed}
-                    loading={loading}
-                    expirationDate={expirationDate}
-                    onPress={() => onSign(termsOfUseID)}
-                />
-            </VCBody>
-        </NationalIdentityVCView>
+        <VCCard>
+            <VCPropLabel>Lest og akseptert</VCPropLabel>
+            <VCPropHyperlink onPress={() => Linking.openURL(termsOfUseID)}>
+                {termsOfUseID}
+            </VCPropHyperlink>
+            <SignButton
+                valid={true}
+                signed={signed}
+                loading={loading}
+                expirationDate={vc?.expirationDate}
+                onPress={() => onSign(termsOfUseID)}
+            />
+        </VCCard>
     );
 }
 
-function CapTableFormVC() {
-    const [isEnabled, setIsEnabled] = useState(false);
-    const toggleSwitch = () => setIsEnabled((previousState) => !previousState);
-
-    return (
-        <NationalIdentityVCView>
-            <VCTitle signed={true}>Aksjeeierbok skjema</VCTitle>
-        </NationalIdentityVCView>
-    );
-}
-
-const NationalIdentityVCView = styled.View`
+const VCCard = styled.View`
     background-color: rgb(105, 105, 107);
     border-radius: 8px;
     margin-top: 15px;
     margin-bottom: 2px;
-`;
-
-const VCBody = styled.View`
-    margin-horizontal: 10px;
-    padding-top: 15px;
+    padding-horizontal: 10px;
+    padding-top: 25px;
     padding-bottom: 10px;
 `;
+
 const VCPropLabel = styled.Text`
     margin-top: 5px;
     color: #fff;
-`;
-
-const VCPropRow = styled.View`
-    flex-direction: row;
-    align-items: center;
 `;
 
 const VCPropText = styled.Text`
@@ -282,45 +259,6 @@ const VCPropHyperlink = styled.Text`
     margin-bottom: 25px;
 `;
 
-const VCPropSwitch = styled.Switch`
-    margin-top: 6px;
-    margin-left: 5px;
-`;
-
-function VCTitle({
-    children,
-    signed,
-}: {
-    signed: boolean;
-    children: ReactNode;
-}) {
-    const backgroundColor = useMemo(() => {
-        if (!signed) {
-            return "rgba(0, 122, 255, 0.9)";
-        } else {
-            return "rgba(52, 199, 89, 0.9)";
-        }
-    }, [signed]);
-
-    return (
-        <VCTitleView backgroundColor={backgroundColor}>
-            <VCTitleText>{children}</VCTitleText>
-        </VCTitleView>
-    );
-}
-const VCTitleView = styled.View`
-    background-color: ${(props: { backgroundColor: string }) =>
-        props.backgroundColor};
-    padding-horizontal: 5px;
-    padding-top: 4px;
-    padding-bottom: 4px;
-    border-radius: 8px;
-`;
-const VCTitleText = styled.Text`
-    color: white;
-    text-align: center;
-`;
-
 function SignButton({
     valid,
     loading,
@@ -331,7 +269,7 @@ function SignButton({
     valid: boolean;
     loading: boolean;
     signed: boolean;
-    expirationDate: Date | null;
+    expirationDate?: string;
     onPress: () => void;
 }) {
     const backgroundColor = useMemo(() => {
@@ -375,9 +313,8 @@ function SignButton({
     const expirationDateText = useMemo(() => {
         if (!expirationDate) {
             return "--/--/----";
-        } else {
-            return `Utløper ${expirationDate.toLocaleDateString()}`;
         }
+        return `Utløper ${new Date(expirationDate).toLocaleDateString()}`;
     }, [expirationDate]);
 
     return (

@@ -44,6 +44,7 @@ import { JwtPayload } from "./types/JwtPayload";
 import { VerifyOptions } from "./types/VerifyOptions";
 import { useVeramo } from "./utils/useVeramo";
 import { useWalletconnect } from "./utils/useWalletconnect";
+import { NationalIdentityVC } from "./verifiableCredentials/NationalIdentityVC";
 import { TermsOfUseVC } from "./verifiableCredentials/TermsOfUseVC";
 
 export type Agent = TAgent<
@@ -95,6 +96,10 @@ export interface IContext {
     pairCached: (uri: string) => Promise<void>;
     hasTrustedIdentity: boolean;
     createTermsOfUseVC: (readAndAcceptedId: string) => Promise<TermsOfUseVC>;
+    createNationalIdentityVC: (
+        nationalIdentityNumber: string,
+        evidence: { type: "BankID"; jwt: string }
+    ) => Promise<NationalIdentityVC>;
 }
 
 export const Context = createContext<IContext>(undefined!);
