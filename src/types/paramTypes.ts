@@ -18,8 +18,8 @@ export type ParamCreateCapTableVP = {
     createCapTableVP: CreateCapTableVP;
 };
 
-export type ParamInitialCreateCapTableVCs = {
+export type ParamCreateCapTableVCs = {
     type: "PARAM_CREATE_CAP_TABLE_VCS";
-    nationalIdentityVC: NationalIdentityVC;
-    capTableTermsOfUseVC: TermsOfUseVC;
+    nationalIdentityVC?: NationalIdentityVC;
+    capTableTermsOfUseVC?: TermsOfUseVC;
 };

@@ -13,11 +13,15 @@ import { ColorContext, ColorSystem } from "../colorContext";
 import { Scanner } from "../components/scanner";
 import { useSymfoniContext } from "../context";
 import { useLocalNavigation } from "../hooks/useLocalNavigation";
-import { ParamCreateCapTableVP } from "../types/paramTypes";
+import {
+    ParamCreateCapTableVP,
+    ParamCreateCapTableVCs,
+} from "../types/paramTypes";
 import { CreateCapTableVP } from "../verifiablePresentations/CreateCapTableVP";
 
 export const Home = (props: { route: { params?: ParamCreateCapTableVP } }) => {
-    const { pair, loading, client } = useSymfoniContext();
+    const { pair, loading, client, findNationalIdentityVC, findTermsOfUseVC } =
+        useSymfoniContext();
     const { colors } = useContext(ColorContext);
     const styles = makeStyles(colors);
     const [sessions, setSessions] = useState<SessionTypes.Settled[]>([]);
@@ -52,8 +56,17 @@ export const Home = (props: { route: { params?: ParamCreateCapTableVP } }) => {
         }
 
         // 3. Get existing VCs if exist.
+        const capTableTermsOfUseVC = await findTermsOfUseVC();
+        const nationalIdentityVC = await findNationalIdentityVC();
 
-        navigatePresentCredential();
+        const params = {
+            type: "PARAM_CREATE_CAP_TABLE_VCS",
+            nationalIdentityVC,
+            capTableTermsOfUseVC,
+        } as ParamCreateCapTableVCs;
+
+        console.log(params);
+        navigatePresentCredential(params);
     }
 
     // UseEffects

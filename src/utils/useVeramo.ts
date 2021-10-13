@@ -382,6 +382,32 @@ export const useVeramo = (chainId: string) => {
         return credentials;
     };
 
+    const findNationalIdentityVC = async () => {
+        const res = await findVC({
+            where: [
+                {
+                    column: "type",
+                    value: ["VerifiableCredential,NationalIdentityVC"],
+                },
+            ],
+        });
+
+        return res[0].verifiableCredential;
+    };
+
+    const findTermsOfUseVC = async () => {
+        const res = await findVC({
+            where: [
+                {
+                    column: "type",
+                    value: ["VerifiableCredential,TermsOfUseVC"],
+                },
+            ],
+        });
+
+        return res[0].verifiableCredential;
+    };
+
     const saveVP = async (vp: VerifiablePresentation | string) => {
         console.log("trysaveVp");
         console.log(vp);
@@ -422,5 +448,7 @@ export const useVeramo = (chainId: string) => {
         createTermsOfUseVC,
         createNationalIdentityVC,
         createCreateCapTableVP,
+        findNationalIdentityVC,
+        findTermsOfUseVC,
     };
 };

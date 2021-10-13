@@ -15,7 +15,7 @@ import {
 import { BankidJWTPayload } from "../types/bankid.types";
 import {
     ParamBankIDToken,
-    ParamInitialCreateCapTableVCs,
+    ParamCreateCapTableVCs,
     ParamPresentCredentialDemo,
 } from "../types/paramTypes";
 import { Context } from "../context";
@@ -27,7 +27,7 @@ export function PresentCredentialScreen(props: {
         params?:
             | ParamBankIDToken
             | ParamPresentCredentialDemo
-            | ParamInitialCreateCapTableVCs;
+            | ParamCreateCapTableVCs;
     };
 }) {
     const { navigateHome } = useLocalNavigation();
@@ -43,12 +43,15 @@ export function PresentCredentialScreen(props: {
     >(null);
     const [presentLoading, setPresentLoading] = useState(false);
     const [bankIDjwt, setBankIDjwt] = useState<string | null>(null);
-
-    const bankID = useMemo(() => {
+    useEffect(() => {
         if (bankIDjwt === null) {
-            return null;
+            return;
         }
-        return decodeJWT(bankIDjwt).payload as BankidJWTPayload;
+        const bankID = decodeJWT(bankIDjwt).payload as BankidJWTPayload;
+        if (!bankID?.socialno) {
+            return;
+        }
+        setNationalIdentityNumber(bankID?.socialno);
     }, [bankIDjwt]);
 
     // TermsOfUseVC
@@ -125,9 +128,11 @@ export function PresentCredentialScreen(props: {
         switch (props.route.params?.type) {
             case "PARAM_CREATE_CAP_TABLE_VCS":
                 setCapTableTermsOfUseVC(
-                    props.route.params?.capTableTermsOfUseVC
+                    props.route.params?.capTableTermsOfUseVC ?? null
                 );
-                setNationalIdentityVC(props.route.params?.nationalIdentityVC);
+                setNationalIdentityVC(
+                    props.route.params?.nationalIdentityVC ?? null
+                );
                 break;
             case "PARAM_BANKID_TOKEN":
                 setBankIDjwt(props.route.params.bankIDToken);
@@ -139,12 +144,6 @@ export function PresentCredentialScreen(props: {
                 break;
         }
     }, [props.route.params]);
-
-    useEffect(() => {
-        if (bankID?.socialno) {
-            setNationalIdentityNumber(bankID?.socialno);
-        }
-    }, [bankID]);
 
     return (
         <Screen>
@@ -207,24 +206,30 @@ function NationalIdentityVCCard({
     const { navigateGetBankID } = useLocalNavigation();
 
     const signed = !!vc;
-    const valid = !!nationalIdentityNumber;
 
+    const _nationalIdentityNumber =
+        vc?.credentialSubject?.nationalIdentityNumber ?? nationalIdentityNumber;
+
+    const valid = !!_nationalIdentityNumber;
+    console.log({ vc, nationalIdentityNumber });
     return (
         <VCCard>
             <VCPropLabel>Fødselsnummer</VCPropLabel>
             <VCPropText
                 placeholder={!valid}
                 onPress={() =>
-                    !valid ? navigateGetBankID(SCREEN_PRESENT_CREDENTIAL) : null
+                    !signed && !valid
+                        ? navigateGetBankID(SCREEN_PRESENT_CREDENTIAL)
+                        : null
                 }>
-                {valid ? nationalIdentityNumber : "123456 54321"}
+                {_nationalIdentityNumber ?? "123456 54321"}
             </VCPropText>
             <SignButton
                 valid={valid}
                 loading={loading}
                 signed={signed}
                 expirationDate={vc?.expirationDate}
-                onPress={() => (valid ? onSign(nationalIdentityNumber) : null)}
+                onPress={() => (valid ? onSign(_nationalIdentityNumber) : null)}
             />
         </VCCard>
     );

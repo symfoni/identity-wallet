@@ -25,13 +25,7 @@ import {
 import Client from "@walletconnect/client";
 import { SessionTypes } from "@walletconnect/types";
 import { ethers } from "ethers";
-import React, {
-    createContext,
-    SetStateAction,
-    useContext,
-    useEffect,
-    useState,
-} from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import {
     DEFAULT_MAIN_CHAINS,
     DEFAULT_RPC_PROVIDER_MAIN,
@@ -90,6 +84,8 @@ export interface IContext {
     findVC: (
         args: FindArgs<TCredentialColumns>
     ) => Promise<UniqueVerifiableCredential[]>;
+    findNationalIdentityVC: () => Promise<NationalIdentityVC | undefined>;
+    findTermsOfUseVC: () => Promise<TermsOfUseVC | undefined>;
     saveVP: (vp: VerifiablePresentation | string) => Promise<string>;
     pair: (uri: string) => Promise<void>;
     createTermsOfUseVC: (readAndAcceptedId: string) => Promise<TermsOfUseVC>;
