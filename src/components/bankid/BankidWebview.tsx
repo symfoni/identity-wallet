@@ -55,7 +55,6 @@ export const BankidWebview: React.FC<Props> = ({ ...props }) => {
             })
             .join("&");
         const url = BANKID_URL + queryString;
-
         return url;
     };
 

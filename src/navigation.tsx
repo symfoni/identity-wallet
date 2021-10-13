@@ -9,7 +9,6 @@ import {
     SCREEN_BANKID,
     SCREEN_DEMO,
     SCREEN_HOME,
-    SCREEN_SCANNER,
     SCREEN_PRESENT_CREDENTIAL,
     SCREEN_GET_BANKID,
 } from "./hooks/useLocalNavigation";

@@ -86,8 +86,14 @@ export function PresentCredentialScreen(props: {
                 );
                 setValidEmail(props.route.params.demoEmail);
                 break;
+            default:
+                console.warn(
+                    `props.route.params?.type unknown: ${
+                        props.route.params?.type
+                    }: ${props.route.params}: ${JSON.stringify(props.route)}`
+                );
         }
-    }, [props.route.params, props.route.params?.type]);
+    }, [props.route.params]);
 
     const bankIDInput: BankidJWTPayload | null = useMemo(() => {
         if (bankIDToken === null) {
