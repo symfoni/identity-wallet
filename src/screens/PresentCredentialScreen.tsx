@@ -5,7 +5,7 @@ import React, {
     useMemo,
     useState,
 } from "react";
-import { ActivityIndicator, TextInput } from "react-native";
+import { ActivityIndicator, Linking } from "react-native";
 import { decodeJWT } from "did-jwt";
 import styled from "styled-components/native";
 import {
@@ -20,12 +20,14 @@ import {
 import { Context } from "../context";
 import { BROK_HELPERS_VERIFIER } from "@env";
 import { registerWithBankId } from "../domain/brok-helpers";
+import { TermsOfUseVC } from "../verifiableCredentials/TermsOfUseVC";
 
 export function PresentCredentialScreen(props: {
     route: { params?: ParamBankIDToken | ParamPresentCredentialDemo };
 }) {
     const { navigateHome } = useLocalNavigation();
-    const { createVC, createVP, saveVP } = useContext(Context);
+    const { createVC, createVP, saveVP, createTermsOfUseVC } =
+        useContext(Context);
 
     // Local data
     const [validBankIDPersonnummer, setValidBankIDPersonnummer] = useState<
@@ -47,7 +49,9 @@ export function PresentCredentialScreen(props: {
     }, [bankIDToken]);
 
     // Local callbacks
-    const saveNationalIdentityVC = async (_validBankIDPersonnummer: string) => {
+    const onSignNationalIdentityVC = async (
+        _validBankIDPersonnummer: string
+    ) => {
         const vc = await createVC({
             identityProof: bankIDToken,
         });
@@ -66,6 +70,22 @@ export function PresentCredentialScreen(props: {
         }
 
         setValidBankIDPersonnummer(_validBankIDPersonnummer);
+    };
+
+    const [capTableTermsOfUseVC, setCapTableTermsOfUseVC] =
+        useState<TermsOfUseVC | null>(null);
+    const [loadingSigningTermsOfUse, setLoadingTermsOfUse] = useState(false);
+
+    const onSignCapTableTermsOfUse = async (readAndAcceptedID: string) => {
+        setLoadingTermsOfUse(true);
+        try {
+            const _capTableTermsOfUseVC = await createTermsOfUseVC(
+                readAndAcceptedID
+            );
+            setCapTableTermsOfUseVC(_capTableTermsOfUseVC);
+        } finally {
+            setLoadingTermsOfUse(false);
+        }
     };
 
     const presentCreateCapTableVP = () => {
@@ -97,19 +117,22 @@ export function PresentCredentialScreen(props: {
         <Screen>
             <Content>
                 <SmallText>Til</SmallText>
-                <BigText>forvalt.no</BigText>
-                <SmallText>Handling</SmallText>
-                <BigText>Opprett aksjeeierbok</BigText>
+                <BigText>Brønnøysundregisteret</BigText>
+
+                <SmallText>For å kunne</SmallText>
+                <BigText>Opprette aksjeeierbok</BigText>
+
+                <CapTableFormVC />
+                <CapTableTermsOfUseVC
+                    vc={capTableTermsOfUseVC}
+                    loading={loadingSigningTermsOfUse}
+                    onSign={onSignCapTableTermsOfUse}
+                />
                 <NationalIdentityVC
                     saveLoading={saveLoading}
                     validBankIDPersonnummer={validBankIDPersonnummer}
-                    onSave={saveNationalIdentityVC}
+                    onSign={onSignNationalIdentityVC}
                 />
-                <BulletWithText>
-                    For å kunne opprette aksjeeierbok, trenger{" "}
-                    <BoldText>Forvalt.no</BoldText> at du fremviser gydlig
-                    legitimasjon.
-                </BulletWithText>
             </Content>
             {validCredential && (
                 <PresentButton onPress={presentCreateCapTableVP}>
@@ -136,49 +159,14 @@ const Content = styled.View`
     padding-vertical: 30px;
 `;
 
-const HelpText = styled.Text`
-    padding-horizontal: 10px;
-    padding-vertical: 10px;
-`;
-
-const BoldText = styled.Text`
-    font-weight: 600;
-`;
-
-/**
- * @inspired by https://stackoverflow.com/a/40450857
- */
-function BulletWithText({ children }: { children: React.ReactNode }) {
-    return (
-        <BulletRow>
-            <BulletView>
-                <BulletText>{"\u2022" + " "}</BulletText>
-            </BulletView>
-            <HelpText>{children}</HelpText>
-        </BulletRow>
-    );
-}
-const BulletRow = styled.View`
-    flex-direction: row;
-    margin-top: 10px;
-`;
-const BulletView = styled.View`
-    width: 20px;
-`;
-const BulletText = styled.Text`
-    width: 20px;
-    font-size: 30px;
-`;
-
 function NationalIdentityVC({
     saveLoading,
     validBankIDPersonnummer,
-    onSave,
+    onSign,
 }: {
     saveLoading: boolean;
     validBankIDPersonnummer: string | null;
-    validEmail: string | null;
-    onSave: (validBankIDPersonnummer: string) => void;
+    onSign: (validBankIDPersonnummer: string) => void;
 }) {
     const { navigateGetBankID } = useLocalNavigation();
 
@@ -191,73 +179,140 @@ function NationalIdentityVC({
             <VCTitle>Nasjonal identitet</VCTitle>
             <VCBody>
                 <VCPropLabel>Fødselsnummer</VCPropLabel>
-                <VCPropPlaceholder
-                    weak={!validBankIDPersonnummer}
+                <VCPropText
+                    placeholder={!validBankIDPersonnummer}
                     onPress={() =>
                         !validCredential
                             ? navigateGetBankID(SCREEN_PRESENT_CREDENTIAL)
                             : null
                     }>
                     {validBankIDPersonnummer ?? "123456 54321"}
-                </VCPropPlaceholder>
-
-                {validCredential ? (
-                    <ValidButton>Gyldig</ValidButton>
-                ) : (
-                    <SaveButton
-                        weak={!validInput}
-                        onPress={() =>
-                            validInput ? onSave(validBankIDPersonnummer) : null
-                        }>
-                        {!saveLoading ? (
-                            "Signer"
-                        ) : (
-                            <ActivityIndicator color="white" size="small" />
-                        )}
-                    </SaveButton>
-                )}
+                </VCPropText>
+                <SignButton
+                    valid={!validInput}
+                    loading={saveLoading}
+                    signed={validCredential}
+                    onPress={() =>
+                        validInput ? onSign(validBankIDPersonnummer) : null
+                    }
+                />
             </VCBody>
         </NationalIdentityVCView>
     );
 }
 
+function CapTableTermsOfUseVC({
+    vc,
+    loading,
+    onSign,
+}: {
+    vc: TermsOfUseVC | null;
+    loading: boolean;
+    onSign: (termsOfUse: string) => {};
+}) {
+    const termsOfUseID = "https://forvalt.brreg.no/brukervilkår";
+    const signed = !!vc;
+
+    return (
+        <NationalIdentityVCView>
+            <VCTitle signed={signed}>Aksjeeierbok brukervilkår</VCTitle>
+
+            <VCBody>
+                <VCPropLabel>Lest og akseptert</VCPropLabel>
+                <VCPropHyperlink onPress={() => Linking.openURL(termsOfUseID)}>
+                    {termsOfUseID}
+                </VCPropHyperlink>
+                <SignButton
+                    valid={true}
+                    signed={signed}
+                    loading={loading}
+                    onPress={() => onSign(termsOfUseID)}
+                />
+            </VCBody>
+        </NationalIdentityVCView>
+    );
+}
+
+function CapTableFormVC() {
+    const [isEnabled, setIsEnabled] = useState(false);
+    const toggleSwitch = () => setIsEnabled((previousState) => !previousState);
+
+    return (
+        <NationalIdentityVCView>
+            <VCTitle signed={true}>Aksjeeierbok skjema</VCTitle>
+        </NationalIdentityVCView>
+    );
+}
+
 const NationalIdentityVCView = styled.View`
-    background-color: rgb(130, 130, 134);
+    background-color: rgb(105, 105, 107);
     border-radius: 8px;
-    margin-top: 10px;
-    margin-bottom: 30px;
-    padding-top: 1px;
-    padding-bottom: 10px;
+    margin-top: 15px;
+    margin-bottom: 2px;
 `;
 
 const VCBody = styled.View`
     margin-horizontal: 10px;
+    padding-top: 15px;
+    padding-bottom: 10px;
 `;
 const VCPropLabel = styled.Text`
+    margin-top: 5px;
     color: #fff;
 `;
 
-const VCPropPlaceholder = styled.Text`
-    color: ${(props: { weak: boolean }) =>
-        props.weak ? "rgba(255,255,255,0.2)" : "white"};
+const VCPropRow = styled.View`
+    flex-direction: row;
+    align-items: center;
+`;
+
+const VCPropText = styled.Text`
+    color: ${(props: { placeholder: boolean }) =>
+        props.placeholder ? "rgba(255,255,255,0.2)" : "white"};
     font-weight: bold;
-    font-size: 22px;
+    font-size: 19px;
     margin-bottom: 7px;
 `;
 
-function VCTitle({ children }: { children: ReactNode }) {
+const VCPropHyperlink = styled.Text`
+    color: white;
+    font-weight: bold;
+    font-size: 17.5px;
+    margin-bottom: 25px;
+`;
+
+const VCPropSwitch = styled.Switch`
+    margin-top: 6px;
+    margin-left: 5px;
+`;
+
+function VCTitle({
+    children,
+    signed,
+}: {
+    signed: boolean;
+    children: ReactNode;
+}) {
+    const backgroundColor = useMemo(() => {
+        if (!signed) {
+            return "rgba(0, 122, 255, 0.9)";
+        } else {
+            return "rgba(52, 199, 89, 0.9)";
+        }
+    }, [signed]);
+
     return (
-        <VCTitleView color="rgb(0, 122, 255)">
+        <VCTitleView backgroundColor={backgroundColor}>
             <VCTitleText>{children}</VCTitleText>
         </VCTitleView>
     );
 }
 const VCTitleView = styled.View`
-    background-color: ${(props: { color: string }) => props.color};
+    background-color: ${(props: { backgroundColor: string }) =>
+        props.backgroundColor};
     padding-horizontal: 5px;
     padding-top: 4px;
     padding-bottom: 4px;
-    margin-bottom: 20px;
     border-radius: 8px;
 `;
 const VCTitleText = styled.Text`
@@ -265,31 +320,62 @@ const VCTitleText = styled.Text`
     text-align: center;
 `;
 
-function ValidButton({ children }: { children: ReactNode }) {
-    return (
-        <DateView>
-            <DateText localValid>{new Date().toLocaleDateString()}</DateText>
-            <StatusButtonTouchable color={"rgba(52, 199, 89, 0.9)"}>
-                <StatusButtonText>{children}</StatusButtonText>
-            </StatusButtonTouchable>
-        </DateView>
-    );
-}
-
-function SaveButton({
-    weak,
+function SignButton({
+    valid,
+    loading,
+    signed,
     onPress,
-    children,
 }: {
-    weak: boolean;
+    valid: boolean;
+    loading: boolean;
+    signed: boolean;
     onPress: () => void;
-    children: ReactNode;
 }) {
+    const backgroundColor = useMemo(() => {
+        if (!valid) {
+            return "rgba(255,255,255,0.3)";
+        } else if (!signed) {
+            return "rgba(0, 122, 255, 0.9)";
+        } else {
+            return "rgba(52, 199, 89, 0.9)";
+        }
+    }, [valid, signed]);
+
+    const color = useMemo(() => {
+        if (!valid) {
+            return "rgba(255,255,255,0.3)";
+        } else {
+            return "white";
+        }
+    }, [valid]);
+
+    const text = useMemo(() => {
+        if (!loading && !signed) {
+            return "Signer";
+        } else if (loading) {
+            return <ActivityIndicator />;
+        } else {
+            return "Gyldig";
+        }
+    }, [loading, signed]);
+
+    const onPressWhenValidAndNotSigned = useMemo(() => {
+        if (valid && !signed) {
+            return onPress;
+        } else {
+            return () => {
+                console.info("Button disabled");
+            };
+        }
+    }, [onPress, valid, signed]);
+
     return (
         <DateView>
-            <DateText weak>--/--/----</DateText>
-            <StatusButtonTouchable onPress={onPress} weak={weak}>
-                <StatusButtonText weak={weak}>{children}</StatusButtonText>
+            <DateText color={color}>--/--/----</DateText>
+            <StatusButtonTouchable
+                onPress={onPressWhenValidAndNotSigned}
+                backgroundColor={backgroundColor}>
+                <StatusButtonText color={color}>{text}</StatusButtonText>
             </StatusButtonTouchable>
         </DateView>
     );
@@ -302,12 +388,11 @@ const DateView = styled.View`
 `;
 const DateText = styled.Text`
     margin-right: 10px;
-    color: ${(props: { weak: boolean }) =>
-        props.weak ? "rgba(255,255,255,0.3)" : "white"};
+    color: ${(props: { color: string }) => props.color};
 `;
 const StatusButtonTouchable = styled.TouchableOpacity`
-    background-color: ${(props: { weak: boolean }) =>
-        props.weak ? "rgba(255,255,255,0.3)" : "rgba(0, 122, 255, 0.9)"};
+    background-color: ${(props: { backgroundColor: string }) =>
+        props.backgroundColor};
     border-radius: 10px;
     height: 26px;
     min-width: 80px;
@@ -319,8 +404,7 @@ const StatusButtonTouchable = styled.TouchableOpacity`
 `;
 
 const StatusButtonText = styled.Text`
-    color: ${(props: { weak: boolean }) =>
-        props.weak ? "rgba(255,255,255,0.3)" : "white"};
+    color: ${(props: { color: string }) => props.color};
     font-weight: 600;
     font-size: 13px;
 `;

@@ -44,6 +44,7 @@ import { JwtPayload } from "./types/JwtPayload";
 import { VerifyOptions } from "./types/VerifyOptions";
 import { useVeramo } from "./utils/useVeramo";
 import { useWalletconnect } from "./utils/useWalletconnect";
+import { TermsOfUseVC } from "./verifiableCredentials/TermsOfUseVC";
 
 export type Agent = TAgent<
     IDIDManager &
@@ -93,6 +94,7 @@ export interface IContext {
     pair: (uri: string) => Promise<void>;
     pairCached: (uri: string) => Promise<void>;
     hasTrustedIdentity: boolean;
+    createTermsOfUseVC: (readAndAcceptedId: string) => Promise<TermsOfUseVC>;
 }
 
 export const Context = createContext<IContext>(undefined!);

@@ -25,11 +25,11 @@ import { deleteVeramoData } from "./../utils/VeramoUtils";
 
 export type Agent = TAgent<
     IDIDManager &
-    IKeyManager &
-    IDataStore &
-    IDataStoreORM &
-    IResolver &
-    ICredentialIssuer
+        IKeyManager &
+        IDataStore &
+        IDataStoreORM &
+        IResolver &
+        ICredentialIssuer
 >;
 
 export type useVeramoInterface = ReturnType<typeof useVeramo>;
@@ -80,6 +80,41 @@ export const useVeramo = (chainId: string) => {
         };
         initWallet();
     }, [agent, chainId]);
+
+    const createTermsOfUseVC = async (readAndAcceptedID: string) => {
+        if (!identity) {
+            throw Error("Cant create VC, identity not initilized");
+        }
+        const vc = await agent.createVerifiableCredential({
+            proofFormat: "jwt",
+            save: true,
+            credential: {
+                "@context": [
+                    "https://www.w3.org/2018/credentials/v1",
+                    "https://www.symfoni.dev/credentials/v1",
+                ],
+                type: ["VerifiableCredential", "TermsOfUseVC"],
+                issuer: {
+                    id: identity.did,
+                },
+                credentialSubject: {
+                    id: identity.did,
+                    readAndAccepted: {
+                        id: readAndAcceptedID,
+                    },
+                },
+                expirationDate: new Date(
+                    new Date().setFullYear(new Date().getFullYear() + 100)
+                ).toISOString(),
+            },
+        });
+
+        console.info(
+            `useVeramo.ts: createTermsOfUseVC() -> vc: ${JSON.stringify(vc)}`
+        );
+
+        return vc;
+    };
 
     const createVC = async (data: Record<string, any>) => {
         if (!identity) {
@@ -171,7 +206,8 @@ export const useVeramo = (chainId: string) => {
                                         return decoded;
                                     } catch (error) {
                                         errors.push(
-                                            `Error decoding subcredential: ${error.message
+                                            `Error decoding subcredential: ${
+                                                error.message
                                             }. \nSubcredential was: \n${Buffer.from(
                                                 subJWT.split(".")[1],
                                                 "base64"
@@ -226,7 +262,8 @@ export const useVeramo = (chainId: string) => {
                     } else if (Array.isArray(verifyOptions.issuer)) {
                         if (!verifyOptions.issuer.includes(payload.iss)) {
                             errors.push(
-                                `JWT issuer was ${payload.iss
+                                `JWT issuer was ${
+                                    payload.iss
                                 }, expected one of ${verifyOptions.issuer.join(
                                     " | "
                                 )}`
@@ -281,8 +318,8 @@ export const useVeramo = (chainId: string) => {
     };
 
     const saveVP = async (vp: VerifiablePresentation | string) => {
-        console.log("trysaveVp")
-        console.log(vp)
+        console.log("trysaveVp");
+        console.log(vp);
 
         if (typeof vp === "string") {
             vp = normalizePresentation(vp);
@@ -317,5 +354,6 @@ export const useVeramo = (chainId: string) => {
         verifyJWT,
         signEthTreansaction,
         deleteVeramoData,
+        createTermsOfUseVC,
     };
 };
