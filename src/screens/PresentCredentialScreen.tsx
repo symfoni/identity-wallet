@@ -31,24 +31,24 @@ export function PresentCredentialScreen(props: {
     const [validBankIDPersonnummer, setValidBankIDPersonnummer] = useState<
         string | null
     >(null);
-    const [validEmail, setValidEmail] = useState<string | null>(null);
     const [presentLoading, setPresentLoading] = useState(false);
     const [saveLoading, setSaveLoading] = useState(false);
-    const [bankIDToken, setBankIDToken] = useState<string | null>(null);
     const [saveError, setSaveError] = useState<any>();
 
-    const validCredential =
-        validBankIDPersonnummer !== null && validEmail !== null;
+    const [bankIDToken, setBankIDToken] = useState<string | null>(null);
+
+    const validCredential = validBankIDPersonnummer !== null;
+
+    const bankIDPayload = useMemo(() => {
+        if (bankIDToken === null) {
+            return null;
+        }
+        return decodeJWT(bankIDToken).payload as BankidJWTPayload;
+    }, [bankIDToken]);
 
     // Local callbacks
-    const onSaveCredential = async (
-        _validBankIDPersonnummer: string,
-        _validEmail: string
-    ) => {
+    const saveNationalIdentityVC = async (_validBankIDPersonnummer: string) => {
         const vc = await createVC({
-            email: validEmail,
-            streetAddress: null,
-            postalCode: null,
             identityProof: bankIDToken,
         });
         const vp = await createVP(BROK_HELPERS_VERIFIER, [vc.proof.jwt]);
@@ -66,10 +66,9 @@ export function PresentCredentialScreen(props: {
         }
 
         setValidBankIDPersonnummer(_validBankIDPersonnummer);
-        setValidEmail(_validEmail);
     };
 
-    const onPresentCredential = () => {
+    const presentCreateCapTableVP = () => {
         setPresentLoading(true);
         setTimeout(() => navigateHome(), 2000);
     };
@@ -84,53 +83,36 @@ export function PresentCredentialScreen(props: {
                 setValidBankIDPersonnummer(
                     props.route.params.demoBankIDPersonnummer
                 );
-                setValidEmail(props.route.params.demoEmail);
                 break;
-            default:
-                console.warn(
-                    `props.route.params?.type unknown: ${
-                        props.route.params?.type
-                    }: ${props.route.params}: ${JSON.stringify(props.route)}`
-                );
         }
     }, [props.route.params]);
 
-    const bankIDInput: BankidJWTPayload | null = useMemo(() => {
-        if (bankIDToken === null) {
-            return null;
-        }
-        return decodeJWT(bankIDToken).payload as BankidJWTPayload;
-    }, [bankIDToken]);
-
     useEffect(() => {
-        if (bankIDInput?.socialno) {
-            setValidBankIDPersonnummer(bankIDInput?.socialno);
+        if (bankIDPayload?.socialno) {
+            setValidBankIDPersonnummer(bankIDPayload?.socialno);
         }
-    }, [bankIDInput]);
+    }, [bankIDPayload]);
 
     return (
         <Screen>
             <Content>
                 <SmallText>Til</SmallText>
                 <BigText>forvalt.no</BigText>
-                <CredentialForm
+                <SmallText>Handling</SmallText>
+                <BigText>Opprett aksjeeierbok</BigText>
+                <NationalIdentityVC
                     saveLoading={saveLoading}
-                    validEmail={validEmail}
                     validBankIDPersonnummer={validBankIDPersonnummer}
-                    onSave={onSaveCredential}
+                    onSave={saveNationalIdentityVC}
                 />
                 <BulletWithText>
                     For å kunne opprette aksjeeierbok, trenger{" "}
                     <BoldText>Forvalt.no</BoldText> at du fremviser gydlig
                     legitimasjon.
                 </BulletWithText>
-                <BulletWithText>
-                    For at legitimasjonen skal regnes som gyldig må den
-                    inneholde BankID-personnumer og epost.
-                </BulletWithText>
             </Content>
             {validCredential && (
-                <PresentButton onPress={onPresentCredential}>
+                <PresentButton onPress={presentCreateCapTableVP}>
                     {!presentLoading ? (
                         "Vis"
                     ) : (
@@ -188,71 +170,101 @@ const BulletText = styled.Text`
     font-size: 30px;
 `;
 
-function CredentialForm({
+function NationalIdentityVC({
     saveLoading,
     validBankIDPersonnummer,
-    validEmail,
     onSave,
 }: {
     saveLoading: boolean;
     validBankIDPersonnummer: string | null;
     validEmail: string | null;
-    onSave: (validBankIDPersonnummer: string, validEmail: string) => void;
+    onSave: (validBankIDPersonnummer: string) => void;
 }) {
     const { navigateGetBankID } = useLocalNavigation();
-    const [emailInput, setEmail] = useState(validEmail);
-    const onChangeText = (input: String) => setEmail(input.toLowerCase());
 
-    const validCredential = !!validBankIDPersonnummer && !!validEmail;
+    const validCredential = !!validBankIDPersonnummer;
 
-    const validInput =
-        !!validBankIDPersonnummer &&
-        emailInput &&
-        emailInput !== "" &&
-        emailInput?.includes("@"); // || bankdID === null;
+    const validInput = !!validBankIDPersonnummer;
 
     return (
-        <CredentialFormView>
-            <WhiteText>BankID-personnumer</WhiteText>
-            <BigWhiteText
-                weak={!validBankIDPersonnummer}
-                onPress={() =>
-                    !validCredential
-                        ? navigateGetBankID(SCREEN_PRESENT_CREDENTIAL)
-                        : null
-                }>
-                {validBankIDPersonnummer ?? "123456 54321"}
-            </BigWhiteText>
-
-            <WhiteText>Epost</WhiteText>
-            <BigInput
-                editable={!validCredential}
-                placeholder="example@symfoni.id"
-                placeholderTextColor="rgba(255, 255, 255, 0.2)"
-                keyboardType="email-address"
-                value={validEmail}
-                onChangeText={onChangeText}
-            />
-            {validCredential ? (
-                <ValidButton>Gyldig</ValidButton>
-            ) : (
-                <SaveButton
-                    weak={!validInput}
+        <NationalIdentityVCView>
+            <VCTitle>Nasjonal identitet</VCTitle>
+            <VCBody>
+                <VCPropLabel>Fødselsnummer</VCPropLabel>
+                <VCPropPlaceholder
+                    weak={!validBankIDPersonnummer}
                     onPress={() =>
-                        validInput
-                            ? onSave(validBankIDPersonnummer, emailInput)
+                        !validCredential
+                            ? navigateGetBankID(SCREEN_PRESENT_CREDENTIAL)
                             : null
                     }>
-                    {!saveLoading ? (
-                        "Utsted"
-                    ) : (
-                        <ActivityIndicator color="white" size="small" />
-                    )}
-                </SaveButton>
-            )}
-        </CredentialFormView>
+                    {validBankIDPersonnummer ?? "123456 54321"}
+                </VCPropPlaceholder>
+
+                {validCredential ? (
+                    <ValidButton>Gyldig</ValidButton>
+                ) : (
+                    <SaveButton
+                        weak={!validInput}
+                        onPress={() =>
+                            validInput ? onSave(validBankIDPersonnummer) : null
+                        }>
+                        {!saveLoading ? (
+                            "Signer"
+                        ) : (
+                            <ActivityIndicator color="white" size="small" />
+                        )}
+                    </SaveButton>
+                )}
+            </VCBody>
+        </NationalIdentityVCView>
     );
 }
+
+const NationalIdentityVCView = styled.View`
+    background-color: rgb(130, 130, 134);
+    border-radius: 8px;
+    margin-top: 10px;
+    margin-bottom: 30px;
+    padding-top: 1px;
+    padding-bottom: 10px;
+`;
+
+const VCBody = styled.View`
+    margin-horizontal: 10px;
+`;
+const VCPropLabel = styled.Text`
+    color: #fff;
+`;
+
+const VCPropPlaceholder = styled.Text`
+    color: ${(props: { weak: boolean }) =>
+        props.weak ? "rgba(255,255,255,0.2)" : "white"};
+    font-weight: bold;
+    font-size: 22px;
+    margin-bottom: 7px;
+`;
+
+function VCTitle({ children }: { children: ReactNode }) {
+    return (
+        <VCTitleView color="rgb(0, 122, 255)">
+            <VCTitleText>{children}</VCTitleText>
+        </VCTitleView>
+    );
+}
+const VCTitleView = styled.View`
+    background-color: ${(props: { color: string }) => props.color};
+    padding-horizontal: 5px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+`;
+const VCTitleText = styled.Text`
+    color: white;
+    text-align: center;
+`;
+
 function ValidButton({ children }: { children: ReactNode }) {
     return (
         <DateView>
@@ -276,10 +288,7 @@ function SaveButton({
     return (
         <DateView>
             <DateText weak>--/--/----</DateText>
-            <StatusButtonTouchable
-                onPress={onPress}
-                weak={weak}
-                color="rgba(0, 122, 255, 0.9)">
+            <StatusButtonTouchable onPress={onPress} weak={weak}>
                 <StatusButtonText weak={weak}>{children}</StatusButtonText>
             </StatusButtonTouchable>
         </DateView>
@@ -297,7 +306,8 @@ const DateText = styled.Text`
         props.weak ? "rgba(255,255,255,0.3)" : "white"};
 `;
 const StatusButtonTouchable = styled.TouchableOpacity`
-    background-color: ${(props: { color: string }) => props.color};
+    background-color: ${(props: { weak: boolean }) =>
+        props.weak ? "rgba(255,255,255,0.3)" : "rgba(0, 122, 255, 0.9)"};
     border-radius: 10px;
     height: 26px;
     min-width: 80px;
@@ -315,27 +325,6 @@ const StatusButtonText = styled.Text`
     font-size: 13px;
 `;
 
-const CredentialFormView = styled.View`
-    background-color: rgb(130, 130, 134);
-    border-radius: 10px;
-    margin-top: 10px;
-    margin-bottom: 30px;
-    padding-horizontal: 15px;
-    padding-top: 20px;
-    padding-bottom: 10px;
-`;
-
-const WhiteText = styled.Text`
-    color: #fff;
-`;
-const BigWhiteText = styled.Text`
-    color: ${(props: { weak: boolean }) =>
-        props.weak ? "rgba(255,255,255,0.2)" : "white"};
-    font-weight: bold;
-    font-size: 22px;
-    padding-bottom: 20px;
-`;
-
 const SmallText = styled.Text`
     margin-left: 5px;
 `;
@@ -343,13 +332,6 @@ const BigText = styled.Text`
     font-size: 22px;
     padding-bottom: 20px;
     margin-left: 5px;
-`;
-
-const BigInput = styled(TextInput)`
-    color: rgb(255, 255, 255);
-    font-weight: bold;
-    font-size: 22px;
-    padding-bottom: 20px;
 `;
 
 function PresentButton({
