@@ -1,7 +1,7 @@
 import { useNavigation } from "@react-navigation/native";
 import { CLIENT_EVENTS } from "@walletconnect/client";
 import { SessionTypes } from "@walletconnect/types";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import {
     ActivityIndicator,
     SafeAreaView,
@@ -12,6 +12,7 @@ import {
 import { ColorContext, ColorSystem } from "../colorContext";
 import { Button, SymfoniButton } from "../components/ui/button";
 import { Context } from "../context";
+import * as RNKeychain from "react-native-keychain";
 
 export const Home = () => {
     const { navigate } = useNavigation();
@@ -45,6 +46,20 @@ export const Home = () => {
         };
     }, [client, client?.session]);
 
+    const onPress = useCallback(async () => {
+        try {
+            const res = await RNKeychain.getGenericPassword({
+                authenticationType: RNKeychain.AUTHENTICATION_TYPE.BIOMETRICS,
+                accessControl:
+                    RNKeychain.ACCESS_CONTROL.BIOMETRY_ANY_OR_DEVICE_PASSCODE,
+                service: "SymfoniID",
+            });
+            console.log({ res });
+        } catch (err) {
+            console.warn({ err });
+        }
+    }, []);
+
     return (
         <>
             <StatusBar />
@@ -57,7 +72,7 @@ export const Home = () => {
                             icon={"qr"}
                             type="primary"
                             text="Scan QR"
-                            onPress={() => navigate("Scanner")}
+                            onPress={onPress}
                         />
                     </View>
                 )}
