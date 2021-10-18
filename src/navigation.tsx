@@ -8,7 +8,6 @@ import { Context } from "./context";
 import {
     SCREEN_BANKID,
     SCREEN_DEMO,
-    SCREEN_CREATE_CAP_TABLE_VP,
     SCREEN_GET_BANKID,
     NAVIGATOR_TABS,
     SCREEN_HOME,
@@ -20,6 +19,7 @@ import { Identity } from "./screens/Identity";
 import { ProfileNavigation } from "./screens/Profile/ProfileNavigation";
 import { CreateCapTableVPScreen } from "./screens/CreateCapTableVPScreen";
 import { GetBankIDScreen } from "./screens/GetBankIDScreen";
+import { SCREEN_CREATE_CAP_TABLE_VP } from "./hooks/useNavigationWithResult";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();

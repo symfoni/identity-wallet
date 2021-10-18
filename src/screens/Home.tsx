@@ -1,5 +1,4 @@
-import { resolveProperties } from "@ethersproject/properties";
-import { JsonRpcRequest } from "@json-rpc-tools/types";
+import { JsonRpcRequest, JsonRpcResult } from "@json-rpc-tools/types";
 import React, { useContext, useEffect, useState } from "react";
 import {
     ActivityIndicator,
@@ -9,28 +8,32 @@ import {
     Text,
     View,
 } from "react-native";
+import useAsyncEffect from "use-async-effect/types";
 import { ColorContext, ColorSystem } from "../colorContext";
 import { Scanner } from "../components/scanner";
 import { useSymfoniContext } from "../context";
 import { useLocalNavigation } from "../hooks/useLocalNavigation";
+import { useNavigationWithResult } from "../hooks/useNavigationWithResult";
 import {
-    CreateCapTableVPRequest,
+    CreateCapTableVPParams,
     CreateCapTableVPResult,
 } from "../types/createCapTableVPTypes";
 import { CreateCapTableVP } from "../verifiablePresentations/CreateCapTableVP";
 
-export const Home = (props: { route: { params?: CreateCapTableVPResult } }) => {
+export const Home = (props: { route: { params?: JsonRpcResult<CreateCapTableVPResult> } }) => {
     const {
         pair,
         loading,
         findNationalIdentityVC,
         findTermsOfUseVC,
-        setOnRequest,
+        getRequestEvent,
         sendResponse,
     } = useSymfoniContext();
     const { colors } = useContext(ColorContext);
     const styles = makeStyles(colors);
-    const { navigateCreateCapTableVP } = useLocalNavigation();
+
+
+    const { getNavigationResultFrom } = useNavigationWithResult(props.route.params)
 
     const [createCapTableVP, setCreateCapTableVP] =
         useState<CreateCapTableVP | null>(null);
@@ -57,77 +60,21 @@ export const Home = (props: { route: { params?: CreateCapTableVPResult } }) => {
             console.warn("ERROR: await pair(URI): ", err);
             return;
         }
-
-        // 3. Get existing VCs if exist.
-        // const capTableTermsOfUseVC = await findTermsOfUseVC();
-        // const nationalIdentityVC = await findNationalIdentityVC();
-
-        // const request = {
-        //     type: "CREATE_CAP_TABLE_VP_REQUEST",
-        //     params: {
-        //         nationalIdentityVC,
-        //         capTableTermsOfUseVC,
-        //     },
-        // } as CreateCapTableVPRequest;
-
-        // navigateCreateCapTableVP(request);
     }
 
-    // UseEffect() - On requests
-    const [event, setEvent] =
-        useState<{ topic: string; request: CreateCapTableVPRequest }>();
+    useAsyncEffect(async () => {
+        const { topic, request } = await getRequestEvent("symfoniID_createCapTableVPRequest");
 
-    useEffect(() => {
-        setOnRequest(
-            "symfoniID_createCapTableVPRequest",
-            async (topic: string, _request: CreateCapTableVPRequest) => {
-                // Get existing VCs if exist.
-                const capTableTermsOfUseVC = await findTermsOfUseVC();
-                const nationalIdentityVC = await findNationalIdentityVC();
+        // Get existing VCs if exist.
+        request.params.capTableTermsOfUseVC = await findTermsOfUseVC();
+        request.params.nationalIdentityVC = await findNationalIdentityVC() 
 
-                _request = {
-                    ..._request,
-                    method: "symfoniID_createCapTableVPRequest",
-                    params: {
-                        ..._request.params,
-                        capTableTermsOfUseVC,
-                        nationalIdentityVC,
-                    },
-                };
+        const result = await getNavigationResultFrom("CreateCapTableVPScreen", request);
 
-                console.info(
-                    "navigateCreateCapTableVP with request: ",
-                    _request
-                );
-                setEvent({ topic, request: _request });
-                navigateCreateCapTableVP(_request);
-            }
-        );
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+        setCreateCapTableVP(result.result.createCapTableVP);
+        sendResponse(topic, result);
     }, []);
 
-    // UseEffect() - On response
-    useEffect(
-        () => {
-            console.info(
-                "Home.tsx: props.route.params?.id:",
-                props.route.params?.id
-            );
-
-            if (
-                event?.topic &&
-                event.request.method === "symfoniID_createCapTableVPRequest" &&
-                props.route.params?.id === event?.request.id
-            ) {
-                const result = props.route.params as CreateCapTableVPResult;
-
-                setCreateCapTableVP(result.result.createCapTableVP);
-                sendResponse(event?.topic, result);
-            }
-        },
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-        [props.route.params?.id, event]
-    );
 
     if (createCapTableVP) {
         return <Text>{JSON.stringify(createCapTableVP)}</Text>;

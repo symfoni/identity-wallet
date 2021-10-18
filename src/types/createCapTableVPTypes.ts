@@ -16,7 +16,7 @@ import { CreateCapTableVP } from "../verifiablePresentations/CreateCapTableVP";
 
 export function formatCreateCapTableVPRequest(
     params: CreateCapTableVPParams
-): CreateCapTableVPRequest {
+): JsonRpcRequest<CreateCapTableVPParams> {
     return {
         ...formatJsonRpcRequest("symfoniID_createCapTableVPRequest", params),
         method: "symfoniID_createCapTableVPRequest",
@@ -24,31 +24,27 @@ export function formatCreateCapTableVPRequest(
 }
 
 export function formatCreateCapTableVPResult(
-    request: CreateCapTableVPRequest,
-    payload: CreateCapTableVPPayload
-): CreateCapTableVPResult {
-    return formatJsonRpcResult(request.id, payload);
+    request: JsonRpcRequest<CreateCapTableVPParams>,
+    result: CreateCapTableVPResult
+): JsonRpcResult<CreateCapTableVPResult> {
+    return formatJsonRpcResult(request.id, result);
 }
 
 export function formatCreateCapTableVPError(
-    request: CreateCapTableVPRequest,
+    request: JsonRpcRequest<CreateCapTableVPParams>,
     error: string | ErrorResponse
-): CreateCapTableVPError {
+): JsonRpcError {
     return formatJsonRpcError(request.id, error);
 }
 
-export type CreateCapTableVPRequest = JsonRpcRequest<CreateCapTableVPParams>;
-export type CreateCapTableVPError = JsonRpcError;
-
-type CreateCapTableVPParams = {
+export type CreateCapTableVPParams = {
     verifier: string;
     capTableForm: CapTableForm;
     nationalIdentityVC?: NationalIdentityVC;
     capTableTermsOfUseVC?: TermsOfUseVC;
 };
 
-export type CreateCapTableVPResult = JsonRpcResult<CreateCapTableVPPayload>;
-type CreateCapTableVPPayload = {
+export type CreateCapTableVPResult = {
     createCapTableVP: CreateCapTableVP;
 };
 

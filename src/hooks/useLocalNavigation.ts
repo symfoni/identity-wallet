@@ -3,14 +3,17 @@ import { ParamPresentCredentialDemo } from "../types/paramTypes";
 import {
     CreateCapTableVPRequest,
     CreateCapTableVPResponse,
+    CreateCapTableVPResult,
 } from "../types/createCapTableVPTypes";
+import { useEffect, useState } from "react";
+import { CreateCapTableVP } from "../verifiablePresentations/CreateCapTableVP";
+import { JsonRpcRequest, JsonRpcResult } from "@json-rpc-tools/types";
 
 export const NAVIGATOR_TABS = "Tabs";
 
 export const SCREEN_BANKID = "Bankid";
 export const SCREEN_HOME = "Home";
 export const SCREEN_SCANNER = "Scanner";
-export const SCREEN_CREATE_CAP_TABLE_VP = "CreateCapTableVP";
 export const SCREEN_DEMO = "Demo";
 export const SCREEN_GET_BANKID = "GetBankID";
 
@@ -45,3 +48,4 @@ export function useLocalNavigation() {
         navigateGetBankID,
     };
 }
+
