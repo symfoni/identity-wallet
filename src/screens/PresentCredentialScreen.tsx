@@ -364,7 +364,9 @@ function SignButton({
         if (!expirationDate) {
             return "--/--/----";
         }
-        return `Utløper ${new Date(expirationDate).toLocaleDateString()}`;
+        return `Utløper ${
+            new Date(expirationDate).toISOString().split("T")[0]
+        }`;
     }, [expirationDate]);
 
     return (
