@@ -17,14 +17,17 @@ import { CreateCapTableVP } from "../verifiablePresentations/CreateCapTableVP";
 export function formatCreateCapTableVPRequest(
     params: CreateCapTableVPParams
 ): CreateCapTableVPRequest {
-    return formatJsonRpcRequest("symfoniID_createCapTableVPRequest", params);
+    return {
+        ...formatJsonRpcRequest("symfoniID_createCapTableVPRequest", params),
+        method: "symfoniID_createCapTableVPRequest",
+    };
 }
 
 export function formatCreateCapTableVPResult(
     request: CreateCapTableVPRequest,
-    result: CreateCapTableVPResult
-): CreateCapTableVPResponse {
-    return formatJsonRpcResult(request.id, result);
+    payload: CreateCapTableVPPayload
+): CreateCapTableVPResult {
+    return formatJsonRpcResult(request.id, payload);
 }
 
 export function formatCreateCapTableVPError(
@@ -35,7 +38,6 @@ export function formatCreateCapTableVPError(
 }
 
 export type CreateCapTableVPRequest = JsonRpcRequest<CreateCapTableVPParams>;
-export type CreateCapTableVPResponse = JsonRpcResponse<CreateCapTableVPResult>;
 export type CreateCapTableVPError = JsonRpcError;
 
 type CreateCapTableVPParams = {
@@ -45,7 +47,8 @@ type CreateCapTableVPParams = {
     capTableTermsOfUseVC?: TermsOfUseVC;
 };
 
-type CreateCapTableVPResult = {
+export type CreateCapTableVPResult = JsonRpcResult<CreateCapTableVPPayload>;
+type CreateCapTableVPPayload = {
     createCapTableVP: CreateCapTableVP;
 };
 

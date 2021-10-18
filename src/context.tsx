@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 import { APP_ENV, IS_TEST } from "@env";
-import { JsonRpcRequest } from "@json-rpc-tools/types";
+import { JsonRpcRequest, JsonRpcResponse } from "@json-rpc-tools/types";
 import {
     IDataStore,
     IDIDManager,
@@ -87,8 +87,9 @@ export interface IContext {
     ) => Promise<CreateCapTableVP>;
     setOnRequest: (
         method: string,
-        handler: (request: JsonRpcRequest<any>) => void
+        handler: (topic: string, request: JsonRpcRequest<any>) => void
     ) => void;
+    sendResponse: (topic: string, response: JsonRpcResponse<any>) => void;
 }
 
 export const Context = createContext<IContext>(undefined!);

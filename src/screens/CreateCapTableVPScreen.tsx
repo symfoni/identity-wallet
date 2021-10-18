@@ -14,10 +14,6 @@ import {
     useLocalNavigation,
 } from "../hooks/useLocalNavigation";
 import { BankidJWTPayload } from "../types/bankid.types";
-import {
-    ParamBankIDToken,
-    ParamPresentCredentialDemo,
-} from "../types/paramTypes";
 import { Context } from "../context";
 import { TermsOfUseVC } from "../verifiableCredentials/TermsOfUseVC";
 import { NationalIdentityVC } from "../verifiableCredentials/NationalIdentityVC";
@@ -26,10 +22,7 @@ import { CreateCapTableVPRequest } from "../types/createCapTableVPTypes";
 
 export function CreateCapTableVPScreen(props: {
     route: {
-        params?:
-            | ParamBankIDToken
-            | ParamPresentCredentialDemo
-            | CreateCapTableVPRequest;
+        params?: CreateCapTableVPRequest;
     };
 }) {
     const { navigateHome } = useLocalNavigation();
@@ -44,17 +37,6 @@ export function CreateCapTableVPScreen(props: {
         string | null
     >(null);
     const [presentLoading, setPresentLoading] = useState(false);
-    const [bankIDjwt, setBankIDjwt] = useState<string | null>(null);
-    useEffect(() => {
-        if (bankIDjwt === null) {
-            return;
-        }
-        const bankID = decodeJWT(bankIDjwt).payload as BankidJWTPayload;
-        if (!bankID?.socialno) {
-            return;
-        }
-        setNationalIdentityNumber(bankID?.socialno);
-    }, [bankIDjwt]);
 
     // TermsOfUseVC
     const [capTableTermsOfUseVC, setCapTableTermsOfUseVC] =
@@ -103,15 +85,15 @@ export function CreateCapTableVPScreen(props: {
         }
     };
 
-    // createCreateCapTableVP
+    // presentCreateCapTableVP
     const presentCreateCapTableVP = async () => {
-        if (!presentable) {
+        if (!presentable || !props.route.params) {
             console.error("presentCreateCapTableVP(): !presentable");
             return;
         }
         setPresentLoading(true);
         const createCapTableVP = await createCreateCapTableVP(
-            BROK_HELPERS_VERIFIER,
+            props.route.params?.params.verifier,
             capTableTermsOfUseVC,
             nationalIdentityVC
         );
@@ -129,33 +111,13 @@ export function CreateCapTableVPScreen(props: {
 
     // UseEffects
     useEffect(() => {
-        switch (props.route.params?.type) {
-            case "CREATE_CAP_TABLE_VP_REQUEST":
+        switch (props.route.params?.method) {
+            case "symfoniID_createCapTableVPRequest":
                 setCapTableTermsOfUseVC(
                     props.route.params?.params.capTableTermsOfUseVC ?? null
                 );
                 setNationalIdentityVC(
                     props.route.params?.params.nationalIdentityVC ?? null
-                );
-                break;
-            case "PARAM_BANKID_TOKEN":
-                {
-                    setBankIDjwt(props.route.params.bankIDToken);
-                    const bankID = decodeJWT(props.route.params.bankIDToken)
-                        .payload as BankidJWTPayload;
-                    if (!bankID?.socialno) {
-                        return;
-                    }
-                    setNationalIdentityNumber(bankID.socialno);
-                    onSignNationalIdentityVC(
-                        bankID.socialno,
-                        props.route.params.bankIDToken
-                    );
-                }
-                break;
-            case "PARAM_PRESENT_CREDENTIAL_DEMO":
-                setNationalIdentityNumber(
-                    props.route.params.demoBankIDPersonnummer
                 );
                 break;
         }

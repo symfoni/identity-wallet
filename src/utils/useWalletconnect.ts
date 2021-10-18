@@ -1,5 +1,9 @@
 /* eslint-disable no-undef */
-import { JsonRpcRequest } from "@json-rpc-tools/types";
+import {
+    JsonRpcRequest,
+    JsonRpcResponse,
+    JsonRpcResult,
+} from "@json-rpc-tools/types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Client, { CLIENT_EVENTS } from "@walletconnect/client";
 import { SessionTypes } from "@walletconnect/types";
@@ -12,7 +16,10 @@ import {
     DEFAULT_RELAY_PROVIDER,
 } from "./../constants/default";
 
-type OnRequestMap = Map<string, (request: JsonRpcRequest<any>) => void>;
+type OnRequestMap = Map<
+    string,
+    (topic: string, request: JsonRpcRequest<any>) => void
+>;
 
 export const useWalletconnect = (supportedChains: string[]) => {
     const [client, setClient] = useState<Client | undefined>(undefined);
@@ -22,7 +29,7 @@ export const useWalletconnect = (supportedChains: string[]) => {
 
     const setOnRequest = (
         method: string,
-        handler: (request: JsonRpcRequest<any>) => void
+        handler: (topic: string, request: JsonRpcRequest<any>) => void
     ) => {
         _setOnRequestMap((current: OnRequestMap) => {
             const next = new Map(current);
@@ -65,26 +72,35 @@ export const useWalletconnect = (supportedChains: string[]) => {
         console.log("PairResult", pairResult);
     };
 
+    type SendReponse = (response: JsonRpcResponse<any>) => void;
     const handleRequest = useCallback(
-        (_requestEvent: SessionTypes.RequestEvent) => {
-            const onRequest = onRequestMap.get(_requestEvent.request.method);
+        (event: SessionTypes.RequestEvent) => {
+            const onRequest = onRequestMap.get(event.request.method);
 
             if (!onRequest) {
                 console.warn(
-                    "useWalletConnect.ts: Unhandled JsonRPC: _requestEvent.request.method: ",
-                    _requestEvent.request.method
+                    "useWalletConnect.ts: Unhandled JsonRPC: event.request.method: ",
+                    event.request.method
                 );
                 return;
             }
 
             console.info(
-                "useWalletConnect.ts: Handling JsonRPC: _requestEvent.request.method: ",
-                _requestEvent.request.method
+                "useWalletConnect.ts: Handling JsonRPC: event.request.method: ",
+                event.request.method
             );
-            onRequest(_requestEvent.request);
+
+            onRequest(event.topic, event.request);
         },
         // eslint-disable-next-line react-hooks/exhaustive-deps
         []
+    );
+
+    const sendResponse = useCallback(
+        (topic: string, response: JsonRpcResponse<any>) => {
+            client?.respond({ topic, response });
+        },
+        [client]
     );
 
     const handlePruposal = useCallback(
@@ -168,5 +184,6 @@ export const useWalletconnect = (supportedChains: string[]) => {
         closeSession,
         pair,
         setOnRequest,
+        sendResponse,
     };
 };
