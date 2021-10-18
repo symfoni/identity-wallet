@@ -1,5 +1,4 @@
-import { CLIENT_EVENTS } from "@walletconnect/client";
-import { SessionTypes } from "@walletconnect/types";
+import { JsonRpcRequest } from "@json-rpc-tools/types";
 import React, { useContext, useEffect, useState } from "react";
 import {
     ActivityIndicator,
@@ -26,15 +25,12 @@ export const Home = (props: {
     const {
         pair,
         loading,
-        client,
         findNationalIdentityVC,
         findTermsOfUseVC,
-        setOnRequestVP,
+        setOnRequest,
     } = useSymfoniContext();
     const { colors } = useContext(ColorContext);
     const styles = makeStyles(colors);
-    const [sessions, setSessions] = useState<SessionTypes.Settled[]>([]);
-    const activeSessions = client?.session.values.length;
     const { navigateCreateCapTableVP } = useLocalNavigation();
 
     const [createCapTableVP, setCreateCapTableVP] =
@@ -80,26 +76,22 @@ export const Home = (props: {
 
     // UseEffect() - On requests
     useEffect(() => {
-        setOnRequestVP(
-            async (_request: CreateCapTableVPRequest | undefined) => {
-                switch (_request?.type) {
-                    case "CREATE_CAP_TABLE_VP_REQUEST":
-                        // Get existing VCs if exist.
-                        const capTableTermsOfUseVC = await findTermsOfUseVC();
-                        const nationalIdentityVC =
-                            await findNationalIdentityVC();
-                        const request: CreateCapTableVPRequest = {
-                            ..._request,
-                            params: {
-                                capTableTermsOfUseVC,
-                                nationalIdentityVC,
-                                ..._request.params,
-                            },
-                        };
-                        console.log("navigateCreateCapTableVP", request);
-                        navigateCreateCapTableVP(request);
-                        break;
-                }
+        setOnRequest(
+            "symfoniID_createCapTableVPRequest",
+            async (_request: CreateCapTableVPRequest) => {
+                // Get existing VCs if exist.
+                const capTableTermsOfUseVC = await findTermsOfUseVC();
+                const nationalIdentityVC = await findNationalIdentityVC();
+                const request: CreateCapTableVPRequest = {
+                    ..._request,
+                    params: {
+                        capTableTermsOfUseVC,
+                        nationalIdentityVC,
+                        ..._request.params,
+                    },
+                };
+                console.log("navigateCreateCapTableVP", request);
+                navigateCreateCapTableVP(request);
             }
         );
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -112,45 +104,12 @@ export const Home = (props: {
         });
         switch (props.route.params?.type) {
             case "CREATE_CAP_TABLE_VP_RESPONSE":
-                sendVP(request, props.route.params.createCapTableVP);
-
                 setCreateCapTableVP(
                     props.route.params.payload.createCapTableVP
                 );
                 break;
-
-            case "CREATE_CAP_TABLE_VP_ERROR":
-                {
-                    // Handle error
-                }
-                break;
         }
     }, [props.route.params]);
-
-    // useEffect() - On session change
-    useEffect(() => {
-        let subscribed = true;
-        if (!client) {
-            return;
-        }
-        setSessions(client.session.values);
-        console.log("Setting sessions");
-        client.on(CLIENT_EVENTS.session.deleted, (some: any) => {
-            console.log("deleted", some);
-            if (subscribed) {
-                setSessions(client.session.values);
-            }
-        });
-        client.on(CLIENT_EVENTS.session.created, (some: any) => {
-            console.log("created", some);
-            if (subscribed) {
-                setSessions(client.session.values);
-            }
-        });
-        return () => {
-            subscribed = false;
-        };
-    }, [client, client?.session]);
 
     if (createCapTableVP) {
         return <Text>{JSON.stringify(createCapTableVP)}</Text>;

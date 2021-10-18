@@ -1,10 +1,6 @@
 /* eslint-disable no-undef */
-import {
-    APP_ENV,
-    BANKID_CLIENT_ID,
-    BROK_HELPERS_VERIFIER,
-    IS_TEST,
-} from "@env";
+import { APP_ENV, IS_TEST } from "@env";
+import { JsonRpcRequest } from "@json-rpc-tools/types";
 import {
     IDataStore,
     IDIDManager,
@@ -25,22 +21,14 @@ import {
 import Client from "@walletconnect/client";
 import { SessionTypes } from "@walletconnect/types";
 import { ethers } from "ethers";
-import React, {
-    createContext,
-    SetStateAction,
-    useContext,
-    useEffect,
-    useState,
-} from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import {
     DEFAULT_MAIN_CHAINS,
     DEFAULT_RPC_PROVIDER_MAIN,
     DEFAULT_RPC_PROVIDER_TEST,
     DEFAULT_TEST_CHAINS,
 } from "./constants/default";
-import useInterval from "./hooks/useInterval";
 import { JwtPayload } from "./types/JwtPayload";
-import { CreateCapTableVPRequest } from "./types/createCapTableVPTypes";
 import { VerifyOptions } from "./types/VerifyOptions";
 import { useVeramo } from "./utils/useVeramo";
 import { useWalletconnect } from "./utils/useWalletconnect";
@@ -64,17 +52,9 @@ export interface IContext {
     chains: string[];
     accounts: string[];
     client: Client | undefined;
-    proposals: SessionTypes.Proposal[];
-    setProposals: Dispatch<SessionTypes.Proposal[]>;
     requests: SessionTypes.RequestEvent[];
     setRequests: Dispatch<SessionTypes.RequestEvent[]>;
     closeSession: (topic: string) => Promise<void>;
-    onApprove: (
-        event: SessionTypes.RequestEvent | SessionTypes.Proposal
-    ) => Promise<void>;
-    onReject: (
-        event: SessionTypes.RequestEvent | SessionTypes.Proposal
-    ) => Promise<void>;
     selectedChain: string;
     provider: ethers.providers.Provider;
     identity?: IIdentifier;
@@ -105,9 +85,10 @@ export interface IContext {
         capTableTermsOfUseVC: TermsOfUseVC,
         nationalIdentityVC: NationalIdentityVC
     ) => Promise<CreateCapTableVP>;
-    setOnRequestVP: Dispatch<
-        SetStateAction<(request: CreateCapTableVPRequest | undefined) => void>
-    >;
+    setOnRequest: (
+        method: string,
+        handler: (request: JsonRpcRequest<any>) => void
+    ) => void;
 }
 
 export const Context = createContext<IContext>(undefined!);
@@ -135,9 +116,7 @@ export const ContextProvider = (props: any) => {
             })
     );
     const veramo = useVeramo(selectedChain);
-    const [hasTrustedIdentity, setHasTrustedIdentity] =
-        useState<boolean>(false);
-    const walletconnect = useWalletconnect(chains, veramo, hasTrustedIdentity);
+    const walletconnect = useWalletconnect(chains);
 
     // Loading
     useEffect(() => {
@@ -189,49 +168,6 @@ export const ContextProvider = (props: any) => {
     //     };
     // }, [veramo, veramo.accounts]);
 
-    useInterval(() => {
-        let subscribed = true;
-        const doAsync = async () => {
-            if (veramo.accounts.length > 0) {
-                const address = veramo.accounts[0].split(":").pop();
-                if (address) {
-                    const vc = await veramo
-                        .findVC({
-                            where: [
-                                {
-                                    column: "issuer",
-                                    value: [BROK_HELPERS_VERIFIER],
-                                },
-                                // {
-                                //     column: "subject",
-                                //     value: [veramo.identity?.did],
-                                // },
-                            ],
-                        })
-                        .catch((err) => {
-                            console.error(err.message);
-                            throw err;
-                        });
-                    const hasRegistered = vc.find((vc) => {
-                        // console.log(vc.verifiableCredential.credentialSubject);
-                        return (
-                            "brregRegistered" in
-                            vc.verifiableCredential.credentialSubject
-                        );
-                    });
-                    console.info("hasTrustedIdentity", !!hasRegistered);
-                    if (subscribed) {
-                        setHasTrustedIdentity(!!hasRegistered);
-                    }
-                }
-            }
-        };
-        doAsync();
-        return () => {
-            subscribed = false;
-        };
-    }, 3000);
-
     // Make the context object:
     const context: IContext = {
         isTest,
@@ -239,7 +175,6 @@ export const ContextProvider = (props: any) => {
         chains,
         provider,
         selectedChain,
-        hasTrustedIdentity,
         ...walletconnect,
         ...veramo,
     };

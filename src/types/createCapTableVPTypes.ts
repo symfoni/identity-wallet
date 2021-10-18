@@ -40,9 +40,9 @@ export type CreateCapTableVPError = JsonRpcError;
 
 type CreateCapTableVPParams = {
     verifier: string;
+    capTableForm: CapTableForm;
     nationalIdentityVC?: NationalIdentityVC;
     capTableTermsOfUseVC?: TermsOfUseVC;
-    capTableForm: CapTableForm;
 };
 
 type CreateCapTableVPResult = {

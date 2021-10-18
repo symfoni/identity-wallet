@@ -1,18 +1,9 @@
 /* eslint-disable no-undef */
-import { BROK_HELPERS_VERIFIER } from "@env";
-import {
-    formatJsonRpcError,
-    formatJsonRpcResult,
-    JsonRpcError,
-    JsonRpcResponse,
-} from "@json-rpc-tools/utils";
+import { JsonRpcRequest } from "@json-rpc-tools/types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useNavigation } from "@react-navigation/native";
 import Client, { CLIENT_EVENTS } from "@walletconnect/client";
 import { SessionTypes } from "@walletconnect/types";
-import { normalizePresentation } from "did-jwt-vc";
 import { useCallback, useEffect, useState } from "react";
-import { requestBoardDirectorVerifiableCredential } from "../domain/brok-helpers";
 import { CreateCapTableVPRequest } from "../types/createCapTableVPTypes";
 
 import {
@@ -20,21 +11,26 @@ import {
     DEFAULT_EIP155_METHODS,
     DEFAULT_RELAY_PROVIDER,
 } from "./../constants/default";
-import { useVeramoInterface } from "./useVeramo";
 
-export const useWalletconnect = (
-    supportedChains: string[],
-    veramo: useVeramoInterface,
-    hasTrustedIdentity: boolean
-) => {
+type OnRequestMap = Map<string, (request: JsonRpcRequest<any>) => void>;
+
+export const useWalletconnect = (supportedChains: string[]) => {
     const [client, setClient] = useState<Client | undefined>(undefined);
-    const [proposals, setProposals] = useState<SessionTypes.Proposal[]>([]);
-    const [requests, setRequests] = useState<SessionTypes.RequestEvent[]>([]);
 
-    // Event-listeners
-    const [onRequestVP, setOnRequestVP] = useState<
-        (params: CreateCapTableVPRequest) => void
-    >(() => {});
+    // On request listeners
+    const [onRequestMap, _setOnRequestMap] = useState<OnRequestMap>(new Map());
+
+    const setOnRequest = (
+        method: string,
+        handler: (request: JsonRpcRequest<any>) => void
+    ) => {
+        _setOnRequestMap((current: OnRequestMap) => {
+            const next = new Map(current);
+            next.set(method, handler);
+
+            return next;
+        });
+    };
 
     // Init Walletconnect client
     useEffect(() => {
@@ -62,19 +58,8 @@ export const useWalletconnect = (
         };
     }, []);
 
-    // Navigate modal if you have requests or proposals
-    // useEffect(() => {
-    //     if (requests.length > 0) {
-    //         navigate("Modal");
-    //     }
-    //     if (proposals.length > 0) {
-    //         navigate("Modal");
-    //     }
-    // }, [requests, proposals]);
-
     const pair = async (uri: string) => {
         console.log(`pair(): Uri: ${uri}`);
-        console.log(`Has trusted identity: ${hasTrustedIdentity}`);
         const pairResult = await client?.pair({ uri: uri });
         console.log("pari", pairResult);
         console.log("PairResult", pairResult);
@@ -82,10 +67,23 @@ export const useWalletconnect = (
 
     const handleRequest = useCallback(
         (_requestEvent: SessionTypes.RequestEvent) => {
-            // TODO - JONAS - Pass this to home, add request.
-            console.log("Received REQUEST: ", _requestEvent.request.params);
-            setRequests((old) => [...old, _requestEvent]);
+            const onRequest = onRequestMap.get(_requestEvent.request.method);
+
+            if (!onRequest) {
+                console.warn(
+                    "useWalletConnect.ts: Unhandled JsonRPC: _requestEvent.request.method: ",
+                    _requestEvent.request.method
+                );
+                return;
+            }
+
+            console.info(
+                "useWalletConnect.ts: Handling JsonRPC: _requestEvent.request.method: ",
+                _requestEvent.request.method
+            );
+            onRequest(_requestEvent.request);
         },
+        // eslint-disable-next-line react-hooks/exhaustive-deps
         []
     );
 
@@ -115,7 +113,6 @@ export const useWalletconnect = (
             if (unsupportedMethods.length) {
                 return client.reject({ proposal: _proposal });
             }
-            setProposals((old) => [...old, _proposal]);
         },
         [supportedChains, client]
     );
@@ -133,7 +130,7 @@ export const useWalletconnect = (
         });
     };
 
-    // Subscribe Walletconnect
+    // Subscribe / Unsubscribe Walletconnect
     useEffect(() => {
         const subscribeClient = async () => {
             try {
@@ -168,12 +165,8 @@ export const useWalletconnect = (
 
     return {
         client,
-        proposals,
-        requests,
         closeSession,
-        setProposals,
-        setRequests,
         pair,
-        setOnRequestVP,
+        setOnRequest,
     };
 };
