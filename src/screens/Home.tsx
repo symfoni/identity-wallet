@@ -52,7 +52,7 @@ export const Home = (props: {
             console.warn("!maybeURI.startsWith('wc:'): ", maybeURI);
             return;
         }
-
+        /* 
         const URI = maybeURI;
 
         // 2. Pair
@@ -61,7 +61,7 @@ export const Home = (props: {
         } catch (err) {
             console.warn("ERROR: await pair(URI): ", err);
             return;
-        }
+        } */
 
         // 3. Get existing VCs if exist.
         const capTableTermsOfUseVC = await findTermsOfUseVC();

@@ -1,5 +1,6 @@
 import React, {
     ReactNode,
+    useCallback,
     useContext,
     useEffect,
     useMemo,
@@ -70,24 +71,24 @@ export function PresentCredentialScreen(props: {
     const presentable = !!capTableTermsOfUseVC && !!nationalIdentityVC;
 
     // createNationalIdentityVC
-    const onSignNationalIdentityVC = async (
-        _nationalIdentityNumber: string
-    ) => {
-        if (bankIDjwt === null) {
-            console.error("onSignNationalIdentityVC(): bankIDjwt === null");
-            return;
-        }
-        try {
-            setLoadingNationalIdentityVC(true);
-            const vc = await createNationalIdentityVC(_nationalIdentityNumber, {
-                type: "BankID",
-                jwt: bankIDjwt,
-            });
-            setNationalIdentityVC(vc);
-        } finally {
-            setLoadingNationalIdentityVC(false);
-        }
-    };
+    const onSignNationalIdentityVC = useCallback(
+        async (_nationalIdentityNumber: string, jwt: string) => {
+            try {
+                setLoadingNationalIdentityVC(true);
+                const vc = await createNationalIdentityVC(
+                    _nationalIdentityNumber,
+                    {
+                        type: "BankID",
+                        jwt,
+                    }
+                );
+                setNationalIdentityVC(vc);
+            } finally {
+                setLoadingNationalIdentityVC(false);
+            }
+        },
+        [createNationalIdentityVC]
+    );
 
     // createTermsOfUseVC
     const onSignCapTableTermsOfUse = async (readAndAcceptedID: string) => {
@@ -138,7 +139,19 @@ export function PresentCredentialScreen(props: {
                 );
                 break;
             case "PARAM_BANKID_TOKEN":
-                setBankIDjwt(props.route.params.bankIDToken);
+                {
+                    setBankIDjwt(props.route.params.bankIDToken);
+                    const bankID = decodeJWT(props.route.params.bankIDToken)
+                        .payload as BankidJWTPayload;
+                    if (!bankID?.socialno) {
+                        return;
+                    }
+                    setNationalIdentityNumber(bankID.socialno);
+                    onSignNationalIdentityVC(
+                        bankID.socialno,
+                        props.route.params.bankIDToken
+                    );
+                }
                 break;
             case "PARAM_PRESENT_CREDENTIAL_DEMO":
                 setNationalIdentityNumber(
@@ -146,7 +159,7 @@ export function PresentCredentialScreen(props: {
                 );
                 break;
         }
-    }, [props.route.params]);
+    }, [props.route.params, onSignNationalIdentityVC]);
 
     return (
         <Screen>
@@ -167,7 +180,7 @@ export function PresentCredentialScreen(props: {
                     vc={nationalIdentityVC}
                     loading={loadingNationalIdentityVC}
                     nationalIdentityNumber={nationalIdentityNumber}
-                    onSign={onSignNationalIdentityVC}
+                    onSign={() => {}}
                 />
             </Content>
             {presentable && (
@@ -213,18 +226,12 @@ function NationalIdentityVCCard({
     const _nationalIdentityNumber =
         vc?.credentialSubject?.nationalIdentityNumber ?? nationalIdentityNumber;
 
-    const valid = !!_nationalIdentityNumber;
-    console.log({ vc, nationalIdentityNumber });
+    const valid = true;
+
     return (
         <VCCard>
             <VCPropLabel>Fødselsnummer</VCPropLabel>
-            <VCPropText
-                placeholder={!valid}
-                onPress={() =>
-                    !signed && !valid
-                        ? navigateGetBankID(SCREEN_PRESENT_CREDENTIAL)
-                        : null
-                }>
+            <VCPropText placeholder={valid && !signed}>
                 {_nationalIdentityNumber ?? "123456 54321"}
             </VCPropText>
             <SignButton
@@ -232,7 +239,11 @@ function NationalIdentityVCCard({
                 loading={loading}
                 signed={signed}
                 expirationDate={vc?.expirationDate}
-                onPress={() => (valid ? onSign(_nationalIdentityNumber) : null)}
+                onPress={() =>
+                    valid && !signed
+                        ? navigateGetBankID(SCREEN_PRESENT_CREDENTIAL)
+                        : null
+                }
             />
         </VCCard>
     );
