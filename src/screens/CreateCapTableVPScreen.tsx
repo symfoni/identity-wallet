@@ -24,7 +24,7 @@ import { NationalIdentityVC } from "../verifiableCredentials/NationalIdentityVC"
 import { BROK_HELPERS_VERIFIER } from "@env";
 import { CreateCapTableVPRequest } from "../types/createCapTableVPTypes";
 
-export function PresentCredentialScreen(props: {
+export function CreateCapTableVPScreen(props: {
     route: {
         params?:
             | ParamBankIDToken

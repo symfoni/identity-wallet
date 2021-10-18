@@ -8,7 +8,7 @@ import { Context } from "./context";
 import {
     SCREEN_BANKID,
     SCREEN_DEMO,
-    SCREEN_PRESENT_CREDENTIAL,
+    SCREEN_CREATE_CAP_TABLE_VP,
     SCREEN_GET_BANKID,
     NAVIGATOR_TABS,
     SCREEN_HOME,
@@ -18,8 +18,7 @@ import { DemoScreen } from "./screens/DemoScreen";
 import { Home } from "./screens/Home";
 import { Identity } from "./screens/Identity";
 import { ProfileNavigation } from "./screens/Profile/ProfileNavigation";
-import RequestAndProposalHandler from "./screens/RequestAndProposalHandler";
-import { PresentCredentialScreen } from "./screens/PresentCredentialScreen";
+import { CreateCapTableVPScreen } from "./screens/CreateCapTableVPScreen";
 import { GetBankIDScreen } from "./screens/GetBankIDScreen";
 
 const Stack = createNativeStackNavigator();
@@ -115,13 +114,8 @@ export const Navigation = () => {
                 options={{ title: "BankID" }}
             />
             <Stack.Screen
-                name="Modal"
-                component={RequestAndProposalHandler}
-                options={{ headerShown: false }}
-            />
-            <Stack.Screen
-                name={SCREEN_PRESENT_CREDENTIAL}
-                component={PresentCredentialScreen}
+                name={SCREEN_CREATE_CAP_TABLE_VP}
+                component={CreateCapTableVPScreen}
                 options={{
                     title: "Vis legitimasjon",
                     headerLargeTitle: true,

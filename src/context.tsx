@@ -40,7 +40,7 @@ import {
 } from "./constants/default";
 import useInterval from "./hooks/useInterval";
 import { JwtPayload } from "./types/JwtPayload";
-import { CreateCapTableVPRequest } from "./types/requestTypes";
+import { CreateCapTableVPRequest } from "./types/createCapTableVPTypes";
 import { VerifyOptions } from "./types/VerifyOptions";
 import { useVeramo } from "./utils/useVeramo";
 import { useWalletconnect } from "./utils/useWalletconnect";

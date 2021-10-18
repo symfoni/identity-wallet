@@ -3,18 +3,18 @@ import { Button } from "react-native";
 import { useSymfoniContext } from "../context";
 import { SCREEN_DEMO, useLocalNavigation } from "../hooks/useLocalNavigation";
 import { ParamPresentCredentialDemo } from "../types/paramTypes";
-import { CreateCapTableVPRequest } from "../types/requestTypes";
+import { CreateCapTableVPRequest } from "../types/createCapTableVPTypes";
 
 export function DemoScreen() {
     const { findTermsOfUseVC, findNationalIdentityVC } = useSymfoniContext();
-    const { navigatePresentCredential, navigateGetBankID } =
+    const { navigateCreateCapTableVP, navigateGetBankID } =
         useLocalNavigation();
 
     return (
         <>
             <Button
                 title="Demo: Lag ny legitimasjon"
-                onPress={() => navigatePresentCredential()}
+                onPress={() => navigateCreateCapTableVP()}
             />
             <Button
                 title="Demo: Bruk eksisterende legitimasjon dersom finnes"
@@ -22,7 +22,7 @@ export function DemoScreen() {
                     const capTableTermsOfUseVC = await findTermsOfUseVC();
                     const nationalIdentityVC = await findNationalIdentityVC();
 
-                    navigatePresentCredential({
+                    navigateCreateCapTableVP({
                         type: "CREATE_CAP_TABLE_VP_REQUEST",
                         params: {
                             nationalIdentityVC,
@@ -34,7 +34,7 @@ export function DemoScreen() {
             <Button
                 title="Demo: Vis legitimasjon med demodata"
                 onPress={() =>
-                    navigatePresentCredential({
+                    navigateCreateCapTableVP({
                         type: "PARAM_PRESENT_CREDENTIAL_DEMO",
                         demoBankIDPersonnummer: "120391 12345",
                         demoEmail: "jonas@symfoni.solutions",

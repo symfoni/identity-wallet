@@ -16,11 +16,12 @@ import { useLocalNavigation } from "../hooks/useLocalNavigation";
 import {
     CreateCapTableVPResponse,
     CreateCapTableVPRequest,
-} from "../types/requestTypes";
+    CreateCapTableVPError,
+} from "../types/createCapTableVPTypes";
 import { CreateCapTableVP } from "../verifiablePresentations/CreateCapTableVP";
 
 export const Home = (props: {
-    route: { params?: CreateCapTableVPResponse };
+    route: { params?: CreateCapTableVPResponse | CreateCapTableVPError };
 }) => {
     const {
         pair,
@@ -34,7 +35,7 @@ export const Home = (props: {
     const styles = makeStyles(colors);
     const [sessions, setSessions] = useState<SessionTypes.Settled[]>([]);
     const activeSessions = client?.session.values.length;
-    const { navigatePresentCredential } = useLocalNavigation();
+    const { navigateCreateCapTableVP } = useLocalNavigation();
 
     const [createCapTableVP, setCreateCapTableVP] =
         useState<CreateCapTableVP | null>(null);
@@ -74,7 +75,7 @@ export const Home = (props: {
         //     },
         // } as CreateCapTableVPRequest;
 
-        // navigatePresentCredential(request);
+        // navigateCreateCapTableVP(request);
     }
 
     // UseEffect() - On requests
@@ -95,8 +96,8 @@ export const Home = (props: {
                                 ..._request.params,
                             },
                         };
-                        console.log("navigatePresentCredential", request);
-                        navigatePresentCredential(request);
+                        console.log("navigateCreateCapTableVP", request);
+                        navigateCreateCapTableVP(request);
                         break;
                 }
             }
