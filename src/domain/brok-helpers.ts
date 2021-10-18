@@ -1,16 +1,25 @@
-import { BROK_HELPERS_URL, USE_LOCAL_ENVIROMENT, USE_TEST_DATA } from "@env";
+import {
+    BROK_HELPERS_URL,
+    USE_LOCAL_ENVIROMENT,
+    USE_TEST_DATA,
+    IS_TEST,
+} from "@env";
 import { VerifiablePresentation } from "@veramo/core";
 import axios, { AxiosResponse } from "axios";
 
-export const registerWithBankId = (
-    vp: VerifiablePresentation
-): Promise<AxiosResponse<string>> => {
-    const url = false ? "http://localhost:3004" : BROK_HELPERS_URL;
+export const registerWithBankId = (vp: VerifiablePresentation) => {
+    const url = USE_LOCAL_ENVIROMENT
+        ? "http://localhost:3004"
+        : BROK_HELPERS_URL;
     console.log(url);
-    return axios.post<string>(`${url}/brreg/entity/register`, {
+    return axios.post<{
+        messages: string[];
+        jwt: string;
+    }>(`${url}/entities`, {
         jwt: vp.proof.jwt,
-        skipBlockchain: USE_TEST_DATA ? true : false,
-        skipBankidVerify: USE_TEST_DATA ? true : false,
+        skipBlockchain: false,
+        skipIdentityProofVerify: USE_TEST_DATA ? true : false,
+        skipDigitalEntityCheck: IS_TEST ? true : false,
     });
 };
 

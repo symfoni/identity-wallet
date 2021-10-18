@@ -213,6 +213,7 @@ export const ContextProvider = (props: any) => {
                             throw err;
                         });
                     const hasRegistered = vc.find((vc) => {
+                        // console.log(vc.verifiableCredential.credentialSubject);
                         return (
                             "brregRegistered" in
                             vc.verifiableCredential.credentialSubject

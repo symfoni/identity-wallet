@@ -63,8 +63,8 @@ export const BankId = () => {
     const registerInForvaltAndSaveVP = (vp: VerifiablePresentation) => {
         registerWithBankId(vp)
             .then(async (result) => {
-                console.log("RESULT register vp", result);
-                await saveVP(result.data);
+                console.log("RESULT registerWithBankId", result.data.messages);
+                await saveVP(result.data.jwt);
                 const sleep = new Promise((resolve) => {
                     setTimeout(() => resolve(true), 2000);
                 });
@@ -98,12 +98,11 @@ export const BankId = () => {
             }
             setLoading(true);
             const vc = await createVC({
-                email: email,
-                streetAddress: streetAddress,
-                postalCode: postcode,
+                acceptedTOADate: "2021-09-30T03:38Z",
+                acceptedTOAVersion: "0.0.1",
                 identityProof: bankidToken,
             });
-
+            console.log("BROK_HELPERS_VERIFIER", BROK_HELPERS_VERIFIER);
             const vp = await createVP(BROK_HELPERS_VERIFIER, [vc.proof.jwt]);
             console.log("vp");
             console.log(vp);

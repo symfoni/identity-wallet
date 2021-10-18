@@ -33,7 +33,7 @@
     "@veramo/kms-local": "^2.1.1",
     "@veramo/message-handler": "^2.1.0",
     "@veramo/selective-disclosure": "^2.1.0",
-    "@walletconnect/client": "^2.0.0-beta.18.2",
+    "@walletconnect/client": "^2.0.0-beta.18.3",
     "@zxing/text-encoding": "^0.9.0",
     "axios": "^0.21.1",
     "babel-plugin-inline-import": "^3.0.0",
