@@ -13,7 +13,7 @@ import { SessionTypes } from "@walletconnect/types";
 import { normalizePresentation } from "did-jwt-vc";
 import { useCallback, useEffect, useState } from "react";
 import { requestBoardDirectorVerifiableCredential } from "../domain/brok-helpers";
-import { CreateCapTableVPRequest } from "../types/paramTypes";
+import { CreateCapTableVPRequest } from "../types/requestTypes";
 
 import {
     DEFAULT_APP_METADATA,
@@ -64,14 +64,14 @@ export const useWalletconnect = (
     }, []);
 
     // Navigate modal if you have requests or proposals
-    useEffect(() => {
-        if (requests.length > 0) {
-            navigate("Modal");
-        }
-        if (proposals.length > 0) {
-            navigate("Modal");
-        }
-    }, [requests, proposals]);
+    // useEffect(() => {
+    //     if (requests.length > 0) {
+    //         navigate("Modal");
+    //     }
+    //     if (proposals.length > 0) {
+    //         navigate("Modal");
+    //     }
+    // }, [requests, proposals]);
 
     const pair = async (uri: string) => {
         console.log(`pair(): Uri: ${uri}`);
@@ -83,6 +83,7 @@ export const useWalletconnect = (
 
     const handleRequest = useCallback(
         (_requestEvent: SessionTypes.RequestEvent) => {
+            // TODO - JONAS - Pass this to home, add request.
             console.log("Received REQUEST: ", _requestEvent.request.params);
             setRequests((old) => [...old, _requestEvent]);
         },

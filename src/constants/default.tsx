@@ -26,6 +26,7 @@ export const DEFAULT_EIP155_METHODS = [
     "did_createVerifiableCredential",
     "did_requestVerifiableCredential",
     "symfoni_privateTransferByPartition",
+    "did_requestVerifiablePresentation",
 ];
 
 export const DEFAULT_LOGGER = "debug";

@@ -41,7 +41,6 @@ export const Home = (props: {
 
     async function onScanQR(maybeURI: any) {
         console.log("onRead", maybeURI);
-        maybeURI = "wc:hei";
 
         // 1. Validate URI
         if (typeof maybeURI !== "string") {
@@ -52,7 +51,7 @@ export const Home = (props: {
             console.warn("!maybeURI.startsWith('wc:'): ", maybeURI);
             return;
         }
-        /* 
+
         const URI = maybeURI;
 
         // 2. Pair
@@ -61,33 +60,49 @@ export const Home = (props: {
         } catch (err) {
             console.warn("ERROR: await pair(URI): ", err);
             return;
-        } */
+        }
 
         // 3. Get existing VCs if exist.
-        const capTableTermsOfUseVC = await findTermsOfUseVC();
-        const nationalIdentityVC = await findNationalIdentityVC();
+        // const capTableTermsOfUseVC = await findTermsOfUseVC();
+        // const nationalIdentityVC = await findNationalIdentityVC();
 
-        const request = {
-            type: "CREATE_CAP_TABLE_VP_REQUEST",
-            params: {
-                nationalIdentityVC,
-                capTableTermsOfUseVC,
-            },
-        } as CreateCapTableVPRequest;
+        // const request = {
+        //     type: "CREATE_CAP_TABLE_VP_REQUEST",
+        //     params: {
+        //         nationalIdentityVC,
+        //         capTableTermsOfUseVC,
+        //     },
+        // } as CreateCapTableVPRequest;
 
-        navigatePresentCredential(request);
+        // navigatePresentCredential(request);
     }
 
     // UseEffect() - On requests
     useEffect(() => {
-        setOnRequestVP((request: CreateCapTableVPRequest | undefined) => {
-            switch (request?.type) {
-                case "CREATE_CAP_TABLE_VP_REQUEST":
-                    navigatePresentCredential(request);
-                    break;
+        setOnRequestVP(
+            async (_request: CreateCapTableVPRequest | undefined) => {
+                switch (_request?.type) {
+                    case "CREATE_CAP_TABLE_VP_REQUEST":
+                        // Get existing VCs if exist.
+                        const capTableTermsOfUseVC = await findTermsOfUseVC();
+                        const nationalIdentityVC =
+                            await findNationalIdentityVC();
+                        const request: CreateCapTableVPRequest = {
+                            ..._request,
+                            params: {
+                                capTableTermsOfUseVC,
+                                nationalIdentityVC,
+                                ..._request.params,
+                            },
+                        };
+                        console.log("navigatePresentCredential", request);
+                        navigatePresentCredential(request);
+                        break;
+                }
             }
-        });
-    }, [setOnRequestVP, navigatePresentCredential]);
+        );
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     // UseEffect() - On responses
     useEffect(() => {
@@ -96,9 +111,17 @@ export const Home = (props: {
         });
         switch (props.route.params?.type) {
             case "CREATE_CAP_TABLE_VP_RESPONSE":
+                sendVP(request, props.route.params.createCapTableVP);
+
                 setCreateCapTableVP(
                     props.route.params.payload.createCapTableVP
                 );
+                break;
+
+            case "CREATE_CAP_TABLE_VP_ERROR":
+                {
+                    // Handle error
+                }
                 break;
         }
     }, [props.route.params]);

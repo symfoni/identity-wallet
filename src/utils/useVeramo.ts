@@ -391,6 +391,7 @@ export const useVeramo = (chainId: string) => {
                 },
             ],
         });
+        // TODO - Handle picking the most recent or ??? credential
 
         return res[0].verifiableCredential;
     };
@@ -404,7 +405,7 @@ export const useVeramo = (chainId: string) => {
                 },
             ],
         });
-
+        // TODO - Handle picking the most recent or ??? credential
         return res[0].verifiableCredential;
     };
 
