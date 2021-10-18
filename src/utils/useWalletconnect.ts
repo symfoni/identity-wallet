@@ -18,7 +18,7 @@ export type RequestMethod =
     | "symfoniID_createCapTableVPRequest" 
     | "symfoniID_createOtherVPRequest";
 
-type RequestMap = Map<
+type RequestResolverMap = Map<
     RequestMethod,
     (event: SessionTypes.RequestEvent) => void
 >;
@@ -27,11 +27,11 @@ export const useWalletconnect = (supportedChains: string[]) => {
     const [client, setClient] = useState<Client | undefined>(undefined);
 
     // Handle requests
-    const [requestMap, setRequestMap] = useState<RequestMap>(new Map());
+    const [requestResolvers, setRequestResolvers] = useState<RequestResolverMap>(new Map());
 
     const getRequestEvent = (method: RequestMethod) => {
         return new Promise<SessionTypes.RequestEvent>((resolve) => {
-            setRequestMap((current: RequestMap) => {
+            setRequestResolvers((current: RequestResolverMap) => {
                 const next = new Map(current);
                 next.set(method, resolve);
                 return next;
@@ -41,7 +41,7 @@ export const useWalletconnect = (supportedChains: string[]) => {
 
     const handleRequest = (event: SessionTypes.RequestEvent) => {
         console.info("useWalletConnect.ts: handleRequest(): ", event.request.method);
-        requestMap.get(event.request.method as RequestMethod)?.(event);
+        requestResolvers.get(event.request.method as RequestMethod)?.(event);
     };
 
     // Init Walletconnect client

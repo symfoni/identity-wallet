@@ -10,10 +10,10 @@ export function useNavigationWithResult<Result>(result?: JsonRpcResult<Result>) 
 
     const [resultMap, setResultMap] = useState<Map<number, (result: JsonRpcResult<Result>) => void>>(new Map);
 
-    const getNavigationResultFrom = <Param>(screen: "CreateCapTableVPScreen", request: JsonRpcRequest<Param>) => {
-        navigation.navigate(screen, request);
-
-        console.info(`useNavigationResult(): Navigating to screen: ${screen} with request.id: ${request.id}`);
+    const getNavigationResultFrom = <Param>(from: string, request: JsonRpcRequest<Param>) => {
+        navigation.navigate(from, request);
+        
+        console.info(`useNavigationResult(): Navigating to screen: ${from} with request.id: ${request.id}`);
         return new Promise<JsonRpcResult<Result>>(resolve => {
             setResultMap(current => {
                 const next = new Map(current);

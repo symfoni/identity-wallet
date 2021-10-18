@@ -12,12 +12,8 @@ import useAsyncEffect from "use-async-effect/types";
 import { ColorContext, ColorSystem } from "../colorContext";
 import { Scanner } from "../components/scanner";
 import { useSymfoniContext } from "../context";
-import { useLocalNavigation } from "../hooks/useLocalNavigation";
-import { useNavigationWithResult } from "../hooks/useNavigationWithResult";
-import {
-    CreateCapTableVPParams,
-    CreateCapTableVPResult,
-} from "../types/createCapTableVPTypes";
+import { SCREEN_CREATE_CAP_TABLE_VP, useNavigationWithResult } from "../hooks/useNavigationWithResult";
+import { CreateCapTableVPResult } from "../types/createCapTableVPTypes";
 import { CreateCapTableVP } from "../verifiablePresentations/CreateCapTableVP";
 
 export const Home = (props: { route: { params?: JsonRpcResult<CreateCapTableVPResult> } }) => {
@@ -69,7 +65,7 @@ export const Home = (props: { route: { params?: JsonRpcResult<CreateCapTableVPRe
         request.params.capTableTermsOfUseVC = await findTermsOfUseVC();
         request.params.nationalIdentityVC = await findNationalIdentityVC() 
 
-        const result = await getNavigationResultFrom("CreateCapTableVPScreen", request);
+        const result = await getNavigationResultFrom(SCREEN_CREATE_CAP_TABLE_VP, request);
 
         setCreateCapTableVP(result.result.createCapTableVP);
         sendResponse(topic, result);
