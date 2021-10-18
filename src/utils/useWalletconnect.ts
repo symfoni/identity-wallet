@@ -5,7 +5,7 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Client, { CLIENT_EVENTS } from "@walletconnect/client";
 import { SessionTypes } from "@walletconnect/types";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import {
     DEFAULT_APP_METADATA,
@@ -18,30 +18,24 @@ export type RequestMethod =
     | "symfoniID_createCapTableVPRequest" 
     | "symfoniID_createOtherVPRequest";
 
-type RequestResolverMap = Map<
-    RequestMethod,
-    (event: SessionTypes.RequestEvent) => void
->;
-
 export const useWalletconnect = (supportedChains: string[]) => {
     const [client, setClient] = useState<Client | undefined>(undefined);
 
     // Handle requests
-    const [requestResolvers, setRequestResolvers] = useState<RequestResolverMap>(new Map());
+    const requestResolvers = useRef(new Map<
+        RequestMethod,
+        (event: SessionTypes.RequestEvent) => void
+    >());
 
     const getRequestEvent = (method: RequestMethod) => {
         return new Promise<SessionTypes.RequestEvent>((resolve) => {
-            setRequestResolvers((current: RequestResolverMap) => {
-                const next = new Map(current);
-                next.set(method, resolve);
-                return next;
-            });
+            requestResolvers.current.set(method, resolve);
         })
     }
 
     const handleRequest = (event: SessionTypes.RequestEvent) => {
         console.info("useWalletConnect.ts: handleRequest(): ", event.request.method);
-        requestResolvers.get(event.request.method as RequestMethod)?.(event);
+        requestResolvers.current.get(event.request.method as RequestMethod)?.(event);
     };
 
     // Init Walletconnect client
