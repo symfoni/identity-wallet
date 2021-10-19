@@ -76,7 +76,14 @@ export const Home = (props: {
         );
 
         console.log({ result });
-        sendResponse(topic, result);
+        result.result.createCapTableVP;
+        sendResponse(topic, {
+            ...result,
+            result: {
+                ...result.result,
+                createCapTableVP: result.result.createCapTableVP.proof.jwt,
+            },
+        });
     }, []);
 
     return (

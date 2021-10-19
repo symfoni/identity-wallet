@@ -392,7 +392,9 @@ export const useVeramo = (chainId: string) => {
             ],
         });
         // TODO - Handle picking the most recent or ??? credential
-
+        if (res.length === 0) {
+            return undefined;
+        }
         return res[0].verifiableCredential;
     };
 
@@ -405,7 +407,11 @@ export const useVeramo = (chainId: string) => {
                 },
             ],
         });
+        console.log("findTermsOfUseVC", res);
         // TODO - Handle picking the most recent or ??? credential
+        if (res.length === 0) {
+            return undefined;
+        }
         return res[0].verifiableCredential;
     };
 
