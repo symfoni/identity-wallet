@@ -47,8 +47,7 @@ export const Home = (props: {
             console.warn("!maybeURI.startsWith('wc:'): ", maybeURI);
             return;
         }
-        maybeURI =
-            "wc:4111c63043b3395d0b21e7b4a70b4fa49aa9f605a0a4b035f11faf6385f70e20@2?controller=false&publicKey=94dff31c721ef7bebad5bd6bc3bc64c2abd23887f55adb113d371159be640512&relay=%7B%22protocol%22%3A%22waku%22%7D";
+
         const URI = maybeURI;
 
         // 2. Pair
