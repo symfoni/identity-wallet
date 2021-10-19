@@ -50,55 +50,78 @@ export function CreateCapTableVPScreen(props: {
     const [nationalIdentityNumber, setNationalIdentityNumber] = useState<
         string | null
     >(null);
+
+    const [request, setRequest] = useState<
+        JsonRpcRequest<CreateCapTableVPParams> | undefined
+    >(undefined);
+
+    // Loading
     const [presentLoading, setPresentLoading] = useState(false);
-
-    const [capTable, setCapTable] = useState<CapTable | undefined>(undefined);
-    const [verifier, setVerifier] = useState<string | undefined>(undefined);
-
-    // TermsOfUseVC
-    const [capTableTermsOfUseVC, setCapTableTermsOfUseVC] =
-        useState<TermsOfUseVC | null>(null);
     const [loadingSigningTermsOfUseVC, setLoadingTermsOfUseVC] =
         useState(false);
-
-    // NationalIdentityVC
-    const [nationalIdentityVC, setNationalIdentityVC] =
-        useState<NationalIdentityVC | null>(null);
     const [loadingNationalIdentityVC, setLoadingNationalIdentityVC] =
         useState(false);
 
-    const presentable = !!capTableTermsOfUseVC && !!nationalIdentityVC;
+    const presentable =
+        !!request?.params.capTableTermsOfUseVC &&
+        !!request?.params.nationalIdentityVC;
 
     // createNationalIdentityVC
     const onSignNationalIdentityVC = useCallback(async () => {
-        const request = makeBankIDRequest({
+        if (!request) {
+            console.error("CreateCapTableVPScreen.tsx: !request");
+            return;
+        }
+
+        const bankIDRequest = makeBankIDRequest({
             resultScreen: SCREEN_CREATE_CAP_TABLE_VP,
         });
 
-        const result = await navigateWithResult(SCREEN_BANKID, request);
+        const result = await navigateWithResult(SCREEN_BANKID, bankIDRequest);
 
         const bankID = decodeJWT(result.result.bankIDToken)
             .payload as BankidJWTPayload;
+        setLoadingNationalIdentityVC(true);
+
         try {
-            setLoadingNationalIdentityVC(true);
-            const vc = await createNationalIdentityVC(bankID.socialno, {
-                type: "BankID",
-                jwt: result.result.bankIDToken,
+            const nationalIdentityVC = await createNationalIdentityVC(
+                bankID.socialno,
+                {
+                    type: "BankID",
+                    jwt: result.result.bankIDToken,
+                }
+            );
+            setRequest({
+                ...request,
+                params: {
+                    ...request.params,
+                    nationalIdentityVC,
+                },
             });
-            setNationalIdentityVC(vc);
         } finally {
             setLoadingNationalIdentityVC(false);
         }
-    }, [createNationalIdentityVC, navigateWithResult]);
+    }, [request, createNationalIdentityVC, navigateWithResult]);
 
     // createTermsOfUseVC
     const onSignCapTableTermsOfUse = async (readAndAcceptedID: string) => {
+        if (!request) {
+            console.error("CreateCapTableVPScreen.tsx: !request");
+            return;
+        }
+
         try {
             setLoadingTermsOfUseVC(true);
-            const _capTableTermsOfUseVC = await createTermsOfUseVC(
+            const capTableTermsOfUseVC = await createTermsOfUseVC(
                 readAndAcceptedID
             );
-            setCapTableTermsOfUseVC(_capTableTermsOfUseVC);
+            setRequest({
+                ...request,
+                params: {
+                    ...request.params,
+                    capTableTermsOfUseVC,
+                },
+            });
         } finally {
             setLoadingTermsOfUseVC(false);
         }
@@ -107,57 +130,45 @@ export function CreateCapTableVPScreen(props: {
     // presentCreateCapTableVP
     const presentCreateCapTableVP = async () => {
         if (
-            !capTableTermsOfUseVC ||
-            !nationalIdentityVC ||
-            !verifier ||
-            !capTable
+            !request ||
+            !request.params.capTableTermsOfUseVC ||
+            !request.params.nationalIdentityVC
         ) {
             console.error(
-                "presentCreateCapTableVP(): !capTableTermsOfUseVC || !nationalIdentityVC || !verifier || !capTable"
+                `CreateCapTableVPScreen.tsx: !request || !request.params.capTableTermsOfUseVC || !request.params.nationalIdentityVC`
             );
             return;
         }
-        if (!props.route.params?.id) {
-            console.error("presentCreateCapTableVP():!props.route.params?.id ");
-            return;
-        }
+
         setPresentLoading(true);
 
         // @note Creating the capTableVC behind the scenes, without asking the user...
         // @TODO Maybe ask user to sign this VC?
-        const capTableVC = await createCapTableVC(capTable);
+        const capTableVC = await createCapTableVC(request.params.capTable);
 
         // Creating the VP
         const createCapTableVP = await createCreateCapTableVP(
-            verifier,
+            request.params.verifier,
             capTableVC,
-            capTableTermsOfUseVC,
-            nationalIdentityVC
+            request.params.capTableTermsOfUseVC,
+            request.params.nationalIdentityVC
         );
 
-        const result = formatJsonRpcResult<CreateCapTableVPResult>(
-            props.route.params?.id,
-            { createCapTableVP }
-        );
+        const result = formatJsonRpcResult<CreateCapTableVPResult>(request.id, {
+            createCapTableVP,
+        });
         navigateHome(result);
     };
 
     // UseEffects
     useEffect(() => {
-        const request = props.route.params as
+        const maybeRequest = props.route.params as
             | JsonRpcRequest<CreateCapTableVPParams>
             | undefined;
 
-        switch (request?.method) {
+        switch (maybeRequest?.method) {
             case "symfoniID_createCapTableVP":
-                setCapTableTermsOfUseVC(
-                    request.params.capTableTermsOfUseVC ?? null
-                );
-                setNationalIdentityVC(
-                    request.params.nationalIdentityVC ?? null
-                );
-                setVerifier(request.params.verifier);
-                setCapTable(request.params.capTable);
+                setRequest(maybeRequest);
                 break;
         }
     }, [props.route.params]);
@@ -176,15 +187,14 @@ export function CreateCapTableVPScreen(props: {
                 <BigText>Opprette aksjeeierbok</BigText>
 
                 <TermsOfUseVCCard
-                    vc={capTableTermsOfUseVC}
+                    vc={request?.params.capTableTermsOfUseVC}
                     loading={loadingSigningTermsOfUseVC}
                     termsOfUseID="https://forvalt.brreg.no/brukervilkår"
                     onSign={onSignCapTableTermsOfUse}
                 />
                 <NationalIdentityVCCard
-                    vc={nationalIdentityVC}
+                    vc={request?.params.nationalIdentityVC}
                     loading={loadingNationalIdentityVC}
-                    nationalIdentityNumber={nationalIdentityNumber}
                     onSign={onSignNationalIdentityVC}
                 />
             </Content>
@@ -215,27 +225,22 @@ const Content = styled.View`
 
 function NationalIdentityVCCard({
     vc,
-    nationalIdentityNumber,
     loading,
     onSign,
 }: {
-    vc: NationalIdentityVC | null;
-    nationalIdentityNumber: string | null;
+    vc: NationalIdentityVC | undefined;
     loading: boolean;
     onSign: () => Promise<void>;
 }) {
     const signed = !!vc;
-
-    const _nationalIdentityNumber =
-        vc?.credentialSubject?.nationalIdentityNumber ?? nationalIdentityNumber;
-
     const valid = true;
 
     return (
         <VCCard>
             <VCPropLabel>Fødselsnummer</VCPropLabel>
             <VCPropText placeholder={valid && !signed}>
-                {_nationalIdentityNumber ?? "123456 54321"}
+                {vc?.credentialSubject?.nationalIdentityNumber ??
+                    "123456 54321"}
             </VCPropText>
             <SignButton
                 valid={valid}
@@ -254,7 +259,7 @@ function TermsOfUseVCCard({
     termsOfUseID,
     onSign,
 }: {
-    vc: TermsOfUseVC | null;
+    vc: TermsOfUseVC | undefined;
     loading: boolean;
     termsOfUseID: string;
     onSign: (termsOfUse: string) => {};
