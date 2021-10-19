@@ -4,7 +4,7 @@ import { CreateCapTableVP } from "../verifiablePresentations/CreateCapTableVP";
 
 export type CreateCapTableVPParams = {
     verifier: string;
-    capTableForm: CapTableForm;
+    capTable: CapTable;
     nationalIdentityVC?: NationalIdentityVC;
     capTableTermsOfUseVC?: TermsOfUseVC;
 };
@@ -13,7 +13,7 @@ export type CreateCapTableVPResult = {
     createCapTableVP: CreateCapTableVP;
 };
 
-type CapTableForm = {
+export type CapTable = {
     organizationNumber: string;
     shareholders: UnknowERC1400TokenTransfer[];
 };

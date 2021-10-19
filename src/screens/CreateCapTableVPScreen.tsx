@@ -17,6 +17,7 @@ import { Context } from "../context";
 import { TermsOfUseVC } from "../verifiableCredentials/TermsOfUseVC";
 import { NationalIdentityVC } from "../verifiableCredentials/NationalIdentityVC";
 import {
+    CapTable,
     CreateCapTableVPParams,
     CreateCapTableVPResult,
 } from "../types/createCapTableVPTypes";
@@ -39,6 +40,7 @@ export function CreateCapTableVPScreen(props: {
         props.route.params as JsonRpcResult<BankIDResult>
     );
     const {
+        createCapTableVC,
         createTermsOfUseVC,
         createNationalIdentityVC,
         createCreateCapTableVP,
@@ -50,6 +52,7 @@ export function CreateCapTableVPScreen(props: {
     >(null);
     const [presentLoading, setPresentLoading] = useState(false);
 
+    const [capTable, setCapTable] = useState<CapTable | undefined>(undefined);
     const [verifier, setVerifier] = useState<string | undefined>(undefined);
 
     // TermsOfUseVC
@@ -103,9 +106,14 @@ export function CreateCapTableVPScreen(props: {
 
     // presentCreateCapTableVP
     const presentCreateCapTableVP = async () => {
-        if (!capTableTermsOfUseVC || !nationalIdentityVC || !verifier) {
+        if (
+            !capTableTermsOfUseVC ||
+            !nationalIdentityVC ||
+            !verifier ||
+            !capTable
+        ) {
             console.error(
-                "presentCreateCapTableVP(): !capTableTermsOfUseVC || !nationalIdentityVC || !verifier"
+                "presentCreateCapTableVP(): !capTableTermsOfUseVC || !nationalIdentityVC || !verifier || !capTable"
             );
             return;
         }
@@ -115,8 +123,14 @@ export function CreateCapTableVPScreen(props: {
         }
         setPresentLoading(true);
 
+        // @note Creating the capTableVC behind the scenes, without asking the user...
+        // @TODO Maybe ask user to sign this VC?
+        const capTableVC = await createCapTableVC(capTable);
+
+        // Creating the VP
         const createCapTableVP = await createCreateCapTableVP(
             verifier,
+            capTableVC,
             capTableTermsOfUseVC,
             nationalIdentityVC
         );
@@ -143,6 +157,7 @@ export function CreateCapTableVPScreen(props: {
                     request.params.nationalIdentityVC ?? null
                 );
                 setVerifier(request.params.verifier);
+                setCapTable(request.params.capTable);
                 break;
         }
     }, [props.route.params]);

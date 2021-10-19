@@ -26,6 +26,8 @@ import { decodeJWT as decodeBankIDJWT } from "did-jwt";
 import { BankidJWTPayload } from "../types/bankid.types";
 import { TermsOfUseVC } from "../verifiableCredentials/TermsOfUseVC";
 import { NationalIdentityVC } from "../verifiableCredentials/NationalIdentityVC";
+import { CapTableVC } from "../verifiableCredentials/CapTableVC";
+import { CapTable } from "../types/createCapTableVPTypes";
 
 export type Agent = TAgent<
     IDIDManager &
@@ -84,6 +86,38 @@ export const useVeramo = (chainId: string) => {
         };
         initWallet();
     }, [agent, chainId]);
+
+    const createCapTableVC = async (
+        capTable: CapTable
+    ): Promise<CapTableVC> => {
+        if (!identity) {
+            throw Error("Cant create VC, identity not initilized");
+        }
+        const vc = await agent.createVerifiableCredential({
+            proofFormat: "jwt",
+            save: true,
+            credential: {
+                "@context": [
+                    "https://www.w3.org/2018/credentials/v1",
+                    "https://www.symfoni.dev/credentials/v1",
+                ],
+                type: ["VerifiableCredential", "CapTableVC"],
+                issuer: {
+                    id: identity.did,
+                },
+                credentialSubject: {
+                    id: identity.did,
+                    capTable,
+                },
+                expirationDate: new Date(
+                    new Date().setFullYear(new Date().getFullYear() + 50)
+                ).toISOString(),
+            },
+        });
+        console.info(`useVeramo.ts: createCapTableVC() -> vc`);
+
+        return vc as CapTableVC;
+    };
 
     const createTermsOfUseVC = async (readAndAcceptedID: string) => {
         if (!identity) {
@@ -155,6 +189,7 @@ export const useVeramo = (chainId: string) => {
 
     const createCreateCapTableVP = async (
         verifier: string,
+        capTableVC: CapTableVC,
         capTableTermsOfUseVC: TermsOfUseVC,
         nationalIdentityVC: NationalIdentityVC
     ) => {
@@ -166,6 +201,7 @@ export const useVeramo = (chainId: string) => {
                 holder: identity.did,
                 verifier,
                 verifiableCredential: [
+                    capTableVC,
                     capTableTermsOfUseVC,
                     nationalIdentityVC,
                 ],
@@ -439,6 +475,7 @@ export const useVeramo = (chainId: string) => {
         verifyJWT,
         signEthTreansaction,
         deleteVeramoData,
+        createCapTableVC,
         createTermsOfUseVC,
         createNationalIdentityVC,
         createCreateCapTableVP,

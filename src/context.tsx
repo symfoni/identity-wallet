@@ -28,10 +28,12 @@ import {
     DEFAULT_RPC_PROVIDER_TEST,
     DEFAULT_TEST_CHAINS,
 } from "./constants/default";
+import { CapTable } from "./types/createCapTableVPTypes";
 import { JwtPayload } from "./types/JwtPayload";
 import { VerifyOptions } from "./types/VerifyOptions";
 import { useVeramo } from "./utils/useVeramo";
 import { useWalletconnect } from "./utils/useWalletconnect";
+import { CapTableVC } from "./verifiableCredentials/CapTableVC";
 import { NationalIdentityVC } from "./verifiableCredentials/NationalIdentityVC";
 import { TermsOfUseVC } from "./verifiableCredentials/TermsOfUseVC";
 import { CreateCapTableVP } from "./verifiablePresentations/CreateCapTableVP";
@@ -75,6 +77,7 @@ export interface IContext {
     findTermsOfUseVC: () => Promise<TermsOfUseVC | undefined>;
     saveVP: (vp: VerifiablePresentation | string) => Promise<string>;
     pair: (uri: string) => Promise<void>;
+    createCapTableVC: (capTable: CapTable) => Promise<CapTableVC>;
     createTermsOfUseVC: (readAndAcceptedId: string) => Promise<TermsOfUseVC>;
     createNationalIdentityVC: (
         nationalIdentityNumber: string,
@@ -82,6 +85,7 @@ export interface IContext {
     ) => Promise<NationalIdentityVC>;
     createCreateCapTableVP: (
         verifier: string,
+        capTable: CapTableVC,
         capTableTermsOfUseVC: TermsOfUseVC,
         nationalIdentityVC: NationalIdentityVC
     ) => Promise<CreateCapTableVP>;
