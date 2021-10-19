@@ -1,7 +1,7 @@
 import { VerifiableCredential } from "@veramo/core";
 import { CapTable } from "../types/capTableTypes";
 
-// @see https://www.notion.so/symfoni/NationalIdentityVC-f0ad0a6b75a64cca9d887f0243dc41ae
+// @see https://www.notion.so/symfoni/CapTableVC-e7cd19ae4eb845979db304d57f77ba19
 export type CapTableVC = VerifiableCredential & {
     "@context": [
         "https://www.w3.org/2018/credentials/v1",
