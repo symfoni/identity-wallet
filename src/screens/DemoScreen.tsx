@@ -1,20 +1,38 @@
+import { formatJsonRpcRequest } from "@json-rpc-tools/utils";
 import React from "react";
 import { Button } from "react-native";
 import { useSymfoniContext } from "../context";
-import { SCREEN_DEMO, useLocalNavigation } from "../hooks/useLocalNavigation";
-import { ParamPresentCredentialDemo } from "../types/paramTypes";
-import { CreateCapTableVPRequest } from "../types/createCapTableVPTypes";
+import { SCREEN_CREATE_CAP_TABLE_VP } from "../hooks/useLocalNavigation";
+import { useNavigationWithResult } from "../hooks/useNavigationWithResult";
+import { CreateCapTableVPParams } from "../types/createCapTableVPTypes";
 
 export function DemoScreen() {
     const { findTermsOfUseVC, findNationalIdentityVC } = useSymfoniContext();
-    const { navigateCreateCapTableVP, navigateGetBankID } =
-        useLocalNavigation();
+    const { navigateWithResult } = useNavigationWithResult();
 
     return (
         <>
             <Button
                 title="Demo: Lag ny legitimasjon"
-                onPress={() => navigateCreateCapTableVP()}
+                onPress={async () => {
+                    const request =
+                        formatJsonRpcRequest<CreateCapTableVPParams>(
+                            "symfoniID_createCapTableVPRequest",
+                            {
+                                verifier: "demo",
+                                capTableForm: {
+                                    organizationNumber: "demo",
+                                    shareholders: [],
+                                },
+                            }
+                        );
+
+                    const result = await navigateWithResult(
+                        SCREEN_CREATE_CAP_TABLE_VP,
+                        request
+                    );
+                    console.debug({ result });
+                }}
             />
             <Button
                 title="Demo: Bruk eksisterende legitimasjon dersom finnes"
@@ -22,28 +40,27 @@ export function DemoScreen() {
                     const capTableTermsOfUseVC = await findTermsOfUseVC();
                     const nationalIdentityVC = await findNationalIdentityVC();
 
-                    navigateCreateCapTableVP({
-                        type: "CREATE_CAP_TABLE_VP_REQUEST",
-                        params: {
-                            nationalIdentityVC,
-                            capTableTermsOfUseVC,
-                        },
-                    } as CreateCapTableVPRequest);
+                    const request =
+                        formatJsonRpcRequest<CreateCapTableVPParams>(
+                            "symfoniID_createCapTableVPRequest",
+                            {
+                                verifier: "demo",
+                                capTableForm: {
+                                    organizationNumber: "demo",
+                                    shareholders: [],
+                                },
+                                capTableTermsOfUseVC,
+                                nationalIdentityVC,
+                            }
+                        );
+                    console.debug({ request });
+
+                    const result = await navigateWithResult(
+                        SCREEN_CREATE_CAP_TABLE_VP,
+                        request
+                    );
+                    console.debug({ result });
                 }}
-            />
-            <Button
-                title="Demo: Vis legitimasjon med demodata"
-                onPress={() =>
-                    navigateCreateCapTableVP({
-                        type: "PARAM_PRESENT_CREDENTIAL_DEMO",
-                        demoBankIDPersonnummer: "120391 12345",
-                        demoEmail: "jonas@symfoni.solutions",
-                    } as ParamPresentCredentialDemo)
-                }
-            />
-            <Button
-                title="Demo: Hent BankID"
-                onPress={() => navigateGetBankID(SCREEN_DEMO)}
             />
         </>
     );

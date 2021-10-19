@@ -1,6 +1,9 @@
 export type ParamBankIDToken = {
-    type: "PARAM_BANKID_TOKEN";
-    bankIDToken: string;
+    id: number;
+    method: "PARAM_BANKID_TOKEN";
+    params: {
+        bankIDToken: string;
+    };
 };
 
 export type ParamPresentCredentialDemo = {

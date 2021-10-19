@@ -6,7 +6,7 @@ import { BankidWebview } from "../components/bankid/BankidWebview";
 import { ParamBankIDToken } from "../types/paramTypes";
 
 export function GetBankIDScreen(props: {
-    route: { params: { resultScreen: string } };
+    route: { params: { id: number; resultScreen: string } };
 }) {
     console.debug("GetBankIDScreen: ", { props });
 
@@ -17,11 +17,13 @@ export function GetBankIDScreen(props: {
     useEffect(() => {
         if (bankIDToken !== null) {
             navigate(props.route.params.resultScreen, {
-                type: "PARAM_BANKID_TOKEN",
-                bankIDToken,
+                id: props.route.params.id,
+                method: "PARAM_BANKID_TOKEN",
+
+                params: { bankIDToken },
             } as ParamBankIDToken);
         }
-    }, [bankIDToken, navigate, props.route.params.resultScreen]);
+    }, [bankIDToken, navigate, props.route.params]);
 
     useEffect(() => {
         if (errors.length > 0) {

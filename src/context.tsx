@@ -31,7 +31,7 @@ import {
 import { JwtPayload } from "./types/JwtPayload";
 import { VerifyOptions } from "./types/VerifyOptions";
 import { useVeramo } from "./utils/useVeramo";
-import { RequestMethod, useWalletconnect } from "./utils/useWalletconnect";
+import { useWalletconnect } from "./utils/useWalletconnect";
 import { NationalIdentityVC } from "./verifiableCredentials/NationalIdentityVC";
 import { TermsOfUseVC } from "./verifiableCredentials/TermsOfUseVC";
 import { CreateCapTableVP } from "./verifiablePresentations/CreateCapTableVP";
@@ -85,7 +85,7 @@ export interface IContext {
         capTableTermsOfUseVC: TermsOfUseVC,
         nationalIdentityVC: NationalIdentityVC
     ) => Promise<CreateCapTableVP>;
-    getRequestEvent: (method: RequestMethod) => Promise<SessionTypes.RequestEvent>;
+    consumeRequestEvent: (method: string) => Promise<SessionTypes.RequestEvent>;
     sendResponse: (topic: string, response: JsonRpcResponse<any>) => void;
 }
 

@@ -11,6 +11,7 @@ import {
     SCREEN_GET_BANKID,
     NAVIGATOR_TABS,
     SCREEN_HOME,
+    SCREEN_CREATE_CAP_TABLE_VP,
 } from "./hooks/useLocalNavigation";
 import { BankId } from "./screens/BankId";
 import { DemoScreen } from "./screens/DemoScreen";
@@ -19,7 +20,6 @@ import { Identity } from "./screens/Identity";
 import { ProfileNavigation } from "./screens/Profile/ProfileNavigation";
 import { CreateCapTableVPScreen } from "./screens/CreateCapTableVPScreen";
 import { GetBankIDScreen } from "./screens/GetBankIDScreen";
-import { SCREEN_CREATE_CAP_TABLE_VP } from "./hooks/useNavigationWithResult";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();

@@ -1,7 +1,5 @@
 /* eslint-disable no-undef */
-import {
-    JsonRpcResponse,
-} from "@json-rpc-tools/types";
+import { JsonRpcResponse } from "@json-rpc-tools/types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Client, { CLIENT_EVENTS } from "@walletconnect/client";
 import { SessionTypes } from "@walletconnect/types";
@@ -13,30 +11,29 @@ import {
     DEFAULT_RELAY_PROVIDER,
 } from "./../constants/default";
 
-
-export type RequestMethod = 
-    | "symfoniID_createCapTableVPRequest" 
-    | "symfoniID_createOtherVPRequest";
-
 export const useWalletconnect = (supportedChains: string[]) => {
     const [client, setClient] = useState<Client | undefined>(undefined);
 
     // Handle requests
-    const requestResolvers = useRef(new Map<
-        RequestMethod,
-        (event: SessionTypes.RequestEvent) => void
-    >());
+    const requestResolvers = useRef(
+        new Map<string, (event: SessionTypes.RequestEvent) => void>()
+    );
 
-    const getRequestEvent = (method: RequestMethod) => {
+    const consumeRequestEvent = (method: string) => {
+        console.info(`useWalletConnect.ts: Subscribed to request: ${method}`);
         return new Promise<SessionTypes.RequestEvent>((resolve) => {
             requestResolvers.current.set(method, resolve);
-        })
-    }
-
-    const handleRequest = (event: SessionTypes.RequestEvent) => {
-        console.info("useWalletConnect.ts: handleRequest(): ", event.request.method);
-        requestResolvers.current.get(event.request.method as RequestMethod)?.(event);
+        });
     };
+
+    const handleRequest = useCallback((event: SessionTypes.RequestEvent) => {
+        console.info(
+            "useWalletConnect.ts: handleRequest(): ",
+            event.request.method
+        );
+        requestResolvers.current.get(event.request.method)?.(event);
+        requestResolvers.current.delete(event.request.method);
+    }, []);
 
     // Init Walletconnect client
     useEffect(() => {
@@ -70,7 +67,6 @@ export const useWalletconnect = (supportedChains: string[]) => {
         console.log("pari", pairResult);
         console.log("PairResult", pairResult);
     };
-
 
     const sendResponse = useCallback(
         (topic: string, response: JsonRpcResponse<any>) => {
@@ -159,7 +155,7 @@ export const useWalletconnect = (supportedChains: string[]) => {
         client,
         closeSession,
         pair,
-        getRequestEvent,
+        consumeRequestEvent,
         sendResponse,
     };
 };
