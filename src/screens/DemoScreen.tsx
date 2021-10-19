@@ -8,7 +8,7 @@ import {
     SCREEN_BANKID,
 } from "../hooks/useLocalNavigation";
 import { useNavigationWithResult } from "../hooks/useNavigationWithResult";
-import { CreateCapTableVPParams } from "../types/createCapTableVPTypes";
+import { CreateCapTableVPParams } from "../types/capTableTypes";
 import { makeBankIDRequest } from "../types/paramTypes";
 
 export function DemoScreen() {
@@ -25,7 +25,7 @@ export function DemoScreen() {
                             "symfoniID_createCapTableVP",
                             {
                                 verifier: "demo",
-                                capTableForm: {
+                                capTable: {
                                     organizationNumber: "demo",
                                     shareholders: [],
                                 },

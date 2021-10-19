@@ -20,7 +20,7 @@ import {
     CapTable,
     CreateCapTableVPParams,
     CreateCapTableVPResult,
-} from "../types/createCapTableVPTypes";
+} from "../types/capTableTypes";
 import { JsonRpcRequest, JsonRpcResult } from "@json-rpc-tools/types";
 import { formatJsonRpcResult } from "@json-rpc-tools/utils";
 import { decodeJWT } from "did-jwt";

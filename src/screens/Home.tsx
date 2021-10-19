@@ -14,7 +14,7 @@ import { Scanner } from "../components/scanner";
 import { useSymfoniContext } from "../context";
 import { SCREEN_CREATE_CAP_TABLE_VP } from "../hooks/useLocalNavigation";
 import { useNavigationWithResult } from "../hooks/useNavigationWithResult";
-import { CreateCapTableVPResult } from "../types/createCapTableVPTypes";
+import { CreateCapTableVPResult } from "../types/capTableTypes";
 import { CreateCapTableVP } from "../verifiablePresentations/CreateCapTableVP";
 
 export const Home = (props: {

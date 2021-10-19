@@ -1,5 +1,5 @@
 import { VerifiableCredential } from "@veramo/core";
-import { CapTable } from "../types/createCapTableVPTypes";
+import { CapTable } from "../types/capTableTypes";
 
 // @see https://www.notion.so/symfoni/NationalIdentityVC-f0ad0a6b75a64cca9d887f0243dc41ae
 export type CapTableVC = VerifiableCredential & {

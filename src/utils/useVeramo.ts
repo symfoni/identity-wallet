@@ -27,7 +27,7 @@ import { BankidJWTPayload } from "../types/bankid.types";
 import { TermsOfUseVC } from "../verifiableCredentials/TermsOfUseVC";
 import { NationalIdentityVC } from "../verifiableCredentials/NationalIdentityVC";
 import { CapTableVC } from "../verifiableCredentials/CapTableVC";
-import { CapTable } from "../types/createCapTableVPTypes";
+import { CapTable } from "../types/capTableTypes";
 
 export type Agent = TAgent<
     IDIDManager &
