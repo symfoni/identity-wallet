@@ -23,7 +23,7 @@ export const useWalletconnect = (
         new Map<string, (event: SessionTypes.RequestEvent) => void>()
     );
 
-    const consumeRequestEvent = (method: string) => {
+    const consumeEvent = (method: string) => {
         console.info(`useWalletConnect.ts: Subscribed to request: ${method}`);
         return new Promise<SessionTypes.RequestEvent>((resolve) => {
             requestResolvers.current.set(method, resolve);
@@ -74,6 +74,10 @@ export const useWalletconnect = (
 
     const sendResponse = useCallback(
         (topic: string, response: JsonRpcResponse<any>) => {
+            if (!client) {
+                console.error("useWalletConnect(): sendResponse: !client");
+                return;
+            }
             client?.respond({ topic, response });
         },
         [client]
@@ -82,9 +86,12 @@ export const useWalletconnect = (
     const handlePruposal = useCallback(
         async (proposal: SessionTypes.Proposal) => {
             console.log("Received PROPOSAL: ", proposal);
+            // Approve connection
             if (typeof client === "undefined") {
+                console.error(`handleProposal: typeof client === "undefined"`);
                 return;
             }
+
             const unsupportedChains = [];
             proposal.permissions.blockchain.chains.forEach((chainId) => {
                 if (supportedChains.includes(chainId)) {
@@ -93,6 +100,7 @@ export const useWalletconnect = (
                 unsupportedChains.push(chainId);
             });
             if (unsupportedChains.length) {
+                console.error(`handleProposal: unsupportedChains.length`);
                 return client.reject({ proposal });
             }
             const unsupportedMethods: string[] = [];
@@ -103,26 +111,32 @@ export const useWalletconnect = (
                 unsupportedMethods.push(method);
             });
             if (unsupportedMethods.length) {
+                console.error(`handleProposal: unsupportedMethods.length`);
+
                 return client.reject({ proposal: proposal });
             }
 
             // Approve connection
+            if (typeof client === "undefined") {
+                console.error(`handleProposal: typeof client === "undefined"`);
+                return;
+            }
+            const _accounts = veramo.accounts.filter((account) => {
+                const [namespace, reference] = account.split(":");
+                return proposal.permissions.blockchain.chains.includes(
+                    `${namespace}:${reference}`
+                );
+            });
+            const response = {
+                state: { accounts: _accounts },
+            };
             try {
-                if (typeof client === "undefined") {
-                    return;
-                }
-                const _accounts = veramo.accounts.filter((account) => {
-                    const [namespace, reference] = account.split(":");
-                    return proposal.permissions.blockchain.chains.includes(
-                        `${namespace}:${reference}`
-                    );
-                });
-                const response = {
-                    state: { accounts: _accounts },
-                };
                 await client.approve({ proposal, response });
-            } catch (e) {
-                console.error(e);
+            } catch (err) {
+                console.error(
+                    "handleProposal: await client.approve({ proposal, response }); failed with error: ",
+                    err
+                );
             }
         },
         [supportedChains, client, veramo.accounts]
@@ -178,7 +192,7 @@ export const useWalletconnect = (
         client,
         closeSession,
         pair,
-        consumeRequestEvent,
+        consumeEvent,
         sendResponse,
     };
 };

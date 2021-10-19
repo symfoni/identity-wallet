@@ -17,7 +17,7 @@ export function DemoScreen() {
                 onPress={async () => {
                     const request =
                         formatJsonRpcRequest<CreateCapTableVPParams>(
-                            "symfoniID_createCapTableVPRequest",
+                            "symfoniID_createCapTableVP",
                             {
                                 verifier: "demo",
                                 capTableForm: {
@@ -42,7 +42,7 @@ export function DemoScreen() {
 
                     const request =
                         formatJsonRpcRequest<CreateCapTableVPParams>(
-                            "symfoniID_createCapTableVPRequest",
+                            "symfoniID_createCapTableVP",
                             {
                                 verifier: "demo",
                                 capTableForm: {

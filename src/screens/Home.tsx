@@ -12,10 +12,8 @@ import { useAsyncEffect } from "use-async-effect";
 import { ColorContext, ColorSystem } from "../colorContext";
 import { Scanner } from "../components/scanner";
 import { useSymfoniContext } from "../context";
-import {
-    SCREEN_CREATE_CAP_TABLE_VP,
-    useNavigationWithResult,
-} from "../hooks/useNavigationWithResult";
+import { SCREEN_CREATE_CAP_TABLE_VP } from "../hooks/useLocalNavigation";
+import { useNavigationWithResult } from "../hooks/useNavigationWithResult";
 import { CreateCapTableVPResult } from "../types/createCapTableVPTypes";
 import { CreateCapTableVP } from "../verifiablePresentations/CreateCapTableVP";
 
@@ -27,7 +25,7 @@ export const Home = (props: {
         loading,
         findNationalIdentityVC,
         findTermsOfUseVC,
-        consumeRequestEvent,
+        consumeEvent,
         sendResponse,
     } = useSymfoniContext();
     const { colors } = useContext(ColorContext);
@@ -35,8 +33,7 @@ export const Home = (props: {
 
     const { navigateWithResult } = useNavigationWithResult(props.route.params);
 
-    const [createCapTableVP, setCreateCapTableVP] =
-        useState<CreateCapTableVP | null>(null);
+    const [loadingRequest, setLoadingRequest] = useState(false);
 
     async function onScanQR(maybeURI: any) {
         console.log("onRead", maybeURI);
@@ -51,7 +48,7 @@ export const Home = (props: {
             return;
         }
         maybeURI =
-            "wc:dcc7f5ebeef34f2212765fe94a516576b5f620621f871085bd7332431f48fc9e@2?controller=false&publicKey=af6d8ddd134b0155b177d6e35ca3368b4ed4a32e0e2fe898ab2968bc7d322860&relay=%7B%22protocol%22%3A%22waku%22%7D";
+            "wc:4111c63043b3395d0b21e7b4a70b4fa49aa9f605a0a4b035f11faf6385f70e20@2?controller=false&publicKey=94dff31c721ef7bebad5bd6bc3bc64c2abd23887f55adb113d371159be640512&relay=%7B%22protocol%22%3A%22waku%22%7D";
         const URI = maybeURI;
 
         // 2. Pair
@@ -61,12 +58,14 @@ export const Home = (props: {
             console.warn("ERROR: await pair(URI): ", err);
             return;
         }
+        setLoadingRequest(true);
     }
 
     useAsyncEffect(async () => {
-        const { topic, request } = await consumeRequestEvent(
-            "symfoniID_createCapTableVPRequest"
+        const { topic, request } = await consumeEvent(
+            "symfoniID_createCapTableVP"
         );
+        setLoadingRequest(false);
 
         // Get existing VCs if exist.
         request.params.capTableTermsOfUseVC = await findTermsOfUseVC();
@@ -77,13 +76,9 @@ export const Home = (props: {
             request
         );
 
-        setCreateCapTableVP(result.result.createCapTableVP);
+        console.log({ result });
         sendResponse(topic, result);
     }, []);
-
-    if (createCapTableVP) {
-        return <Text>{JSON.stringify(createCapTableVP)}</Text>;
-    }
 
     return (
         <>
@@ -94,6 +89,7 @@ export const Home = (props: {
                 ) : (
                     <View style={styles.actionContainer}>
                         <Scanner onInput={onScanQR} />
+                        {loadingRequest && <Text>Loading request...</Text>}
                     </View>
                 )}
             </SafeAreaView>

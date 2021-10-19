@@ -122,7 +122,7 @@ export function CreateCapTableVPScreen(props: {
 
         console.log({ method, params: props.route.params });
         switch (method) {
-            case "symfoniID_createCapTableVPRequest":
+            case "symfoniID_createCapTableVP":
                 const params = props.route.params
                     ?.params as CreateCapTableVPParams;
 
