@@ -22,6 +22,7 @@ export function useNavigationWithResult<Result>(
 
         return new Promise<JsonRpcResult<Result>>((resolve) => {
             resultMap.current.set(request.id, resolve);
+            resultMap.current.delete(request.id);
         });
     };
 

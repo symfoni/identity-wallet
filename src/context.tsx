@@ -114,7 +114,7 @@ export const ContextProvider = (props: any) => {
             })
     );
     const veramo = useVeramo(selectedChain);
-    const walletconnect = useWalletconnect(chains);
+    const walletconnect = useWalletconnect(chains, veramo);
 
     // Loading
     useEffect(() => {

@@ -10,8 +10,12 @@ import {
     DEFAULT_EIP155_METHODS,
     DEFAULT_RELAY_PROVIDER,
 } from "./../constants/default";
+import { useVeramoInterface } from "./useVeramo";
 
-export const useWalletconnect = (supportedChains: string[]) => {
+export const useWalletconnect = (
+    supportedChains: string[],
+    veramo: useVeramoInterface
+) => {
     const [client, setClient] = useState<Client | undefined>(undefined);
 
     // Handle requests
@@ -76,33 +80,52 @@ export const useWalletconnect = (supportedChains: string[]) => {
     );
 
     const handlePruposal = useCallback(
-        (_proposal: SessionTypes.Proposal) => {
-            console.log("Received PROPOSAL: ", _proposal);
+        async (proposal: SessionTypes.Proposal) => {
+            console.log("Received PROPOSAL: ", proposal);
             if (typeof client === "undefined") {
                 return;
             }
             const unsupportedChains = [];
-            _proposal.permissions.blockchain.chains.forEach((chainId) => {
+            proposal.permissions.blockchain.chains.forEach((chainId) => {
                 if (supportedChains.includes(chainId)) {
                     return;
                 }
                 unsupportedChains.push(chainId);
             });
             if (unsupportedChains.length) {
-                return client.reject({ proposal: _proposal });
+                return client.reject({ proposal });
             }
             const unsupportedMethods: string[] = [];
-            _proposal.permissions.jsonrpc.methods.forEach((method) => {
+            proposal.permissions.jsonrpc.methods.forEach((method) => {
                 if (DEFAULT_EIP155_METHODS.includes(method)) {
                     return;
                 }
                 unsupportedMethods.push(method);
             });
             if (unsupportedMethods.length) {
-                return client.reject({ proposal: _proposal });
+                return client.reject({ proposal: proposal });
+            }
+
+            // Approve connection
+            try {
+                if (typeof client === "undefined") {
+                    return;
+                }
+                const _accounts = veramo.accounts.filter((account) => {
+                    const [namespace, reference] = account.split(":");
+                    return proposal.permissions.blockchain.chains.includes(
+                        `${namespace}:${reference}`
+                    );
+                });
+                const response = {
+                    state: { accounts: _accounts },
+                };
+                await client.approve({ proposal, response });
+            } catch (e) {
+                console.error(e);
             }
         },
-        [supportedChains, client]
+        [supportedChains, client, veramo.accounts]
     );
 
     const closeSession = async (topic: string) => {
