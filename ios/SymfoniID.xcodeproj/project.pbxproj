@@ -165,8 +165,8 @@
 				00E356EA1AD99517003FC87E /* Sources */,
 				00E356EB1AD99517003FC87E /* Frameworks */,
 				00E356EC1AD99517003FC87E /* Resources */,
-				3A649B7086D42B39230AEF4B /* [CP] Embed Pods Frameworks */,
 				C8EEB1C426B7790B0D086572 /* [CP] Copy Pods Resources */,
+				4A4B10100456EA35FA559CAC /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -188,8 +188,8 @@
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
-				A99C01354C4F2ABDC567859B /* [CP] Embed Pods Frameworks */,
 				96966DFB1BD60F80B811C668 /* [CP] Copy Pods Resources */,
+				9C6053D1C92AB4C4FB9E7846 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -271,7 +271,7 @@
 			shellPath = /bin/sh;
 			shellScript = "set -e\n\nexport NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh\n";
 		};
-		3A649B7086D42B39230AEF4B /* [CP] Embed Pods Frameworks */ = {
+		4A4B10100456EA35FA559CAC /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -305,7 +305,7 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SymfoniID/Pods-SymfoniID-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		A99C01354C4F2ABDC567859B /* [CP] Embed Pods Frameworks */ = {
+		9C6053D1C92AB4C4FB9E7846 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -499,7 +499,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 24GN7W9BTV;
 				ENABLE_BITCODE = NO;
-				EXCLUDED_ARCHS = "";
+				EXCLUDED_ARCHS = arm64;
 				INFOPLIST_FILE = SymfoniID/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -527,7 +527,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 24GN7W9BTV;
-				EXCLUDED_ARCHS = "";
+				EXCLUDED_ARCHS = arm64;
 				INFOPLIST_FILE = SymfoniID/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

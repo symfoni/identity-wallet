@@ -24,15 +24,21 @@ target 'SymfoniID' do
   #
   # Note that if you have use_frameworks! enabled, Flipper will not work and
   # you should disable the next line.
-  use_flipper!()
+  # use_flipper!()
+
+  # Why this line? 
+  # @see: https://github.com/dharding/ReactNativeOnM1Article/commit/33eb76b8834fc7cd94af8eb57f977b5c92badfcf?branch=33eb76b8834fc7cd94af8eb57f977b5c92badfcf&diff=unified
+  # @see: https://medium.com/@davidjasonharding/developing-a-react-native-app-on-an-m1-mac-without-rosetta-29fcc7314d70
+  use_flipper!({ 'Flipper' => '0.91.1', 'Flipper-Folly' => '~> 2.6', 'Flipper-RSocket' => '~> 1.4' })
 
   post_install do |installer|
-    react_native_post_install(installer)
     
     installer.pods_project.targets.each do |target|
       target.build_configurations.each do |config|
         config.build_settings["ONLY_ACTIVE_ARCH"] = "NO"
       end
     end
+    flipper_post_install(installer)
+    react_native_post_install(installer)
   end
 end
