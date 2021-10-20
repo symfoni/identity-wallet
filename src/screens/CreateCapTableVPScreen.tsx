@@ -7,7 +7,6 @@ import React, {
     useState,
 } from "react";
 import styled from "styled-components/native";
-import * as RNKeychain from "react-native-keychain";
 import { ActivityIndicator, Linking } from "react-native";
 import {
     SCREEN_CREATE_CAP_TABLE_VP,
@@ -27,6 +26,7 @@ import { decodeJWT } from "did-jwt";
 import { BankidJWTPayload } from "../types/bankid.types";
 import { BankIDResult, makeBankIDRequest } from "../types/paramTypes";
 import { useNavigationWithResult } from "../hooks/useNavigationWithResult";
+import { useDeviceAuthentication } from "../hooks/useDeviceAuthentication";
 
 export function CreateCapTableVPScreen(props: {
     route: {
@@ -35,6 +35,7 @@ export function CreateCapTableVPScreen(props: {
             | JsonRpcResult<BankIDResult>;
     };
 }) {
+    const { checkDeviceAuthentication } = useDeviceAuthentication();
     const { navigateHome } = useLocalNavigation();
     const { navigateWithResult } = useNavigationWithResult(
         props.route.params as JsonRpcResult<BankIDResult>
@@ -112,6 +113,12 @@ export function CreateCapTableVPScreen(props: {
 
         try {
             setLoadingTermsOfUseVC(true);
+
+            const authenticated = await checkDeviceAuthentication();
+            if (!authenticated) {
+                return;
+            }
+
             const capTableTermsOfUseVC = await createTermsOfUseVC(
                 readAndAcceptedID
             );
