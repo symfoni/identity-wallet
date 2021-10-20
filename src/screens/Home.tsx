@@ -1,50 +1,84 @@
-import { useNavigation } from "@react-navigation/native";
-import { CLIENT_EVENTS } from "@walletconnect/client";
-import { SessionTypes } from "@walletconnect/types";
-import React, { useCallback, useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useState } from "react";
+import { JsonRpcResult } from "@json-rpc-tools/types";
+
 import {
     ActivityIndicator,
     SafeAreaView,
     StatusBar,
     StyleSheet,
+    Text,
     View,
 } from "react-native";
-import { ColorContext, ColorSystem } from "../colorContext";
-import { Button, SymfoniButton } from "../components/ui/button";
-import { Context } from "../context";
 import * as RNKeychain from "react-native-keychain";
+import { useAsyncEffect } from "use-async-effect";
+import { ColorContext, ColorSystem } from "../colorContext";
+import { Scanner } from "../components/scanner";
+import { useSymfoniContext } from "../context";
+import { SCREEN_CREATE_CAP_TABLE_VP } from "../hooks/useLocalNavigation";
+import { useNavigationWithResult } from "../hooks/useNavigationWithResult";
+import { CreateCapTableVPResult } from "../types/capTableTypes";
 
-export const Home = () => {
-    const { navigate } = useNavigation();
-    const { loading, client, closeSession } = useContext(Context);
+export const Home = (props: {
+    route: { params?: JsonRpcResult<CreateCapTableVPResult> };
+}) => {
+    const {
+        pair,
+        loading,
+        findNationalIdentityVC,
+        findTermsOfUseVC,
+        consumeEvent,
+        sendResponse,
+    } = useSymfoniContext();
     const { colors } = useContext(ColorContext);
     const styles = makeStyles(colors);
-    const [sessions, setSessions] = useState<SessionTypes.Settled[]>([]);
-    const activeSessions = client?.session.values.length;
 
-    useEffect(() => {
-        let subscribed = true;
-        if (!client) {
+    const { navigateWithResult } = useNavigationWithResult(props.route.params);
+
+    const [loadingRequest, setLoadingRequest] = useState(false);
+
+    async function onScanQR(maybeURI: any) {
+        console.log("onRead", maybeURI);
+
+        // 1. Validate URI
+        if (typeof maybeURI !== "string") {
+            console.warn("typeof maybeURI !== 'string': ", maybeURI);
             return;
         }
-        setSessions(client.session.values);
-        console.log("Setting sessions");
-        client.on(CLIENT_EVENTS.session.deleted, (some: any) => {
-            console.log("deleted", some);
-            if (subscribed) {
-                setSessions(client.session.values);
-            }
-        });
-        client.on(CLIENT_EVENTS.session.created, (some: any) => {
-            console.log("created", some);
-            if (subscribed) {
-                setSessions(client.session.values);
-            }
-        });
-        return () => {
-            subscribed = false;
-        };
-    }, [client, client?.session]);
+        if (!maybeURI.startsWith("wc:")) {
+            console.warn("!maybeURI.startsWith('wc:'): ", maybeURI);
+            return;
+        }
+
+        const URI = maybeURI;
+
+        // 2. Pair
+        try {
+            await pair(URI);
+        } catch (err) {
+            console.warn("ERROR: await pair(URI): ", err);
+            return;
+        }
+        setLoadingRequest(true);
+    }
+
+    useAsyncEffect(async () => {
+        const { topic, request } = await consumeEvent(
+            "symfoniID_createCapTableVP"
+        );
+        setLoadingRequest(false);
+
+        // Get existing VCs if exist.
+        request.params.capTableTermsOfUseVC = await findTermsOfUseVC();
+        request.params.nationalIdentityVC = await findNationalIdentityVC();
+
+        const result = await navigateWithResult(
+            SCREEN_CREATE_CAP_TABLE_VP,
+            request
+        );
+
+        console.log({ result });
+        sendResponse(topic, result);
+    }, []);
 
     const onPress = useCallback(async () => {
         try {
@@ -68,12 +102,8 @@ export const Home = () => {
                     <ActivityIndicator size="large" />
                 ) : (
                     <View style={styles.actionContainer}>
-                        <SymfoniButton
-                            icon={"qr"}
-                            type="primary"
-                            text="Scan QR"
-                            onPress={onPress}
-                        />
+                        <Scanner onInput={onScanQR} />
+                        {loadingRequest && <Text>Loading request...</Text>}
                     </View>
                 )}
             </SafeAreaView>
@@ -90,7 +120,6 @@ const makeStyles = (colors: ColorSystem) => {
             justifyContent: "center",
         },
         actionContainer: {
-            flexDirection: "row",
             alignSelf: "center",
         },
     });

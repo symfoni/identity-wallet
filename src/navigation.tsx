@@ -1,19 +1,25 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import * as React from "react";
 import { useContext } from "react";
 import { Icon, IconType } from "./assets/icons/Icon";
 import { ColorContext } from "./colorContext";
 import { Context } from "./context";
-import { SCREEN_BANKID, SCREEN_HOME } from "./hooks/useNavigation";
-import { BankId } from "./screens/BankId";
+import {
+    SCREEN_BANKID,
+    SCREEN_DEMO,
+    NAVIGATOR_TABS,
+    SCREEN_HOME,
+    SCREEN_CREATE_CAP_TABLE_VP,
+} from "./hooks/useLocalNavigation";
+import { DemoScreen } from "./screens/DemoScreen";
 import { Home } from "./screens/Home";
 import { Identity } from "./screens/Identity";
 import { ProfileNavigation } from "./screens/Profile/ProfileNavigation";
-import RequestAndProposalHandler from "./screens/RequestAndProposalHandler";
-import { ScannerScreen } from "./screens/ScannerScreen";
+import { CreateCapTableVPScreen } from "./screens/CreateCapTableVPScreen";
+import { BankIDScreen } from "./screens/BankIDScreen";
 
-const Stack = createStackNavigator();
+const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 interface Route {
     routeId: string;
@@ -33,8 +39,10 @@ const PROFILE_ROUTE: Route = {
     icon: "account",
 };
 
-function Tabs() {
+function TabNavigator() {
+    const { isTest } = useContext(Context);
     const { colors } = useContext(ColorContext);
+
     return (
         <Tab.Navigator
             screenOptions={({ route }) => ({
@@ -54,7 +62,7 @@ function Tabs() {
                 tabBarStyle: { backgroundColor: colors.surface },
             })}>
             <Tab.Screen
-                name={HOME_ROUTE.routeId}
+                name={SCREEN_HOME}
                 component={Home}
                 options={{
                     title: HOME_ROUTE.title,
@@ -66,25 +74,26 @@ function Tabs() {
                 component={ProfileNavigation}
                 options={{ title: PROFILE_ROUTE.title, headerShown: false }}
             />
-            {/* <Tab.Screen
-                name="Settings"
-                component={Settings}
-                options={{ title: "Settings" }}
-            /> */}
+            {isTest && (
+                <Tab.Screen
+                    name={SCREEN_DEMO}
+                    component={DemoScreen}
+                    options={{ title: "Demo" }}
+                />
+            )}
         </Tab.Navigator>
     );
 }
 
 export const Navigation = () => {
-    const { selectedChain, isTest } = useContext(Context);
-    const { colors, toggleDarkMode } = useContext(ColorContext);
+    const { colors } = useContext(ColorContext);
 
     // const { colors } = useTheme();
     return (
         <Stack.Navigator>
             <Stack.Screen
-                name={SCREEN_HOME}
-                component={Tabs}
+                name={NAVIGATOR_TABS}
+                component={TabNavigator}
                 options={{ headerShown: false }}
             />
             <Stack.Screen
@@ -98,19 +107,22 @@ export const Navigation = () => {
                 }}
             />
             <Stack.Screen
+                name={SCREEN_CREATE_CAP_TABLE_VP}
+                component={CreateCapTableVPScreen}
+                options={{
+                    title: "Vis legitimasjon",
+                    headerLargeTitle: true,
+                    presentation: "modal",
+                }}
+            />
+            <Stack.Screen
                 name={SCREEN_BANKID}
-                component={BankId}
-                options={{ title: "BankID" }}
-            />
-            <Stack.Screen
-                name="Modal"
-                component={RequestAndProposalHandler}
-                options={{ headerShown: false }}
-            />
-            <Stack.Screen
-                name="Scanner"
-                component={ScannerScreen}
-                options={{ title: "Scan QR" }}
+                component={BankIDScreen}
+                options={{
+                    title: "Hent BankID",
+                    headerLargeTitle: true,
+                    presentation: "modal",
+                }}
             />
         </Stack.Navigator>
     );
