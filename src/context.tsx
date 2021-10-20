@@ -1,10 +1,6 @@
 /* eslint-disable no-undef */
-import {
-    APP_ENV,
-    BANKID_CLIENT_ID,
-    BROK_HELPERS_VERIFIER,
-    IS_TEST,
-} from "@env";
+import { APP_ENV, IS_TEST } from "@env";
+import { JsonRpcRequest, JsonRpcResponse } from "@json-rpc-tools/types";
 import {
     IDataStore,
     IDIDManager,
@@ -25,24 +21,22 @@ import {
 import Client from "@walletconnect/client";
 import { SessionTypes } from "@walletconnect/types";
 import { ethers } from "ethers";
-import React, {
-    createContext,
-    SetStateAction,
-    useEffect,
-    useState,
-} from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import {
     DEFAULT_MAIN_CHAINS,
     DEFAULT_RPC_PROVIDER_MAIN,
     DEFAULT_RPC_PROVIDER_TEST,
     DEFAULT_TEST_CHAINS,
 } from "./constants/default";
-import useInterval from "./hooks/useInterval";
-import { CachedPairing } from "./types/CachedPairing";
+import { CapTable } from "./types/capTableTypes";
 import { JwtPayload } from "./types/JwtPayload";
 import { VerifyOptions } from "./types/VerifyOptions";
 import { useVeramo } from "./utils/useVeramo";
 import { useWalletconnect } from "./utils/useWalletconnect";
+import { CapTableVC } from "./verifiableCredentials/CapTableVC";
+import { NationalIdentityVC } from "./verifiableCredentials/NationalIdentityVC";
+import { TermsOfUseVC } from "./verifiableCredentials/TermsOfUseVC";
+import { CreateCapTableVP } from "./verifiablePresentations/CreateCapTableVP";
 
 export type Agent = TAgent<
     IDIDManager &
@@ -60,18 +54,9 @@ export interface IContext {
     chains: string[];
     accounts: string[];
     client: Client | undefined;
-    proposals: SessionTypes.Proposal[];
-    setProposals: Dispatch<SessionTypes.Proposal[]>;
     requests: SessionTypes.RequestEvent[];
-    cachedPairing: CachedPairing | undefined;
     setRequests: Dispatch<SessionTypes.RequestEvent[]>;
     closeSession: (topic: string) => Promise<void>;
-    onApprove: (
-        event: SessionTypes.RequestEvent | SessionTypes.Proposal
-    ) => Promise<void>;
-    onReject: (
-        event: SessionTypes.RequestEvent | SessionTypes.Proposal
-    ) => Promise<void>;
     selectedChain: string;
     provider: ethers.providers.Provider;
     identity?: IIdentifier;
@@ -88,13 +73,30 @@ export interface IContext {
     findVC: (
         args: FindArgs<TCredentialColumns>
     ) => Promise<UniqueVerifiableCredential[]>;
+    findNationalIdentityVC: () => Promise<NationalIdentityVC | undefined>;
+    findTermsOfUseVC: () => Promise<TermsOfUseVC | undefined>;
     saveVP: (vp: VerifiablePresentation | string) => Promise<string>;
     pair: (uri: string) => Promise<void>;
-    pairCached: (uri: string) => Promise<void>;
-    hasTrustedIdentity: boolean;
+    createCapTableVC: (capTable: CapTable) => Promise<CapTableVC>;
+    createTermsOfUseVC: (readAndAcceptedId: string) => Promise<TermsOfUseVC>;
+    createNationalIdentityVC: (
+        nationalIdentityNumber: string,
+        evidence: { type: "BankID"; jwt: string }
+    ) => Promise<NationalIdentityVC>;
+    createCreateCapTableVP: (
+        verifier: string,
+        capTable: CapTableVC,
+        capTableTermsOfUseVC: TermsOfUseVC,
+        nationalIdentityVC: NationalIdentityVC
+    ) => Promise<CreateCapTableVP>;
+    consumeEvent: (method: string) => Promise<SessionTypes.RequestEvent>;
+    sendResponse: (topic: string, response: JsonRpcResponse<any>) => void;
 }
 
 export const Context = createContext<IContext>(undefined!);
+export function useSymfoniContext() {
+    return useContext(Context);
+}
 
 console.log("APP_ENV:", APP_ENV);
 
@@ -116,9 +118,7 @@ export const ContextProvider = (props: any) => {
             })
     );
     const veramo = useVeramo(selectedChain);
-    const [hasTrustedIdentity, setHasTrustedIdentity] =
-        useState<boolean>(false);
-    const walletconnect = useWalletconnect(chains, veramo, hasTrustedIdentity);
+    const walletconnect = useWalletconnect(chains, veramo);
 
     // Loading
     useEffect(() => {
@@ -168,49 +168,7 @@ export const ContextProvider = (props: any) => {
     //     return () => {
     //         subscribed = false;
     //     };
-    // }, [veramo, veramo.accounts, walletconnect.cachedPairing]);
-
-    useInterval(() => {
-        let subscribed = true;
-        const doAsync = async () => {
-            if (veramo.accounts.length > 0) {
-                const address = veramo.accounts[0].split(":").pop();
-                if (address) {
-                    const vc = await veramo
-                        .findVC({
-                            where: [
-                                {
-                                    column: "issuer",
-                                    value: [BROK_HELPERS_VERIFIER],
-                                },
-                                // {
-                                //     column: "subject",
-                                //     value: [veramo.identity?.did],
-                                // },
-                            ],
-                        })
-                        .catch((err) => {
-                            console.error(err.message);
-                            throw err;
-                        });
-                    const hasRegistered = vc.find((vc) => {
-                        return (
-                            "brregRegistered" in
-                            vc.verifiableCredential.credentialSubject
-                        );
-                    });
-                    console.info("hasTrustedIdentity", !!hasRegistered);
-                    if (subscribed) {
-                        setHasTrustedIdentity(!!hasRegistered);
-                    }
-                }
-            }
-        };
-        doAsync();
-        return () => {
-            subscribed = false;
-        };
-    }, 3000);
+    // }, [veramo, veramo.accounts]);
 
     // Make the context object:
     const context: IContext = {
@@ -219,7 +177,6 @@ export const ContextProvider = (props: any) => {
         chains,
         provider,
         selectedChain,
-        hasTrustedIdentity,
         ...walletconnect,
         ...veramo,
     };

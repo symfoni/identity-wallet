@@ -14,18 +14,15 @@ export const DEFAULT_CHAINS = [...DEFAULT_MAIN_CHAINS, ...DEFAULT_TEST_CHAINS];
 export const DEFAULT_RELAY_PROVIDER = "wss://relay.walletconnect.org"; // "wss://localhost:5555"
 
 export const DEFAULT_RPC_PROVIDER_TEST =
-    "https://arb-rinkeby.g.alchemy.com/v2/WnII4L0FD_VF0230U_s0jq4t20w2sEM4";
+    "https://arbitrum-rinkeby.infura.io/v3/0771265f174543dca52bbe282a69397d";
 export const DEFAULT_RPC_PROVIDER_MAIN = "SET THIS UP!!!!";
 
 export const DEFAULT_EIP155_METHODS = [
-    "eth_sendTransaction",
-    "personal_sign",
-    "eth_signTypedData",
-    "eth_signTransaction",
-    "oracle_data",
-    "did_createVerifiableCredential",
-    "did_requestVerifiableCredential",
-    "symfoni_privateTransferByPartition",
+    // "eth_sendTransaction",
+    // "personal_sign",
+    // "eth_signTypedData",
+    // "eth_signTransaction",
+    "symfoniID_createCapTableVP",
 ];
 
 export const DEFAULT_LOGGER = "debug";
