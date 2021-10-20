@@ -9,7 +9,7 @@ import axios, { AxiosResponse } from "axios";
 
 
 export const registerWithBankId = (vp: VerifiablePresentation) => {
-    const url = USE_LOCAL_ENVIROMENT
+    const url = !!USE_LOCAL_ENVIROMENT
         ? "http://localhost:3004"
         : BROK_HELPERS_URL;
     console.log("registerBankIdUrl", url);
