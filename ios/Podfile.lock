@@ -342,6 +342,8 @@ PODS:
     - React
   - RNGestureHandler (1.10.3):
     - React-Core
+  - RNKeychain (8.0.0):
+    - React-Core
   - RNPermissions (3.0.5):
     - React-Core
   - RNReanimated (2.2.2):
@@ -441,6 +443,7 @@ DEPENDENCIES:
   - "RNCAsyncStorage (from `../node_modules/@react-native-async-storage/async-storage`)"
   - "RNCMaskedView (from `../node_modules/@react-native-community/masked-view`)"
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
+  - RNKeychain (from `../node_modules/react-native-keychain`)
   - RNPermissions (from `../node_modules/react-native-permissions`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
@@ -537,6 +540,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-community/masked-view"
   RNGestureHandler:
     :path: "../node_modules/react-native-gesture-handler"
+  RNKeychain:
+    :path: "../node_modules/react-native-keychain"
   RNPermissions:
     :path: "../node_modules/react-native-permissions"
   RNReanimated:
@@ -553,7 +558,7 @@ SPEC CHECKSUMS:
   CocoaAsyncSocket: 065fd1e645c7abab64f7a6a2007a48038fdc6a99
   DoubleConversion: cf9b38bf0b2d048436d9a82ad2abe1404f11e7de
   FBLazyVector: 7b423f9e248eae65987838148c36eec1dbfe0b53
-  FBReactNativeSpec: 65dcccaa0d44f728f230f4dd7a9b7850049d6806
+  FBReactNativeSpec: bce04181e51940006a67ec65611531649cea788c
   Flipper: d3da1aa199aad94455ae725e9f3aa43f3ec17021
   Flipper-DoubleConversion: 38631e41ef4f9b12861c67d17cb5518d06badc41
   Flipper-Folly: 755929a4f851b2fb2c347d533a23f191b008554c
@@ -597,6 +602,7 @@ SPEC CHECKSUMS:
   RNCAsyncStorage: 26f25150da507524a7815f2ada06ca0967f65633
   RNCMaskedView: 0e1bc4bfa8365eba5fbbb71e07fbdc0555249489
   RNGestureHandler: a479ebd5ed4221a810967000735517df0d2db211
+  RNKeychain: 4f63aada75ebafd26f4bc2c670199461eab85d94
   RNPermissions: 7043bacbf928eae25808275cfe73799b8f618911
   RNReanimated: 241c586663f44f19a53883c63375fdd041253960
   RNScreens: 6e1ea5787989f92b0671049b808aef64fa1ef98c
@@ -606,4 +612,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 601176bb70916241e534d47c3400a4f8f8ce3042
 
-COCOAPODS: 1.10.1
+COCOAPODS: 1.11.2

@@ -7,6 +7,7 @@ import React, {
     useState,
 } from "react";
 import styled from "styled-components/native";
+import * as RNKeychain from "react-native-keychain";
 import { ActivityIndicator, Linking } from "react-native";
 import {
     SCREEN_CREATE_CAP_TABLE_VP,
@@ -17,7 +18,6 @@ import { Context } from "../context";
 import { TermsOfUseVC } from "../verifiableCredentials/TermsOfUseVC";
 import { NationalIdentityVC } from "../verifiableCredentials/NationalIdentityVC";
 import {
-    CapTable,
     CreateCapTableVPParams,
     CreateCapTableVPResult,
 } from "../types/capTableTypes";
