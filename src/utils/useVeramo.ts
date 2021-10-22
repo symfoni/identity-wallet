@@ -48,18 +48,11 @@ export const useVeramo = (chainId: string) => {
     useEffect(() => {
         const getIdentity = async () => {
             try {
-                const createIdentity = async () => {
-                    const identity = await agent.didManagerCreate({
-                        kms: "local",
-                        provider: "did:ethr:421611",
-                    });
-                    return identity;
-                };
-                const identifiers = await agent.didManagerFind();
-                if (identifiers.length === 0) {
-                    return await createIdentity();
-                }
-                return identifiers[0];
+                return await agent.didManagerGetOrCreate({
+                    alias: "default",
+                    kms: "local",
+                    provider: "did:ethr:421611",
+                });
             } catch (error) {
                 console.error(error);
             }
@@ -420,10 +413,8 @@ export const useVeramo = (chainId: string) => {
             ],
         });
         // TODO - Handle picking the most recent or ??? credential
-        if (res.length === 0) {
-            return undefined;
-        }
-        return res[0].verifiableCredential;
+
+        return res[0]?.verifiableCredential;
     };
 
     const findTermsOfUseVC = async () => {
@@ -436,10 +427,7 @@ export const useVeramo = (chainId: string) => {
             ],
         });
         // TODO - Handle picking the most recent or ??? credential
-        if (res.length === 0) {
-            return undefined;
-        }
-        return res[0].verifiableCredential;
+        return res[0]?.verifiableCredential;
     };
 
     const saveVP = async (vp: VerifiablePresentation | string) => {

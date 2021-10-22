@@ -38,21 +38,23 @@ export const Home = (props: {
     async function onScanQR(maybeURI: any) {
         console.log("onRead", maybeURI);
 
-        // 1. Validate URI
-        if (typeof maybeURI !== "string") {
-            console.warn("typeof maybeURI !== 'string': ", maybeURI);
-            return;
-        }
-        if (!maybeURI.startsWith("wc:")) {
-            console.warn("!maybeURI.startsWith('wc:'): ", maybeURI);
-            return;
-        }
+        // // 1. Validate URI
+        // if (typeof maybeURI !== "string") {
+        //     console.warn("typeof maybeURI !== 'string': ", maybeURI);
+        //     return;
+        // }
+        // if (!maybeURI.startsWith("wc:")) {
+        //     console.warn("!maybeURI.startsWith('wc:'): ", maybeURI);
+        //     return;
+        // }
 
         const URI = maybeURI;
 
         // 2. Pair
         try {
-            await pair(URI);
+            await pair(
+                "wc:c4be5c85e68e0b45ee00afa1fdccdd1b5b9d45ff47755089ff105c577dab489b@2?controller=false&publicKey=d910442ea69d918a9d79b1429adb3d642eef1d7bd02656165d385011a0d85b58&relay=%7B%22protocol%22%3A%22waku%22%7D"
+            );
         } catch (err) {
             console.warn("ERROR: await pair(URI): ", err);
             return;
@@ -83,7 +85,7 @@ export const Home = (props: {
                 createCapTableVP: result.result.createCapTableVP.proof.jwt,
             },
         });
-    }, []);
+    }, [sendResponse]);
 
     return (
         <>
