@@ -19,6 +19,7 @@ import {
     Entities,
     IDataStoreORM,
     KeyStore,
+    migrations,
     PrivateKeyStore,
 } from "@veramo/data-store";
 import { JwtMessageHandler } from "@veramo/did-jwt";
@@ -48,7 +49,9 @@ const dbConnection = createConnection({
     type: "react-native",
     location: "default",
     database: "VERAMO_DATABASE.sqlite.db",
-    synchronize: true,
+    migrations: migrations,
+    migrationsRun: true,
+    synchronize: false,
     logging: ["error", "info", "warn"],
     entities: Entities,
     name: "VERAMO_NAME.sqlite.db",

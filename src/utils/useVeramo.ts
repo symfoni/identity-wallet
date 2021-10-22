@@ -413,10 +413,8 @@ export const useVeramo = (chainId: string) => {
             ],
         });
         // TODO - Handle picking the most recent or ??? credential
-        if (res.length === 0) {
-            return undefined;
-        }
-        return res[0].verifiableCredential;
+
+        return res[0]?.verifiableCredential;
     };
 
     const findTermsOfUseVC = async () => {
@@ -429,10 +427,7 @@ export const useVeramo = (chainId: string) => {
             ],
         });
         // TODO - Handle picking the most recent or ??? credential
-        if (res.length === 0) {
-            return undefined;
-        }
-        return res[0].verifiableCredential;
+        return res[0]?.verifiableCredential;
     };
 
     const saveVP = async (vp: VerifiablePresentation | string) => {

@@ -83,7 +83,7 @@ export const Home = (props: {
                 createCapTableVP: result.result.createCapTableVP.proof.jwt,
             },
         });
-    }, []);
+    }, [sendResponse]);
 
     return (
         <>
