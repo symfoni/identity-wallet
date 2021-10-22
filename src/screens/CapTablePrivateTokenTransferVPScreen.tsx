@@ -1,3 +1,6 @@
+import { JsonRpcRequest, JsonRpcResult } from "@json-rpc-tools/types";
+import { formatJsonRpcResult } from "@json-rpc-tools/utils";
+import { decodeJWT } from "did-jwt";
 import React, {
     ReactNode,
     useCallback,
@@ -6,32 +9,30 @@ import React, {
     useMemo,
     useState,
 } from "react";
-import styled from "styled-components/native";
 import { ActivityIndicator, Linking } from "react-native";
+import styled from "styled-components/native";
+import { Context } from "../context";
+import { useDeviceAuthentication } from "../hooks/useDeviceAuthentication";
 import {
-    SCREEN_CREATE_CAP_TABLE_VP,
     SCREEN_BANKID,
+    SCREEN_CREATE_CAP_TABLE_VP,
     useLocalNavigation,
 } from "../hooks/useLocalNavigation";
-import { Context } from "../context";
-import { TermsOfUseVC } from "../verifiableCredentials/TermsOfUseVC";
-import { NationalIdentityVC } from "../verifiableCredentials/NationalIdentityVC";
-import {
-    CreateCapTableVPParams,
-    CreateCapTableVPResult,
-} from "../types/capTableTypes";
-import { JsonRpcRequest, JsonRpcResult } from "@json-rpc-tools/types";
-import { formatJsonRpcResult } from "@json-rpc-tools/utils";
-import { decodeJWT } from "did-jwt";
-import { BankidJWTPayload } from "../types/bankid.types";
-import { BankIDResult, makeBankIDRequest } from "../types/paramTypes";
 import { useNavigationWithResult } from "../hooks/useNavigationWithResult";
-import { useDeviceAuthentication } from "../hooks/useDeviceAuthentication";
+import { BankidJWTPayload } from "../types/bankid.types";
+import {
+    CapTablePrivateTokenTransferParams,
+    CapTablePrivateTokenTransferResult,
+} from "../types/capTableTypes";
+import { BankIDResult, makeBankIDRequest } from "../types/paramTypes";
+import { CapTablePrivateTokenTransferVC } from "../verifiableCredentials/CapTablePrivateTokenTransferVC";
+import { NationalIdentityVC } from "../verifiableCredentials/NationalIdentityVC";
+import { TermsOfUseVC } from "../verifiableCredentials/TermsOfUseVC";
 
-export function CreateCapTableVPScreen(props: {
+export function CapTablePrivateTokenTransferVPScreen(props: {
     route: {
         params?:
-            | JsonRpcRequest<CreateCapTableVPParams>
+            | JsonRpcRequest<CapTablePrivateTokenTransferParams>
             | JsonRpcResult<BankIDResult>;
     };
 }) {
@@ -41,10 +42,9 @@ export function CreateCapTableVPScreen(props: {
         props.route.params as JsonRpcResult<BankIDResult>
     );
     const {
-        createCapTableVC,
         createTermsOfUseVC,
         createNationalIdentityVC,
-        createCreateCapTableVP,
+        createCapTablePrivateTransferVP,
     } = useContext(Context);
 
     // Local data
@@ -53,7 +53,7 @@ export function CreateCapTableVPScreen(props: {
     >(null);
 
     const [request, setRequest] = useState<
-        JsonRpcRequest<CreateCapTableVPParams> | undefined
+        JsonRpcRequest<CapTablePrivateTokenTransferParams> | undefined
     >(undefined);
 
     // Loading
@@ -107,7 +107,7 @@ export function CreateCapTableVPScreen(props: {
     // createTermsOfUseVC
     const onSignCapTableTermsOfUse = async (readAndAcceptedID: string) => {
         if (!request) {
-            console.error("CreateCapTableVPScreen.tsx: !request");
+            console.error("CapTablePrivateTransferVPScreen.tsx: !request");
             return;
         }
 
@@ -134,43 +134,46 @@ export function CreateCapTableVPScreen(props: {
         }
     };
 
-    // presentCreateCapTableVP
-    const presentCreateCapTableVP = async () => {
+    // presentCapTablePrivateTokenTransferVP
+    const presentCapTablePrivateTokenTransferVP = async () => {
         if (
             !request ||
             !request.params.capTableTermsOfUseVC ||
+            !request.params.capTablePrivateTokenTransferVC ||
             !request.params.nationalIdentityVC
         ) {
             console.error(
-                `CreateCapTableVPScreen.tsx: !request || !request.params.capTableTermsOfUseVC || !request.params.nationalIdentityVC`
+                `!request ||
+            !request.params.capTableTermsOfUseVC ||
+            !request.params.capTablePrivateTokenTransferVC ||
+            !request.params.nationalIdentityVC`
             );
             return;
         }
 
         setPresentLoading(true);
 
-        // @note Creating the capTableVC behind the scenes, without asking the user...
-        // @TODO Maybe ask user to sign this VC?
-        const capTableVC = await createCapTableVC(request.params.capTable);
-
         // Creating the VP
-        const createCapTableVP = await createCreateCapTableVP(
-            request.params.verifier,
-            capTableVC,
-            request.params.capTableTermsOfUseVC,
-            request.params.nationalIdentityVC
-        );
+        const capTablePrivateTokenTransferVP =
+            await createCapTablePrivateTransferVP(
+                request.params.verifier,
+                request.params.capTablePrivateTokenTransferVC,
+                request.params.nationalIdentityVC
+            );
 
-        const result = formatJsonRpcResult<CreateCapTableVPResult>(request.id, {
-            createCapTableVP,
-        });
+        const result = formatJsonRpcResult<CapTablePrivateTokenTransferResult>(
+            request.id,
+            {
+                capTablePrivateTokenTransferVP,
+            }
+        );
         navigateHome(result);
     };
 
     // UseEffects
     useEffect(() => {
         const maybeRequest = props.route.params as
-            | JsonRpcRequest<CreateCapTableVPParams>
+            | JsonRpcRequest<CapTablePrivateTokenTransferParams>
             | undefined;
 
         switch (maybeRequest?.method) {
@@ -191,7 +194,7 @@ export function CreateCapTableVPScreen(props: {
                 <BigText>Brønnøysundregisteret</BigText>
 
                 <SmallText>For å kunne</SmallText>
-                <BigText>Opprette aksjeeierbok</BigText>
+                <BigText>Overføre aksjer</BigText>
 
                 <TermsOfUseVCCard
                     vc={request?.params.capTableTermsOfUseVC}
@@ -210,9 +213,12 @@ export function CreateCapTableVPScreen(props: {
                     loading={loadingNationalIdentityVC}
                     onSign={onSignNationalIdentityVC}
                 />
+                <PrivateTransferVCCard
+                    vc={request?.params.capTablePrivateTokenTransferVC}
+                />
             </Content>
             {presentable && (
-                <PresentButton onPress={presentCreateCapTableVP}>
+                <PresentButton onPress={presentCapTablePrivateTokenTransferVP}>
                     {!presentLoading ? (
                         "Vis"
                     ) : (
@@ -235,6 +241,24 @@ const Content = styled.View`
     padding-horizontal: 30px;
     padding-vertical: 30px;
 `;
+
+function PrivateTransferVCCard({
+    vc,
+}: {
+    vc: CapTablePrivateTokenTransferVC | undefined;
+}) {
+    // TODO hvordan skal denne se ut?
+    return (
+        <VCCard>
+            <VCPropLabel>Overfør</VCPropLabel>
+            <VCPropText>
+                {vc?.credentialSubject?.toShareHolder.amount}
+            </VCPropText>
+            <VCPropLabel></VCPropLabel>
+            <VCPropText>{vc?.credentialSubject?.toShareHolder.name}</VCPropText>
+        </VCCard>
+    );
+}
 
 function NationalIdentityVCCard({
     vc,

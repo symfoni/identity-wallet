@@ -1,3 +1,4 @@
+import { CapTablePrivateTokenTransferVP } from "./../verifiablePresentations/CapTablePrivateTokenTransferVP";
 /* eslint-disable no-undef */
 import {
     IDataStore,
@@ -15,18 +16,19 @@ import {
     IDataStoreORM,
     TCredentialColumns,
 } from "@veramo/data-store";
+import { decodeJWT as decodeBankIDJWT } from "did-jwt";
 import { normalizePresentation } from "did-jwt-vc";
 import { ethers } from "ethers";
 import { useEffect, useState } from "react";
+import { BankidJWTPayload } from "../types/bankid.types";
+import { CapTable } from "../types/capTableTypes";
 import { JwtPayload } from "../types/JwtPayload";
 import { VerifyOptions } from "../types/VerifyOptions";
-import { decodeJWT as decodeBankIDJWT } from "did-jwt";
-import { BankidJWTPayload } from "../types/bankid.types";
-import { TermsOfUseVC } from "../verifiableCredentials/TermsOfUseVC";
-import { NationalIdentityVC } from "../verifiableCredentials/NationalIdentityVC";
 import { CapTableVC } from "../verifiableCredentials/CapTableVC";
-import { CapTable } from "../types/capTableTypes";
+import { NationalIdentityVC } from "../verifiableCredentials/NationalIdentityVC";
+import { TermsOfUseVC } from "../verifiableCredentials/TermsOfUseVC";
 import { agent as _agent, deleteVeramoData } from "./../utils/VeramoUtils";
+import { CapTablePrivateTokenTransferVC } from "../verifiableCredentials/CapTablePrivateTokenTransferVC";
 
 export type Agent = TAgent<
     IDIDManager &
@@ -195,6 +197,29 @@ export const useVeramo = (chainId: string) => {
                 verifiableCredential: [
                     capTableVC,
                     capTableTermsOfUseVC,
+                    nationalIdentityVC,
+                ],
+            },
+            proofFormat: "jwt",
+        });
+
+        return vp;
+    };
+
+    const createCapTablePrivateTransferVP = async (
+        verifier: string,
+        capTablePrivateTokenTransferVC: CapTablePrivateTokenTransferVC,
+        nationalIdentityVC: NationalIdentityVC
+    ) => {
+        if (!identity) {
+            throw Error("Cant create VP, identity not initilized");
+        }
+        const vp = await agent.createVerifiablePresentation({
+            presentation: {
+                holder: identity.did,
+                verifier,
+                verifiableCredential: [
+                    capTablePrivateTokenTransferVC,
                     nationalIdentityVC,
                 ],
             },
@@ -468,6 +493,7 @@ export const useVeramo = (chainId: string) => {
         signEthTreansaction,
         deleteVeramoData,
         createCapTableVC,
+        createCapTablePrivateTransferVP,
         createTermsOfUseVC,
         createNationalIdentityVC,
         createCreateCapTableVP,

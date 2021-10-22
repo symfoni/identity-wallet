@@ -1,6 +1,19 @@
+import { CapTablePrivateTokenTransferVP } from "./../verifiablePresentations/CapTablePrivateTokenTransferVP";
+import { CapTablePrivateTokenTransferVC } from "./../verifiableCredentials/CapTablePrivateTokenTransferVC";
 import { NationalIdentityVC } from "../verifiableCredentials/NationalIdentityVC";
 import { TermsOfUseVC } from "../verifiableCredentials/TermsOfUseVC";
 import { CreateCapTableVP } from "../verifiablePresentations/CreateCapTableVP";
+
+export type CapTablePrivateTokenTransferParams = {
+    verifier: string;
+    capTablePrivateTokenTransferVC: CapTablePrivateTokenTransferVC;
+    nationalIdentityVC?: NationalIdentityVC;
+    capTableTermsOfUseVC?: TermsOfUseVC;
+};
+
+export type CapTablePrivateTokenTransferResult = {
+    capTablePrivateTokenTransferVP: CapTablePrivateTokenTransferVP;
+};
 
 export type CreateCapTableVPParams = {
     verifier: string;

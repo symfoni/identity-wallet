@@ -33,9 +33,11 @@ import { JwtPayload } from "./types/JwtPayload";
 import { VerifyOptions } from "./types/VerifyOptions";
 import { useVeramo } from "./utils/useVeramo";
 import { useWalletconnect } from "./utils/useWalletconnect";
+import { CapTablePrivateTokenTransferVC } from "./verifiableCredentials/CapTablePrivateTokenTransferVC";
 import { CapTableVC } from "./verifiableCredentials/CapTableVC";
 import { NationalIdentityVC } from "./verifiableCredentials/NationalIdentityVC";
 import { TermsOfUseVC } from "./verifiableCredentials/TermsOfUseVC";
+import { CapTablePrivateTokenTransferVP } from "./verifiablePresentations/CapTablePrivateTokenTransferVP";
 import { CreateCapTableVP } from "./verifiablePresentations/CreateCapTableVP";
 
 export type Agent = TAgent<
@@ -89,6 +91,11 @@ export interface IContext {
         capTableTermsOfUseVC: TermsOfUseVC,
         nationalIdentityVC: NationalIdentityVC
     ) => Promise<CreateCapTableVP>;
+    createCapTablePrivateTransferVP: (
+        verifier: string,
+        capTablePrivateTokenTransferVC: CapTablePrivateTokenTransferVC,
+        nationalIdentityVC: NationalIdentityVC
+    ) => Promise<CapTablePrivateTokenTransferVP>;
     consumeEvent: (method: string) => Promise<SessionTypes.RequestEvent>;
     sendResponse: (topic: string, response: JsonRpcResponse<any>) => void;
 }
