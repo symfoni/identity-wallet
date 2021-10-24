@@ -9,13 +9,13 @@
 /* Begin PBXBuildFile section */
 		00A7D0D626FB63620043F596 /* void.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00A7D0D526FB63620043F596 /* void.swift */; };
 		00E356F31AD99517003FC87E /* SymfoniIDTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* SymfoniIDTests.m */; };
-		0AC4357CB5FD97045FDF52D4 /* libPods-SymfoniID.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B1644848ECC56A01CF622FFB /* libPods-SymfoniID.a */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		1AC32F6226F493BE0020E573 /* BootSplash.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1AC32F6126F493BE0020E573 /* BootSplash.storyboard */; };
-		796EF0818DFCF004D64DC202 /* libPods-SymfoniID-SymfoniIDTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = EE377906B5CED0F428061730 /* libPods-SymfoniID-SymfoniIDTests.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
+		880A14F27AC1AE7DA642473C /* libPods-SymfoniID-SymfoniIDTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9B5ED28BC6EC0EDD6FC36F89 /* libPods-SymfoniID-SymfoniIDTests.a */; };
+		E8D548D61B2C7E06108DEBFC /* libPods-SymfoniID.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C49861DE824C00322F65BE0D /* libPods-SymfoniID.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -33,29 +33,33 @@
 		00E356EE1AD99517003FC87E /* SymfoniIDTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SymfoniIDTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		00E356F21AD99517003FC87E /* SymfoniIDTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SymfoniIDTests.m; sourceTree = "<group>"; };
-		01A7458B57EDBF1BC46F2746 /* Pods-SymfoniID-SymfoniIDTests.id.symfoni.app.dev.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SymfoniID-SymfoniIDTests.id.symfoni.app.dev.release.xcconfig"; path = "Target Support Files/Pods-SymfoniID-SymfoniIDTests/Pods-SymfoniID-SymfoniIDTests.id.symfoni.app.dev.release.xcconfig"; sourceTree = "<group>"; };
-		05A583B97E3882EBD43965BF /* Pods-SymfoniID-SymfoniIDTests.id.symfoni.app.dev.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SymfoniID-SymfoniIDTests.id.symfoni.app.dev.debug.xcconfig"; path = "Target Support Files/Pods-SymfoniID-SymfoniIDTests/Pods-SymfoniID-SymfoniIDTests.id.symfoni.app.dev.debug.xcconfig"; sourceTree = "<group>"; };
-		13B07F961A680F5B00A75B9A /* Symfoni ID.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Symfoni ID.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		0AEBF4B8CC08C00FE89631EE /* Pods-SymfoniID.id.symfoni.app.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SymfoniID.id.symfoni.app.debug.xcconfig"; path = "Target Support Files/Pods-SymfoniID/Pods-SymfoniID.id.symfoni.app.debug.xcconfig"; sourceTree = "<group>"; };
+		0B390C8C5CC9F1A8DE5BABAF /* Pods-SymfoniID-SymfoniIDTests.id.symfoni.app.dev.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SymfoniID-SymfoniIDTests.id.symfoni.app.dev.debug.xcconfig"; path = "Target Support Files/Pods-SymfoniID-SymfoniIDTests/Pods-SymfoniID-SymfoniIDTests.id.symfoni.app.dev.debug.xcconfig"; sourceTree = "<group>"; };
+		13B07F961A680F5B00A75B9A /* Debug.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Debug.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = SymfoniID/AppDelegate.h; sourceTree = "<group>"; };
 		13B07FB01A68108700A75B9A /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = SymfoniID/AppDelegate.m; sourceTree = "<group>"; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = SymfoniID/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = SymfoniID/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = SymfoniID/main.m; sourceTree = "<group>"; };
 		1AC32F6126F493BE0020E573 /* BootSplash.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = BootSplash.storyboard; path = SymfoniID/BootSplash.storyboard; sourceTree = "<group>"; };
-		1DDE499CEE3A781A9502C353 /* Pods-SymfoniID.id.symfoni.app.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SymfoniID.id.symfoni.app.debug.xcconfig"; path = "Target Support Files/Pods-SymfoniID/Pods-SymfoniID.id.symfoni.app.debug.xcconfig"; sourceTree = "<group>"; };
-		1E0FA41F8A7124D69CACA66A /* Pods-SymfoniID-SymfoniIDTests.id.symfoni.app.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SymfoniID-SymfoniIDTests.id.symfoni.app.release.xcconfig"; path = "Target Support Files/Pods-SymfoniID-SymfoniIDTests/Pods-SymfoniID-SymfoniIDTests.id.symfoni.app.release.xcconfig"; sourceTree = "<group>"; };
-		47EDEB209B3878877011503B /* Pods-SymfoniID.id.symfoni.app.dev.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SymfoniID.id.symfoni.app.dev.debug.xcconfig"; path = "Target Support Files/Pods-SymfoniID/Pods-SymfoniID.id.symfoni.app.dev.debug.xcconfig"; sourceTree = "<group>"; };
-		51DF537A78029851E9DCB377 /* Pods-SymfoniID.id.symfoni.app.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SymfoniID.id.symfoni.app.release.xcconfig"; path = "Target Support Files/Pods-SymfoniID/Pods-SymfoniID.id.symfoni.app.release.xcconfig"; sourceTree = "<group>"; };
+		2D795BA78AC1C1AF3AC7E0BB /* Pods-SymfoniID-SymfoniIDTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SymfoniID-SymfoniIDTests.debug.xcconfig"; path = "Target Support Files/Pods-SymfoniID-SymfoniIDTests/Pods-SymfoniID-SymfoniIDTests.debug.xcconfig"; sourceTree = "<group>"; };
+		3C44984FDDA4B6C0F7117B27 /* Pods-SymfoniID.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SymfoniID.debug.xcconfig"; path = "Target Support Files/Pods-SymfoniID/Pods-SymfoniID.debug.xcconfig"; sourceTree = "<group>"; };
+		3DA1D6563E0221F31B0E1D1D /* Pods-SymfoniID-SymfoniIDTests.id.symfoni.app.stage.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SymfoniID-SymfoniIDTests.id.symfoni.app.stage.debug.xcconfig"; path = "Target Support Files/Pods-SymfoniID-SymfoniIDTests/Pods-SymfoniID-SymfoniIDTests.id.symfoni.app.stage.debug.xcconfig"; sourceTree = "<group>"; };
+		42282754667F0D295C996BE3 /* Pods-SymfoniID-SymfoniIDTests.id.symfoni.app.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SymfoniID-SymfoniIDTests.id.symfoni.app.release.xcconfig"; path = "Target Support Files/Pods-SymfoniID-SymfoniIDTests/Pods-SymfoniID-SymfoniIDTests.id.symfoni.app.release.xcconfig"; sourceTree = "<group>"; };
+		68D3B63C226DF4317F455D1E /* Pods-SymfoniID.id.symfoni.app.stage.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SymfoniID.id.symfoni.app.stage.debug.xcconfig"; path = "Target Support Files/Pods-SymfoniID/Pods-SymfoniID.id.symfoni.app.stage.debug.xcconfig"; sourceTree = "<group>"; };
+		7896964F650C7D86FF529BE8 /* Pods-SymfoniID.id.symfoni.app.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SymfoniID.id.symfoni.app.release.xcconfig"; path = "Target Support Files/Pods-SymfoniID/Pods-SymfoniID.id.symfoni.app.release.xcconfig"; sourceTree = "<group>"; };
+		80C0132BC173195E6EDFAE1D /* Pods-SymfoniID.id.symfoni.app.dev.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SymfoniID.id.symfoni.app.dev.debug.xcconfig"; path = "Target Support Files/Pods-SymfoniID/Pods-SymfoniID.id.symfoni.app.dev.debug.xcconfig"; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = SymfoniID/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		8E69921DB00DA510BD31A7DE /* Pods-SymfoniID.id.symfoni.app.stage.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SymfoniID.id.symfoni.app.stage.debug.xcconfig"; path = "Target Support Files/Pods-SymfoniID/Pods-SymfoniID.id.symfoni.app.stage.debug.xcconfig"; sourceTree = "<group>"; };
-		A7C96DB7A4F2A0A3489D1C54 /* Pods-SymfoniID.id.symfoni.app.dev.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SymfoniID.id.symfoni.app.dev.release.xcconfig"; path = "Target Support Files/Pods-SymfoniID/Pods-SymfoniID.id.symfoni.app.dev.release.xcconfig"; sourceTree = "<group>"; };
-		B1644848ECC56A01CF622FFB /* libPods-SymfoniID.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-SymfoniID.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		BA7802A23F3E8DFFA240C6CB /* Pods-SymfoniID.id.symfoni.app.stage.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SymfoniID.id.symfoni.app.stage.release.xcconfig"; path = "Target Support Files/Pods-SymfoniID/Pods-SymfoniID.id.symfoni.app.stage.release.xcconfig"; sourceTree = "<group>"; };
-		C0484B457300CB9B41401B27 /* Pods-SymfoniID-SymfoniIDTests.id.symfoni.app.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SymfoniID-SymfoniIDTests.id.symfoni.app.debug.xcconfig"; path = "Target Support Files/Pods-SymfoniID-SymfoniIDTests/Pods-SymfoniID-SymfoniIDTests.id.symfoni.app.debug.xcconfig"; sourceTree = "<group>"; };
-		D92B4F65597D9DD370A18DB5 /* Pods-SymfoniID-SymfoniIDTests.id.symfoni.app.stage.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SymfoniID-SymfoniIDTests.id.symfoni.app.stage.debug.xcconfig"; path = "Target Support Files/Pods-SymfoniID-SymfoniIDTests/Pods-SymfoniID-SymfoniIDTests.id.symfoni.app.stage.debug.xcconfig"; sourceTree = "<group>"; };
-		DBDC806F93E559666738AE11 /* Pods-SymfoniID-SymfoniIDTests.id.symfoni.app.stage.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SymfoniID-SymfoniIDTests.id.symfoni.app.stage.release.xcconfig"; path = "Target Support Files/Pods-SymfoniID-SymfoniIDTests/Pods-SymfoniID-SymfoniIDTests.id.symfoni.app.stage.release.xcconfig"; sourceTree = "<group>"; };
+		946AB113C6094D81E0F206B9 /* Pods-SymfoniID-SymfoniIDTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SymfoniID-SymfoniIDTests.release.xcconfig"; path = "Target Support Files/Pods-SymfoniID-SymfoniIDTests/Pods-SymfoniID-SymfoniIDTests.release.xcconfig"; sourceTree = "<group>"; };
+		9B5ED28BC6EC0EDD6FC36F89 /* libPods-SymfoniID-SymfoniIDTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-SymfoniID-SymfoniIDTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		ADE0C21F217E6F318AA895AF /* Pods-SymfoniID.id.symfoni.app.dev.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SymfoniID.id.symfoni.app.dev.release.xcconfig"; path = "Target Support Files/Pods-SymfoniID/Pods-SymfoniID.id.symfoni.app.dev.release.xcconfig"; sourceTree = "<group>"; };
+		BB820CC9BE2D7A36977AEAF4 /* Pods-SymfoniID-SymfoniIDTests.id.symfoni.app.stage.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SymfoniID-SymfoniIDTests.id.symfoni.app.stage.release.xcconfig"; path = "Target Support Files/Pods-SymfoniID-SymfoniIDTests/Pods-SymfoniID-SymfoniIDTests.id.symfoni.app.stage.release.xcconfig"; sourceTree = "<group>"; };
+		BF305DE5B58CCAE2CF0BDB80 /* Pods-SymfoniID.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SymfoniID.release.xcconfig"; path = "Target Support Files/Pods-SymfoniID/Pods-SymfoniID.release.xcconfig"; sourceTree = "<group>"; };
+		C49861DE824C00322F65BE0D /* libPods-SymfoniID.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-SymfoniID.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		C62B8EAC40212EC1E40C80A2 /* Pods-SymfoniID-SymfoniIDTests.id.symfoni.app.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SymfoniID-SymfoniIDTests.id.symfoni.app.debug.xcconfig"; path = "Target Support Files/Pods-SymfoniID-SymfoniIDTests/Pods-SymfoniID-SymfoniIDTests.id.symfoni.app.debug.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
-		EE377906B5CED0F428061730 /* libPods-SymfoniID-SymfoniIDTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-SymfoniID-SymfoniIDTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		F3E9001293FA84EA3786C3D3 /* Pods-SymfoniID.id.symfoni.app.stage.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SymfoniID.id.symfoni.app.stage.release.xcconfig"; path = "Target Support Files/Pods-SymfoniID/Pods-SymfoniID.id.symfoni.app.stage.release.xcconfig"; sourceTree = "<group>"; };
+		FE061D7AF3D86C1E3F9D3917 /* Pods-SymfoniID-SymfoniIDTests.id.symfoni.app.dev.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SymfoniID-SymfoniIDTests.id.symfoni.app.dev.release.xcconfig"; path = "Target Support Files/Pods-SymfoniID-SymfoniIDTests/Pods-SymfoniID-SymfoniIDTests.id.symfoni.app.dev.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -63,7 +67,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				796EF0818DFCF004D64DC202 /* libPods-SymfoniID-SymfoniIDTests.a in Frameworks */,
+				880A14F27AC1AE7DA642473C /* libPods-SymfoniID-SymfoniIDTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -71,7 +75,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0AC4357CB5FD97045FDF52D4 /* libPods-SymfoniID.a in Frameworks */,
+				E8D548D61B2C7E06108DEBFC /* libPods-SymfoniID.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -114,8 +118,8 @@
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				B1644848ECC56A01CF622FFB /* libPods-SymfoniID.a */,
-				EE377906B5CED0F428061730 /* libPods-SymfoniID-SymfoniIDTests.a */,
+				C49861DE824C00322F65BE0D /* libPods-SymfoniID.a */,
+				9B5ED28BC6EC0EDD6FC36F89 /* libPods-SymfoniID-SymfoniIDTests.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -123,18 +127,22 @@
 		60C3FE384F4D607ABC31AE97 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				1DDE499CEE3A781A9502C353 /* Pods-SymfoniID.id.symfoni.app.debug.xcconfig */,
-				47EDEB209B3878877011503B /* Pods-SymfoniID.id.symfoni.app.dev.debug.xcconfig */,
-				8E69921DB00DA510BD31A7DE /* Pods-SymfoniID.id.symfoni.app.stage.debug.xcconfig */,
-				51DF537A78029851E9DCB377 /* Pods-SymfoniID.id.symfoni.app.release.xcconfig */,
-				A7C96DB7A4F2A0A3489D1C54 /* Pods-SymfoniID.id.symfoni.app.dev.release.xcconfig */,
-				BA7802A23F3E8DFFA240C6CB /* Pods-SymfoniID.id.symfoni.app.stage.release.xcconfig */,
-				C0484B457300CB9B41401B27 /* Pods-SymfoniID-SymfoniIDTests.id.symfoni.app.debug.xcconfig */,
-				05A583B97E3882EBD43965BF /* Pods-SymfoniID-SymfoniIDTests.id.symfoni.app.dev.debug.xcconfig */,
-				D92B4F65597D9DD370A18DB5 /* Pods-SymfoniID-SymfoniIDTests.id.symfoni.app.stage.debug.xcconfig */,
-				1E0FA41F8A7124D69CACA66A /* Pods-SymfoniID-SymfoniIDTests.id.symfoni.app.release.xcconfig */,
-				01A7458B57EDBF1BC46F2746 /* Pods-SymfoniID-SymfoniIDTests.id.symfoni.app.dev.release.xcconfig */,
-				DBDC806F93E559666738AE11 /* Pods-SymfoniID-SymfoniIDTests.id.symfoni.app.stage.release.xcconfig */,
+				0AEBF4B8CC08C00FE89631EE /* Pods-SymfoniID.id.symfoni.app.debug.xcconfig */,
+				80C0132BC173195E6EDFAE1D /* Pods-SymfoniID.id.symfoni.app.dev.debug.xcconfig */,
+				68D3B63C226DF4317F455D1E /* Pods-SymfoniID.id.symfoni.app.stage.debug.xcconfig */,
+				3C44984FDDA4B6C0F7117B27 /* Pods-SymfoniID.debug.xcconfig */,
+				7896964F650C7D86FF529BE8 /* Pods-SymfoniID.id.symfoni.app.release.xcconfig */,
+				ADE0C21F217E6F318AA895AF /* Pods-SymfoniID.id.symfoni.app.dev.release.xcconfig */,
+				F3E9001293FA84EA3786C3D3 /* Pods-SymfoniID.id.symfoni.app.stage.release.xcconfig */,
+				BF305DE5B58CCAE2CF0BDB80 /* Pods-SymfoniID.release.xcconfig */,
+				C62B8EAC40212EC1E40C80A2 /* Pods-SymfoniID-SymfoniIDTests.id.symfoni.app.debug.xcconfig */,
+				0B390C8C5CC9F1A8DE5BABAF /* Pods-SymfoniID-SymfoniIDTests.id.symfoni.app.dev.debug.xcconfig */,
+				3DA1D6563E0221F31B0E1D1D /* Pods-SymfoniID-SymfoniIDTests.id.symfoni.app.stage.debug.xcconfig */,
+				2D795BA78AC1C1AF3AC7E0BB /* Pods-SymfoniID-SymfoniIDTests.debug.xcconfig */,
+				42282754667F0D295C996BE3 /* Pods-SymfoniID-SymfoniIDTests.id.symfoni.app.release.xcconfig */,
+				FE061D7AF3D86C1E3F9D3917 /* Pods-SymfoniID-SymfoniIDTests.id.symfoni.app.dev.release.xcconfig */,
+				BB820CC9BE2D7A36977AEAF4 /* Pods-SymfoniID-SymfoniIDTests.id.symfoni.app.stage.release.xcconfig */,
+				946AB113C6094D81E0F206B9 /* Pods-SymfoniID-SymfoniIDTests.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -164,7 +172,7 @@
 		83CBBA001A601CBA00E9B192 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				13B07F961A680F5B00A75B9A /* Symfoni ID.app */,
+				13B07F961A680F5B00A75B9A /* Debug.app */,
 				00E356EE1AD99517003FC87E /* SymfoniIDTests.xctest */,
 			);
 			name = Products;
@@ -177,12 +185,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "SymfoniIDTests" */;
 			buildPhases = (
-				F176C06D46DAC04A1332FFE3 /* [CP] Check Pods Manifest.lock */,
+				3409356D6D96F3BC8D3659E1 /* [CP] Check Pods Manifest.lock */,
 				00E356EA1AD99517003FC87E /* Sources */,
 				00E356EB1AD99517003FC87E /* Frameworks */,
 				00E356EC1AD99517003FC87E /* Resources */,
-				162B910EFFA495C89C761413 /* [CP] Embed Pods Frameworks */,
-				473F021EEE6A2DD8FD12B2A3 /* [CP] Copy Pods Resources */,
+				56E80C4E4254AB69D27A5C2F /* [CP] Embed Pods Frameworks */,
+				E4D28A6B1911F92E18FA273C /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -198,14 +206,14 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "SymfoniID" */;
 			buildPhases = (
-				0E8ABD77ADC84855DEF5D568 /* [CP] Check Pods Manifest.lock */,
+				A614512810DDFC976AC17033 /* [CP] Check Pods Manifest.lock */,
 				FD10A7F022414F080027D42C /* Start Packager */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
-				20A0D121A262F68955446BE0 /* [CP] Embed Pods Frameworks */,
-				639820AF5D5006513EF68D44 /* [CP] Copy Pods Resources */,
+				203DD972D63F1E7D7A035848 /* [CP] Embed Pods Frameworks */,
+				6ACD7234FEFE3D7D9284A905 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -213,7 +221,7 @@
 			);
 			name = SymfoniID;
 			productName = SymfoniID;
-			productReference = 13B07F961A680F5B00A75B9A /* Symfoni ID.app */;
+			productReference = 13B07F961A680F5B00A75B9A /* Debug.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -287,7 +295,80 @@
 			shellPath = /bin/sh;
 			shellScript = "set -e\n\nexport NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh\n";
 		};
-		0E8ABD77ADC84855DEF5D568 /* [CP] Check Pods Manifest.lock */ = {
+		203DD972D63F1E7D7A035848 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-SymfoniID/Pods-SymfoniID-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-SymfoniID/Pods-SymfoniID-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SymfoniID/Pods-SymfoniID-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		3409356D6D96F3BC8D3659E1 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-SymfoniID-SymfoniIDTests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		56E80C4E4254AB69D27A5C2F /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-SymfoniID-SymfoniIDTests/Pods-SymfoniID-SymfoniIDTests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-SymfoniID-SymfoniIDTests/Pods-SymfoniID-SymfoniIDTests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SymfoniID-SymfoniIDTests/Pods-SymfoniID-SymfoniIDTests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		6ACD7234FEFE3D7D9284A905 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-SymfoniID/Pods-SymfoniID-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-SymfoniID/Pods-SymfoniID-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SymfoniID/Pods-SymfoniID-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		A614512810DDFC976AC17033 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -309,41 +390,7 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		162B910EFFA495C89C761413 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-SymfoniID-SymfoniIDTests/Pods-SymfoniID-SymfoniIDTests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-SymfoniID-SymfoniIDTests/Pods-SymfoniID-SymfoniIDTests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SymfoniID-SymfoniIDTests/Pods-SymfoniID-SymfoniIDTests-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		20A0D121A262F68955446BE0 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-SymfoniID/Pods-SymfoniID-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-SymfoniID/Pods-SymfoniID-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SymfoniID/Pods-SymfoniID-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		473F021EEE6A2DD8FD12B2A3 /* [CP] Copy Pods Resources */ = {
+		E4D28A6B1911F92E18FA273C /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -358,45 +405,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SymfoniID-SymfoniIDTests/Pods-SymfoniID-SymfoniIDTests-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		639820AF5D5006513EF68D44 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-SymfoniID/Pods-SymfoniID-resources-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Copy Pods Resources";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-SymfoniID/Pods-SymfoniID-resources-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SymfoniID/Pods-SymfoniID-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		F176C06D46DAC04A1332FFE3 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-SymfoniID-SymfoniIDTests-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
 		FD10A7F022414F080027D42C /* Start Packager */ = {
@@ -452,7 +460,7 @@
 /* Begin XCBuildConfiguration section */
 		00E356F61AD99517003FC87E /* id.symfoni.app.Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = C0484B457300CB9B41401B27 /* Pods-SymfoniID-SymfoniIDTests.id.symfoni.app.debug.xcconfig */;
+			baseConfigurationReference = C62B8EAC40212EC1E40C80A2 /* Pods-SymfoniID-SymfoniIDTests.id.symfoni.app.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -481,7 +489,7 @@
 		};
 		00E356F71AD99517003FC87E /* id.symfoni.app.Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1E0FA41F8A7124D69CACA66A /* Pods-SymfoniID-SymfoniIDTests.id.symfoni.app.release.xcconfig */;
+			baseConfigurationReference = 42282754667F0D295C996BE3 /* Pods-SymfoniID-SymfoniIDTests.id.symfoni.app.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -507,25 +515,27 @@
 		};
 		13B07F941A680F5B00A75B9A /* id.symfoni.app.Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1DDE499CEE3A781A9502C353 /* Pods-SymfoniID.id.symfoni.app.debug.xcconfig */;
+			baseConfigurationReference = 0AEBF4B8CC08C00FE89631EE /* Pods-SymfoniID.id.symfoni.app.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = id.symfoni.app.AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 6V8VNM2FX9;
 				ENABLE_BITCODE = NO;
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
 				INFOPLIST_FILE = SymfoniID/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				NEW_SETTING = "";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = id.symfoni.app;
-				PRODUCT_NAME = "Symfoni ID";
+				PRODUCT_BUNDLE_IDENTIFIER = id.symfoni.app.Debug;
+				PRODUCT_NAME = "Symfoni ID Debug";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -534,17 +544,19 @@
 		};
 		13B07F951A680F5B00A75B9A /* id.symfoni.app.Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 51DF537A78029851E9DCB377 /* Pods-SymfoniID.id.symfoni.app.release.xcconfig */;
+			baseConfigurationReference = 7896964F650C7D86FF529BE8 /* Pods-SymfoniID.id.symfoni.app.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = id.symfoni.app.AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 6V8VNM2FX9;
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
 				INFOPLIST_FILE = SymfoniID/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				NEW_SETTING = "";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -556,6 +568,240 @@
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = id.symfoni.app.Release;
+		};
+		453595E727255DEE00D6E41C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "Apple Development";
+				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					/usr/lib/swift,
+					"$(inherited)",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"\"$(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME)\"",
+					"\"$(TOOLCHAIN_DIR)/usr/lib/swift-5.0/$(PLATFORM_NAME)\"",
+					"\"$(inherited)\"",
+				);
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		453595E827255DEE00D6E41C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3C44984FDDA4B6C0F7117B27 /* Pods-SymfoniID.debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = id.symfoni.app.dev.AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 6V8VNM2FX9;
+				ENABLE_BITCODE = NO;
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
+				INFOPLIST_FILE = SymfoniID/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				NEW_SETTING = "";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+					"-lc++",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = Debug;
+				PRODUCT_NAME = Debug;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = Debug;
+		};
+		453595E927255DEE00D6E41C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 2D795BA78AC1C1AF3AC7E0BB /* Pods-SymfoniID-SymfoniIDTests.debug.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				DEVELOPMENT_TEAM = 6V8VNM2FX9;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = SymfoniIDTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"-lc++",
+					"$(inherited)",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SymfoniID.app/SymfoniID";
+			};
+			name = Debug;
+		};
+		453595EA27255DF600D6E41C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "Apple Development";
+				COPY_PHASE_STRIP = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					/usr/lib/swift,
+					"$(inherited)",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"\"$(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME)\"",
+					"\"$(TOOLCHAIN_DIR)/usr/lib/swift-5.0/$(PLATFORM_NAME)\"",
+					"\"$(inherited)\"",
+				);
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		453595EB27255DF600D6E41C /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = BF305DE5B58CCAE2CF0BDB80 /* Pods-SymfoniID.release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = id.symfoni.app.dev.AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 6V8VNM2FX9;
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
+				INFOPLIST_FILE = SymfoniID/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				NEW_SETTING = "";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+					"-lc++",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = Release;
+				PRODUCT_NAME = Release;
+				SWIFT_VERSION = 5.0;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = Release;
+		};
+		453595EC27255DF600D6E41C /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 946AB113C6094D81E0F206B9 /* Pods-SymfoniID-SymfoniIDTests.release.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COPY_PHASE_STRIP = NO;
+				DEVELOPMENT_TEAM = 6V8VNM2FX9;
+				INFOPLIST_FILE = SymfoniIDTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"-lc++",
+					"$(inherited)",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SymfoniID.app/SymfoniID";
+			};
+			name = Release;
 		};
 		454C4D41272459D8009B7A28 /* id.symfoni.app.dev.Debug */ = {
 			isa = XCBuildConfiguration;
@@ -591,8 +837,6 @@
 				COPY_PHASE_STRIP = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				EXCLUDED_ARCHS = "";
-				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -626,25 +870,27 @@
 		};
 		454C4D42272459D8009B7A28 /* id.symfoni.app.dev.Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 47EDEB209B3878877011503B /* Pods-SymfoniID.id.symfoni.app.dev.debug.xcconfig */;
+			baseConfigurationReference = 80C0132BC173195E6EDFAE1D /* Pods-SymfoniID.id.symfoni.app.dev.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = id.symfoni.app.dev.AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 6V8VNM2FX9;
 				ENABLE_BITCODE = NO;
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
 				INFOPLIST_FILE = SymfoniID/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				NEW_SETTING = "";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = id.symfoni.app.dev;
-				PRODUCT_NAME = "Symfoni ID Dev";
+				PRODUCT_BUNDLE_IDENTIFIER = id.symfoni.app.dev.Debug;
+				PRODUCT_NAME = "Symfoni ID Dev Debug";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -653,7 +899,7 @@
 		};
 		454C4D43272459D8009B7A28 /* id.symfoni.app.dev.Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 05A583B97E3882EBD43965BF /* Pods-SymfoniID-SymfoniIDTests.id.symfoni.app.dev.debug.xcconfig */;
+			baseConfigurationReference = 0B390C8C5CC9F1A8DE5BABAF /* Pods-SymfoniID-SymfoniIDTests.id.symfoni.app.dev.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -714,7 +960,6 @@
 				COPY_PHASE_STRIP = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -741,17 +986,19 @@
 		};
 		454C4D45272459EB009B7A28 /* id.symfoni.app.dev.Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = A7C96DB7A4F2A0A3489D1C54 /* Pods-SymfoniID.id.symfoni.app.dev.release.xcconfig */;
+			baseConfigurationReference = ADE0C21F217E6F318AA895AF /* Pods-SymfoniID.id.symfoni.app.dev.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = id.symfoni.app.dev.AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 6V8VNM2FX9;
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
 				INFOPLIST_FILE = SymfoniID/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				NEW_SETTING = "";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -766,7 +1013,7 @@
 		};
 		454C4D46272459EB009B7A28 /* id.symfoni.app.dev.Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 01A7458B57EDBF1BC46F2746 /* Pods-SymfoniID-SymfoniIDTests.id.symfoni.app.dev.release.xcconfig */;
+			baseConfigurationReference = FE061D7AF3D86C1E3F9D3917 /* Pods-SymfoniID-SymfoniIDTests.id.symfoni.app.dev.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -824,7 +1071,6 @@
 				COPY_PHASE_STRIP = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -858,25 +1104,27 @@
 		};
 		454C4D4827245A02009B7A28 /* id.symfoni.app.stage.Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 8E69921DB00DA510BD31A7DE /* Pods-SymfoniID.id.symfoni.app.stage.debug.xcconfig */;
+			baseConfigurationReference = 68D3B63C226DF4317F455D1E /* Pods-SymfoniID.id.symfoni.app.stage.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = id.symfoni.app.stage.AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 6V8VNM2FX9;
 				ENABLE_BITCODE = NO;
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
 				INFOPLIST_FILE = SymfoniID/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				NEW_SETTING = "";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = id.symfoni.app.stage;
-				PRODUCT_NAME = "Symfoni ID Stage";
+				PRODUCT_BUNDLE_IDENTIFIER = id.symfoni.app.stage.Debug;
+				PRODUCT_NAME = "Symfoni ID Stage Debug";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -885,7 +1133,7 @@
 		};
 		454C4D4927245A02009B7A28 /* id.symfoni.app.stage.Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = D92B4F65597D9DD370A18DB5 /* Pods-SymfoniID-SymfoniIDTests.id.symfoni.app.stage.debug.xcconfig */;
+			baseConfigurationReference = 3DA1D6563E0221F31B0E1D1D /* Pods-SymfoniID-SymfoniIDTests.id.symfoni.app.stage.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -946,7 +1194,6 @@
 				COPY_PHASE_STRIP = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -973,17 +1220,19 @@
 		};
 		454C4D4B27245A18009B7A28 /* id.symfoni.app.stage.Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = BA7802A23F3E8DFFA240C6CB /* Pods-SymfoniID.id.symfoni.app.stage.release.xcconfig */;
+			baseConfigurationReference = F3E9001293FA84EA3786C3D3 /* Pods-SymfoniID.id.symfoni.app.stage.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = id.symfoni.app.stage.AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 6V8VNM2FX9;
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
 				INFOPLIST_FILE = SymfoniID/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				NEW_SETTING = "";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -998,7 +1247,7 @@
 		};
 		454C4D4C27245A18009B7A28 /* id.symfoni.app.stage.Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = DBDC806F93E559666738AE11 /* Pods-SymfoniID-SymfoniIDTests.id.symfoni.app.stage.release.xcconfig */;
+			baseConfigurationReference = BB820CC9BE2D7A36977AEAF4 /* Pods-SymfoniID-SymfoniIDTests.id.symfoni.app.stage.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -1056,8 +1305,6 @@
 				COPY_PHASE_STRIP = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				EXCLUDED_ARCHS = "";
-				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -1123,8 +1370,6 @@
 				COPY_PHASE_STRIP = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				EXCLUDED_ARCHS = "";
-				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -1158,9 +1403,11 @@
 				00E356F61AD99517003FC87E /* id.symfoni.app.Debug */,
 				454C4D43272459D8009B7A28 /* id.symfoni.app.dev.Debug */,
 				454C4D4927245A02009B7A28 /* id.symfoni.app.stage.Debug */,
+				453595E927255DEE00D6E41C /* Debug */,
 				00E356F71AD99517003FC87E /* id.symfoni.app.Release */,
 				454C4D46272459EB009B7A28 /* id.symfoni.app.dev.Release */,
 				454C4D4C27245A18009B7A28 /* id.symfoni.app.stage.Release */,
+				453595EC27255DF600D6E41C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = id.symfoni.app.Debug;
@@ -1171,9 +1418,11 @@
 				13B07F941A680F5B00A75B9A /* id.symfoni.app.Debug */,
 				454C4D42272459D8009B7A28 /* id.symfoni.app.dev.Debug */,
 				454C4D4827245A02009B7A28 /* id.symfoni.app.stage.Debug */,
+				453595E827255DEE00D6E41C /* Debug */,
 				13B07F951A680F5B00A75B9A /* id.symfoni.app.Release */,
 				454C4D45272459EB009B7A28 /* id.symfoni.app.dev.Release */,
 				454C4D4B27245A18009B7A28 /* id.symfoni.app.stage.Release */,
+				453595EB27255DF600D6E41C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = id.symfoni.app.Debug;
@@ -1184,9 +1433,11 @@
 				83CBBA201A601CBA00E9B192 /* id.symfoni.app.Debug */,
 				454C4D41272459D8009B7A28 /* id.symfoni.app.dev.Debug */,
 				454C4D4727245A02009B7A28 /* id.symfoni.app.stage.Debug */,
+				453595E727255DEE00D6E41C /* Debug */,
 				83CBBA211A601CBA00E9B192 /* id.symfoni.app.Release */,
 				454C4D44272459EB009B7A28 /* id.symfoni.app.dev.Release */,
 				454C4D4A27245A18009B7A28 /* id.symfoni.app.stage.Release */,
+				453595EA27255DF600D6E41C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = id.symfoni.app.Debug;
