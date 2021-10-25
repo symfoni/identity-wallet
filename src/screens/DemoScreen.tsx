@@ -43,7 +43,12 @@ export function DemoScreen() {
             <Button
                 title="Demo: Bruk eksisterende legitimasjon dersom finnes"
                 onPress={async () => {
-                    const capTableTermsOfUseVC = await findTermsOfUseVC();
+                    const termsOfUseForvaltVC = await findTermsOfUseVC(
+                        "TermsOfUseForvaltVC"
+                    );
+                    const termsOfUseSymfoniIDVC = await findTermsOfUseVC(
+                        "TermsOfUseSymfoniIDVC"
+                    );
                     const nationalIdentityVC = await findNationalIdentityVC();
 
                     const request =
@@ -51,11 +56,12 @@ export function DemoScreen() {
                             "symfoniID_createCapTableVP",
                             {
                                 verifier: "demo",
-                                capTableForm: {
+                                capTable: {
                                     organizationNumber: "demo",
                                     shareholders: [],
                                 },
-                                capTableTermsOfUseVC,
+                                termsOfUseForvaltVC,
+                                termsOfUseSymfoniIDVC,
                                 nationalIdentityVC,
                             }
                         );

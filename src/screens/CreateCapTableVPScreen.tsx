@@ -64,7 +64,7 @@ export function CreateCapTableVPScreen(props: {
         useState(false);
 
     const presentable =
-        !!request?.params.capTableTermsOfUseVC &&
+        !!request?.params.termsOfUseForvaltVC &&
         !!request?.params.nationalIdentityVC;
 
     // createNationalIdentityVC
@@ -104,8 +104,8 @@ export function CreateCapTableVPScreen(props: {
         }
     }, [request, createNationalIdentityVC, navigateWithResult]);
 
-    // createTermsOfUseVC
-    const onSignCapTableTermsOfUse = async (readAndAcceptedID: string) => {
+    // create TermsOfUseForvaltVC
+    const onSignTermsOfUseForvalt = async (readAndAcceptedID: string) => {
         if (!request) {
             console.error("CreateCapTableVPScreen.tsx: !request");
             return;
@@ -119,14 +119,46 @@ export function CreateCapTableVPScreen(props: {
                 return;
             }
 
-            const capTableTermsOfUseVC = await createTermsOfUseVC(
-                readAndAcceptedID
+            const termsOfUseForvaltVC = await createTermsOfUseVC(
+                readAndAcceptedID,
+                "TermsOfUseForvaltVC"
             );
             setRequest({
                 ...request,
                 params: {
                     ...request.params,
-                    capTableTermsOfUseVC,
+                    termsOfUseForvaltVC,
+                },
+            });
+        } finally {
+            setLoadingTermsOfUseVC(false);
+        }
+    };
+
+    // create TermsOfUseSymfoniIDVC
+    const onSignTermsOfUseSymfoniID = async (readAndAcceptedID: string) => {
+        if (!request) {
+            console.error("CreateCapTableVPScreen.tsx: !request");
+            return;
+        }
+
+        try {
+            setLoadingTermsOfUseVC(true);
+
+            const authenticated = await checkDeviceAuthentication();
+            if (!authenticated) {
+                return;
+            }
+
+            const termsOfUseSymfoniIDVC = await createTermsOfUseVC(
+                readAndAcceptedID,
+                "TermsOfUseSymfoniIDVC"
+            );
+            setRequest({
+                ...request,
+                params: {
+                    ...request.params,
+                    termsOfUseSymfoniIDVC,
                 },
             });
         } finally {
@@ -138,7 +170,8 @@ export function CreateCapTableVPScreen(props: {
     const presentCreateCapTableVP = async () => {
         if (
             !request ||
-            !request.params.capTableTermsOfUseVC ||
+            !request.params.termsOfUseForvaltVC ||
+            !request.params.termsOfUseSymfoniIDVC ||
             !request.params.nationalIdentityVC
         ) {
             console.error(
@@ -157,7 +190,8 @@ export function CreateCapTableVPScreen(props: {
         const createCapTableVP = await createCreateCapTableVP(
             request.params.verifier,
             capTableVC,
-            request.params.capTableTermsOfUseVC,
+            request.params.termsOfUseForvaltVC,
+            request.params.termsOfUseSymfoniIDVC,
             request.params.nationalIdentityVC
         );
 
@@ -194,10 +228,16 @@ export function CreateCapTableVPScreen(props: {
                 <BigText>Opprette aksjeeierbok</BigText>
 
                 <TermsOfUseVCCard
-                    vc={request?.params.capTableTermsOfUseVC}
+                    vc={request?.params.termsOfUseForvaltVC}
                     loading={loadingSigningTermsOfUseVC}
                     termsOfUseID="https://forvalt.brreg.no/brukervilkår"
-                    onSign={onSignCapTableTermsOfUse}
+                    onSign={onSignTermsOfUseForvalt}
+                />
+                <TermsOfUseVCCard
+                    vc={request?.params.termsOfUseSymfoniIDVC}
+                    loading={loadingSigningTermsOfUseVC}
+                    termsOfUseID="https://symfoni.id/brukervilkår"
+                    onSign={onSignTermsOfUseSymfoniID}
                 />
                 <NationalIdentityVCCard
                     vc={request?.params.nationalIdentityVC}

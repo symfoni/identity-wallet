@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 import { APP_ENV, IS_TEST } from "@env";
-import { JsonRpcRequest, JsonRpcResponse } from "@json-rpc-tools/types";
+import { JsonRpcResponse } from "@json-rpc-tools/types";
 import {
     IDataStore,
     IDIDManager,
@@ -74,19 +74,25 @@ export interface IContext {
         args: FindArgs<TCredentialColumns>
     ) => Promise<UniqueVerifiableCredential[]>;
     findNationalIdentityVC: () => Promise<NationalIdentityVC | undefined>;
-    findTermsOfUseVC: () => Promise<TermsOfUseVC | undefined>;
+    findTermsOfUseVC: (
+        type: "TermsOfUseForvaltVC" | "TermsOfUseSymfoniIDVC"
+    ) => Promise<TermsOfUseVC | undefined>;
     saveVP: (vp: VerifiablePresentation | string) => Promise<string>;
     pair: (uri: string) => Promise<void>;
     createCapTableVC: (capTable: CapTable) => Promise<CapTableVC>;
-    createTermsOfUseVC: (readAndAcceptedId: string) => Promise<TermsOfUseVC>;
+    createTermsOfUseVC: (
+        readAndAcceptedId: string,
+        type: "TermsOfUseForvaltVC" | "TermsOfUseSymfoniIDVC"
+    ) => Promise<TermsOfUseVC>;
     createNationalIdentityVC: (
         nationalIdentityNumber: string,
         evidence: { type: "BankID"; jwt: string }
     ) => Promise<NationalIdentityVC>;
     createCreateCapTableVP: (
         verifier: string,
-        capTable: CapTableVC,
-        capTableTermsOfUseVC: TermsOfUseVC,
+        capTableVC: CapTableVC,
+        termsOfUseForvaltVC: TermsOfUseVC,
+        termsOfUseSymfoniIDVC: TermsOfUseVC,
         nationalIdentityVC: NationalIdentityVC
     ) => Promise<CreateCapTableVP>;
     consumeEvent: (method: string) => Promise<SessionTypes.RequestEvent>;

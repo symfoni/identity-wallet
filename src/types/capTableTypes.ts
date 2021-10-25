@@ -6,7 +6,8 @@ export type CreateCapTableVPParams = {
     verifier: string;
     capTable: CapTable;
     nationalIdentityVC?: NationalIdentityVC;
-    capTableTermsOfUseVC?: TermsOfUseVC;
+    termsOfUseForvaltVC?: TermsOfUseVC;
+    termsOfUseSymfoniIDVC?: TermsOfUseVC;
 };
 
 export type CreateCapTableVPResult = {

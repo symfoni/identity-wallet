@@ -69,7 +69,12 @@ export const Home = (props: {
 
             // Get existing VCs if exist.
             request.params = request.params[0];
-            request.params.capTableTermsOfUseVC = await findTermsOfUseVC();
+            request.params.termsOfUseForvaltVC = await findTermsOfUseVC(
+                "TermsOfUseForvaltVC"
+            );
+            request.params.termsOfUseSymfoniIDVC = await findTermsOfUseVC(
+                "TermsOfUseSymfoniIDVC"
+            );
             request.params.nationalIdentityVC = await findNationalIdentityVC();
 
             const result = await navigateWithResult(

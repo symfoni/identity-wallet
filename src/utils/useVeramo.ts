@@ -111,7 +111,10 @@ export const useVeramo = (chainId: string) => {
         return vc as CapTableVC;
     };
 
-    const createTermsOfUseVC = async (readAndAcceptedID: string) => {
+    const createTermsOfUseVC = async (
+        readAndAcceptedID: string,
+        type: "TermsOfUseForvaltVC" | "TermsOfUseSymfoniIDVC"
+    ) => {
         if (!identity) {
             throw Error("Cant create VC, identity not initilized");
         }
@@ -123,7 +126,7 @@ export const useVeramo = (chainId: string) => {
                     "https://www.w3.org/2018/credentials/v1",
                     "https://www.symfoni.dev/credentials/v1",
                 ],
-                type: ["VerifiableCredential", "TermsOfUseVC"],
+                type: ["VerifiableCredential", "TermsOfUseVC", type],
                 issuer: {
                     id: identity.did,
                 },
@@ -182,7 +185,8 @@ export const useVeramo = (chainId: string) => {
     const createCreateCapTableVP = async (
         verifier: string,
         capTableVC: CapTableVC,
-        capTableTermsOfUseVC: TermsOfUseVC,
+        termsOfUseForvaltVC: TermsOfUseVC,
+        termsOfUseSymfoniIDVC: TermsOfUseVC,
         nationalIdentityVC: NationalIdentityVC
     ) => {
         if (!identity) {
@@ -194,7 +198,8 @@ export const useVeramo = (chainId: string) => {
                 verifier: [verifier],
                 verifiableCredential: [
                     capTableVC,
-                    capTableTermsOfUseVC,
+                    termsOfUseForvaltVC,
+                    termsOfUseSymfoniIDVC,
                     nationalIdentityVC,
                 ],
             },
@@ -417,12 +422,14 @@ export const useVeramo = (chainId: string) => {
         return res[0]?.verifiableCredential;
     };
 
-    const findTermsOfUseVC = async () => {
+    const findTermsOfUseVC = async (
+        type: "TermsOfUseForvaltVC" | "TermsOfUseSymfoniIDVC"
+    ) => {
         const res = await findVC({
             where: [
                 {
                     column: "type",
-                    value: ["VerifiableCredential,TermsOfUseVC"],
+                    value: [`VerifiableCredential,TermsOfUseVC,${type}`],
                 },
             ],
         });
