@@ -254,7 +254,7 @@ function PrivateTransferVCCard({
             <VCPropText>
                 {vc?.credentialSubject?.toShareHolder.amount}
             </VCPropText>
-            <VCPropLabel></VCPropLabel>
+            <VCPropLabel>Til</VCPropLabel>
             <VCPropText>{vc?.credentialSubject?.toShareHolder.name}</VCPropText>
         </VCCard>
     );

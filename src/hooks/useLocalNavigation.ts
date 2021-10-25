@@ -8,6 +8,8 @@ export const SCREEN_SCANNER = "Scanner";
 export const SCREEN_DEMO = "Demo";
 export const SCREEN_BANKID = "BankIDScreen";
 export const SCREEN_CREATE_CAP_TABLE_VP = "CreateCapTableVPScreen";
+export const SCREEN_CREATE_CAP_TABLE_PRIVATE_TOKEN_TRANSFER_VP =
+    "CreateCapTablePrivateTokenTransferVP";
 
 export function useLocalNavigation() {
     const navigation = useNavigation();

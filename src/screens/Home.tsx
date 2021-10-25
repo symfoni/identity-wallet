@@ -1,4 +1,5 @@
 import { JsonRpcResult } from "@json-rpc-tools/types";
+import { useNavigation } from "@react-navigation/core";
 import React, { useContext, useState } from "react";
 import {
     ActivityIndicator,
@@ -18,18 +19,9 @@ import { CreateCapTableVPResult } from "../types/capTableTypes";
 export const Home = (props: {
     route: { params?: JsonRpcResult<CreateCapTableVPResult> };
 }) => {
-    const {
-        pair,
-        loading,
-        findNationalIdentityVC,
-        findTermsOfUseVC,
-        consumeEvent,
-        sendResponse,
-    } = useSymfoniContext();
+    const { pair, loading } = useSymfoniContext();
     const { colors } = useContext(ColorContext);
     const styles = makeStyles(colors);
-
-    const { navigateWithResult } = useNavigationWithResult(props.route.params);
 
     async function onScanQR(maybeURI: any) {
         console.log("onRead", maybeURI);
@@ -55,57 +47,9 @@ export const Home = (props: {
         }
     }
 
-    useAsyncEffect(async () => {
-        while (sendResponse) {
-            const { topic, request } = await consumeEvent(
-                "symfoniID_createCapTableVP"
-            );
+    useEffectCreateCapTableVP(props.route.params);
+    useEffectCreateCapTablePrivateTokenTransferVP(props.route.params);
 
-            // Get existing VCs if exist.
-            request.params = request.params[0];
-            request.params.capTableTermsOfUseVC = await findTermsOfUseVC();
-            request.params.nationalIdentityVC = await findNationalIdentityVC();
-
-            const result = await navigateWithResult(
-                SCREEN_CREATE_CAP_TABLE_VP,
-                request
-            );
-
-            console.log({ result });
-            sendResponse(topic, {
-                ...result,
-                result: {
-                    ...result.result,
-                    createCapTableVP: result.result.createCapTableVP.proof.jwt,
-                },
-            });
-        }
-    }, [sendResponse]);
-
-    useAsyncEffect(async () => {
-        const { topic, request } = await consumeEvent(
-            "symfoniID_createCapTablePrivateTokenTransferVP"
-        );
-
-        // Get existing VCs if exist.
-        // TODO get correct terms of use
-        request.params.capTableTermsOfUseVC = await findTermsOfUseVC();
-        request.params.nationalIdentityVC = await findNationalIdentityVC();
-
-        const result = await navigateWithResult(
-            SCREEN_CREATE_CAP_TABLE_VP,
-            request
-        );
-
-        console.log({ result });
-        sendResponse(topic, {
-            ...result,
-            result: {
-                ...result.result,
-                createCapTableVP: result.result.createCapTableVP.proof.jwt,
-            },
-        });
-    }, [sendResponse]);
     return (
         <>
             <StatusBar />
@@ -135,3 +79,90 @@ const makeStyles = (colors: ColorSystem) => {
         },
     });
 };
+
+/**
+ * Listen, navigate, get navigation result and send response
+ */
+function useEffectCreateCapTableVP(
+    params?: JsonRpcResult<CreateCapTableVPResult>
+) {
+    const {
+        consumeEvent,
+        findNationalIdentityVC,
+        findTermsOfUseVC,
+        sendResponse,
+    } = useSymfoniContext();
+
+    const { navigateWithResult } = useNavigationWithResult(params);
+
+    useAsyncEffect(async () => {
+        while (sendResponse) {
+            const { topic, request } = await consumeEvent(
+                "symfoniID_createCapTableVP"
+            );
+
+            // Get existing VCs if exist.
+            request.params = request.params[0];
+            request.params.capTableTermsOfUseVC = await findTermsOfUseVC();
+            request.params.nationalIdentityVC = await findNationalIdentityVC();
+
+            const result = await navigateWithResult(
+                SCREEN_CREATE_CAP_TABLE_VP,
+                request
+            );
+
+            console.log({ result });
+            sendResponse(topic, {
+                ...result,
+                result: {
+                    ...result.result,
+                    createCapTableVP: result.result.createCapTableVP.proof.jwt,
+                },
+            });
+        }
+    }, [sendResponse]);
+}
+
+/**
+ * Listen, navigate, get navigation result and send response
+ */
+function useEffectCreateCapTablePrivateTokenTransferVP(
+    params?: JsonRpcResult<CreateCapTableVPResult>
+) {
+    const {
+        consumeEvent,
+        findNationalIdentityVC,
+        findTermsOfUseVC,
+        sendResponse,
+    } = useSymfoniContext();
+
+    const { navigateWithResult } = useNavigationWithResult(params);
+
+    useAsyncEffect(async () => {
+        while (sendResponse) {
+            const { topic, request } = await consumeEvent(
+                "symfoniID_createCapTablePrivateTokenTransferVP"
+            );
+
+            // Get existing VCs if exist.
+            // TODO get correct terms of use
+            request.params = request.params[0];
+            request.params.capTableTermsOfUseVC = await findTermsOfUseVC();
+            request.params.nationalIdentityVC = await findNationalIdentityVC();
+
+            const result = await navigateWithResult(
+                SCREEN_CREATE_CAP_TABLE_VP,
+                request
+            );
+
+            console.log({ result });
+            sendResponse(topic, {
+                ...result,
+                result: {
+                    ...result.result,
+                    createCapTableVP: result.result.createCapTableVP.proof.jwt,
+                },
+            });
+        }
+    }, [sendResponse]);
+}

@@ -6,9 +6,13 @@ import {
     SCREEN_CREATE_CAP_TABLE_VP,
     SCREEN_DEMO,
     SCREEN_BANKID,
+    SCREEN_CREATE_CAP_TABLE_PRIVATE_TOKEN_TRANSFER_VP,
 } from "../hooks/useLocalNavigation";
 import { useNavigationWithResult } from "../hooks/useNavigationWithResult";
-import { CreateCapTableVPParams } from "../types/capTableTypes";
+import {
+    CapTablePrivateTokenTransferParams,
+    CreateCapTableVPParams,
+} from "../types/capTableTypes";
 import { makeBankIDRequest } from "../types/paramTypes";
 
 export function DemoScreen() {
@@ -51,7 +55,7 @@ export function DemoScreen() {
                             "symfoniID_createCapTableVP",
                             {
                                 verifier: "demo",
-                                capTableForm: {
+                                capTable: {
                                     organizationNumber: "demo",
                                     shareholders: [],
                                 },
@@ -83,6 +87,26 @@ export function DemoScreen() {
                     console.info({ result });
                 }}
             />
+            <Button
+                title="Demo: TransferShare"
+                onPress={async () => {
+                    const request =
+                        formatJsonRpcRequest<CapTablePrivateTokenTransferParams>(
+                            "symfoniID_createCapTablePrivateTokenTransferVP",
+                            {
+                                verifier: "demo",
+                                capTablePrivateTokenTransfer: "hei",
+                            }
+                        );
+
+                    const result = await navigateWithResult(
+                        SCREEN_CREATE_CAP_TABLE_PRIVATE_TOKEN_TRANSFER_VP,
+                        request
+                    );
+                    console.info({ result });
+                }}>
+                Demo: Transfer Share
+            </Button>
         </>
     );
 }

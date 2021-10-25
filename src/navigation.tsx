@@ -11,6 +11,7 @@ import {
     NAVIGATOR_TABS,
     SCREEN_HOME,
     SCREEN_CREATE_CAP_TABLE_VP,
+    SCREEN_CREATE_CAP_TABLE_PRIVATE_TOKEN_TRANSFER_VP,
 } from "./hooks/useLocalNavigation";
 import { DemoScreen } from "./screens/DemoScreen";
 import { Home } from "./screens/Home";
@@ -18,6 +19,7 @@ import { Identity } from "./screens/Identity";
 import { ProfileNavigation } from "./screens/Profile/ProfileNavigation";
 import { CreateCapTableVPScreen } from "./screens/CreateCapTableVPScreen";
 import { BankIDScreen } from "./screens/BankIDScreen";
+import { CapTablePrivateTokenTransferVPScreen } from "./screens/CapTablePrivateTokenTransferVPScreen";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -109,6 +111,15 @@ export const Navigation = () => {
             <Stack.Screen
                 name={SCREEN_CREATE_CAP_TABLE_VP}
                 component={CreateCapTableVPScreen}
+                options={{
+                    title: "Vis legitimasjon",
+                    headerLargeTitle: true,
+                    presentation: "modal",
+                }}
+            />
+            <Stack.Screen
+                name={SCREEN_CREATE_CAP_TABLE_PRIVATE_TOKEN_TRANSFER_VP}
+                component={CapTablePrivateTokenTransferVPScreen}
                 options={{
                     title: "Vis legitimasjon",
                     headerLargeTitle: true,
