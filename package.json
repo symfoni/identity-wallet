@@ -4,9 +4,9 @@
     "private": true,
     "scripts": {
         "android": "react-native run-android",
-        "ios": "react-native run-ios --scheme id.symfoni.app.dev",
-        "ios:stage": "react-native run-ios --scheme id.symfoni.app.stage",
-        "ios:prod": "react-native run-ios --scheme id.symfoni.app",
+        "ios": "react-native run-ios --scheme id.symfoni.app.dev --configuration id.symfoni.app.dev.Debug",
+        "ios:stage": "react-native run-ios --scheme id.symfoni.app.stage --configuration id.symfoni.app.stage.Stage",
+        "ios:prod": "react-native run-ios --scheme id.symfoni.app --configuration id.symfoni.app.Debug",
         "start": "APP_ENV=development react-native start",
         "start:prod": "APP_ENV=production react-native start",
         "test": "jest",
