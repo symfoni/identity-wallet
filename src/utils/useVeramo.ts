@@ -193,7 +193,7 @@ export const useVeramo = (chainId: string) => {
         const vp = await agent.createVerifiablePresentation({
             presentation: {
                 holder: identity.did,
-                verifier,
+                verifier: [verifier],
                 verifiableCredential: [
                     capTableVC,
                     capTableTermsOfUseVC,

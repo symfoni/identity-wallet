@@ -5,7 +5,6 @@ import {
     SafeAreaView,
     StatusBar,
     StyleSheet,
-    Text,
     View,
 } from "react-native";
 import { useAsyncEffect } from "use-async-effect";
@@ -32,8 +31,6 @@ export const Home = (props: {
 
     const { navigateWithResult } = useNavigationWithResult(props.route.params);
 
-    const [loadingRequest, setLoadingRequest] = useState(false);
-
     async function onScanQR(maybeURI: any) {
         console.log("onRead", maybeURI);
 
@@ -59,27 +56,30 @@ export const Home = (props: {
     }
 
     useAsyncEffect(async () => {
-        const { topic, request } = await consumeEvent(
-            "symfoniID_createCapTableVP"
-        );
+        while (sendResponse) {
+            const { topic, request } = await consumeEvent(
+                "symfoniID_createCapTableVP"
+            );
 
-        // Get existing VCs if exist.
-        request.params.capTableTermsOfUseVC = await findTermsOfUseVC();
-        request.params.nationalIdentityVC = await findNationalIdentityVC();
+            // Get existing VCs if exist.
+            request.params = request.params[0];
+            request.params.capTableTermsOfUseVC = await findTermsOfUseVC();
+            request.params.nationalIdentityVC = await findNationalIdentityVC();
 
-        const result = await navigateWithResult(
-            SCREEN_CREATE_CAP_TABLE_VP,
-            request
-        );
+            const result = await navigateWithResult(
+                SCREEN_CREATE_CAP_TABLE_VP,
+                request
+            );
 
-        console.log({ result });
-        sendResponse(topic, {
-            ...result,
-            result: {
-                ...result.result,
-                createCapTableVP: result.result.createCapTableVP.proof.jwt,
-            },
-        });
+            console.log({ result });
+            sendResponse(topic, {
+                ...result,
+                result: {
+                    ...result.result,
+                    createCapTableVP: result.result.createCapTableVP.proof.jwt,
+                },
+            });
+        }
     }, [sendResponse]);
 
     useAsyncEffect(async () => {
@@ -115,7 +115,6 @@ export const Home = (props: {
                 ) : (
                     <View style={styles.actionContainer}>
                         <Scanner onInput={onScanQR} />
-                        {loadingRequest && <Text>Loading request...</Text>}
                     </View>
                 )}
             </SafeAreaView>
