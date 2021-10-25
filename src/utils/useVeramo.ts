@@ -188,7 +188,6 @@ export const useVeramo = (chainId: string) => {
         if (!identity) {
             throw Error("Cant create VP, identity not initilized");
         }
-        console.log("create verifier", verifier);
         const vp = await agent.createVerifiablePresentation({
             presentation: {
                 holder: identity.did,
