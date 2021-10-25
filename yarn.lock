@@ -2618,9 +2618,9 @@
     debug "^4.1.1"
     did-jwt "5.8.0"
 
-"@walletconnect/client@^2.0.0-beta.18.3":
+"@walletconnect/client@^2.0.0-beta.19":
   version "2.0.0-beta.19"
-  resolved "https://registry.npmjs.org/@walletconnect/client/-/client-2.0.0-beta.19.tgz"
+  resolved "https://registry.yarnpkg.com/@walletconnect/client/-/client-2.0.0-beta.19.tgz#606018803a7afe40660c41994a6e1da965982505"
   integrity sha512-I36xcxakrDKV/Z8vflqJJOUit/I0QRnv+YvgYu0Z4F3rUCi+HKnF9hAbmhJPzZmspZekXMP5OFCjgHiU2gAC2Q==
   dependencies:
     "@walletconnect/encoding" "^1.0.0"
@@ -8015,7 +8015,7 @@ pkg-dir@^4.2.0:
 
 plist@^3.0.1:
   version "3.0.4"
-  resolved "https://registry.npmjs.org/plist/-/plist-3.0.4.tgz"
+  resolved "https://registry.yarnpkg.com/plist/-/plist-3.0.4.tgz#a62df837e3aed2bb3b735899d510c4f186019cbe"
   integrity sha512-ksrr8y9+nXOxQB2osVNqrgvX/XQPOXaU4BQMKjYq8PvaY1U18mo+fKgBSwzK+luSyinOuPae956lSVcBwxlAMg==
   dependencies:
     base64-js "^1.5.1"

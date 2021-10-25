@@ -14,7 +14,7 @@ export const DEFAULT_CHAINS = [...DEFAULT_MAIN_CHAINS, ...DEFAULT_TEST_CHAINS];
 export const DEFAULT_RELAY_PROVIDER = "wss://relay.walletconnect.org"; // "wss://localhost:5555"
 
 export const DEFAULT_RPC_PROVIDER_TEST =
-    "https://arbitrum-rinkeby.infura.io/v3/0771265f174543dca52bbe282a69397d";
+    "https://arb-rinkeby.g.alchemy.com/v2/_oMAKsLfMlE5OrHhjUPdBiV-8bKnpGXW";
 export const DEFAULT_RPC_PROVIDER_MAIN = "SET THIS UP!!!!";
 
 export const DEFAULT_EIP155_METHODS = [
