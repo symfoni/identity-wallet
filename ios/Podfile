@@ -4,6 +4,15 @@ require_relative '../node_modules/@react-native-community/cli-platform-ios/nativ
 platform :ios, '10.0'
 
 target 'SymfoniID' do
+  project 'SymfoniID',
+    # https://guides.cocoapods.org/syntax/podfile.html#project
+    'id.symfoni.app.dev.Debug' => :debug,
+    'id.symfoni.app.stage.Debug' => :debug,
+    'id.symfoni.app.Debug' => :debug,
+    'id.symfoni.app.dev.Release' => :release,
+    'id.symfoni.app.stage.Release' => :release,
+    'id.symfoni.app.Release' => :release
+
   config = use_native_modules!
 
   use_react_native!(
@@ -34,15 +43,7 @@ target 'SymfoniID' do
       'Flipper' => '0.91.1', 
       'Flipper-Folly' => '2.6.7', 
       'Flipper-RSocket' => '~> 1.4' 
-    }, 
-    configurations: [
-      'id.symfoni.app.debug',
-      'id.symfoni.app.release',
-      'id.symfoni.app.dev.debug',
-      'id.symfoni.app.dev.release',
-      'id.symfoni.app.stage.debug',
-      'id.symfoni.app.stage.debug'
-    ]
+    }
   )
 
   post_install do |installer|
