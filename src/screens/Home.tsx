@@ -61,28 +61,31 @@ export const Home = (props: {
     }
 
     useAsyncEffect(async () => {
-        const { topic, request } = await consumeEvent(
-            "symfoniID_createCapTableVP"
-        );
-        setLoadingRequest(false);
+        while (sendResponse) {
+            const { topic, request } = await consumeEvent(
+                "symfoniID_createCapTableVP"
+            );
+            setLoadingRequest(false);
 
-        // Get existing VCs if exist.
-        request.params.capTableTermsOfUseVC = await findTermsOfUseVC();
-        request.params.nationalIdentityVC = await findNationalIdentityVC();
+            // Get existing VCs if exist.
+            request.params = request.params[0];
+            request.params.capTableTermsOfUseVC = await findTermsOfUseVC();
+            request.params.nationalIdentityVC = await findNationalIdentityVC();
 
-        const result = await navigateWithResult(
-            SCREEN_CREATE_CAP_TABLE_VP,
-            request
-        );
+            const result = await navigateWithResult(
+                SCREEN_CREATE_CAP_TABLE_VP,
+                request
+            );
 
-        console.log({ result });
-        sendResponse(topic, {
-            ...result,
-            result: {
-                ...result.result,
-                createCapTableVP: result.result.createCapTableVP.proof.jwt,
-            },
-        });
+            console.log({ result });
+            sendResponse(topic, {
+                ...result,
+                result: {
+                    ...result.result,
+                    createCapTableVP: result.result.createCapTableVP.proof.jwt,
+                },
+            });
+        }
     }, [sendResponse]);
 
     return (
