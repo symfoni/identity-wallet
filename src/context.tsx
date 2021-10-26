@@ -28,14 +28,16 @@ import {
     DEFAULT_RPC_PROVIDER_TEST,
     DEFAULT_TEST_CHAINS,
 } from "./constants/default";
-import { CapTable } from "./types/capTableTypes";
+import { CapTable, CreateCapTableVPParams } from "./types/capTableTypes";
 import { JwtPayload } from "./types/JwtPayload";
 import { VerifyOptions } from "./types/VerifyOptions";
 import { useVeramo } from "./utils/useVeramo";
 import { useWalletconnect } from "./utils/useWalletconnect";
+import { CapTablePrivateTokenTransferVC } from "./verifiableCredentials/CapTablePrivateTokenTransferVC";
 import { CapTableVC } from "./verifiableCredentials/CapTableVC";
 import { NationalIdentityVC } from "./verifiableCredentials/NationalIdentityVC";
 import { TermsOfUseVC } from "./verifiableCredentials/TermsOfUseVC";
+import { CapTablePrivateTokenTransferVP } from "./verifiablePresentations/CapTablePrivateTokenTransferVP";
 import { CreateCapTableVP } from "./verifiablePresentations/CreateCapTableVP";
 
 export type Agent = TAgent<
@@ -73,22 +75,30 @@ export interface IContext {
     findVC: (
         args: FindArgs<TCredentialColumns>
     ) => Promise<UniqueVerifiableCredential[]>;
-    findNationalIdentityVC: () => Promise<NationalIdentityVC | undefined>;
-    findTermsOfUseVC: () => Promise<TermsOfUseVC | undefined>;
+    findVCByType: (type: string) => Promise<VerifiableCredential | undefined>;
     saveVP: (vp: VerifiablePresentation | string) => Promise<string>;
     pair: (uri: string) => Promise<void>;
     createCapTableVC: (capTable: CapTable) => Promise<CapTableVC>;
-    createTermsOfUseVC: (readAndAcceptedId: string) => Promise<TermsOfUseVC>;
+    createTermsOfUseVC: (
+        type: string,
+        readAndAcceptedId: string
+    ) => Promise<TermsOfUseVC>;
     createNationalIdentityVC: (
         nationalIdentityNumber: string,
         evidence: { type: "BankID"; jwt: string }
     ) => Promise<NationalIdentityVC>;
     createCreateCapTableVP: (
-        verifier: string,
-        capTable: CapTableVC,
-        capTableTermsOfUseVC: TermsOfUseVC,
-        nationalIdentityVC: NationalIdentityVC
+        request: CreateCapTableVPParams
     ) => Promise<CreateCapTableVP>;
+    createCapTablePrivateTransferVP: (
+        verifier: string,
+        capTablePrivateTokenTransferVC: CapTablePrivateTokenTransferVC,
+        nationalIdentityVC: NationalIdentityVC
+    ) => Promise<CapTablePrivateTokenTransferVP>;
+    createCapTablePrivateTransferVC: (toShareholder: {
+        amount: string;
+        name: string;
+    }) => Promise<CapTablePrivateTokenTransferVC>;
     consumeEvent: (method: string) => Promise<SessionTypes.RequestEvent>;
     sendResponse: (topic: string, response: JsonRpcResponse<any>) => void;
 }

@@ -6,19 +6,28 @@ import {
     SCREEN_CREATE_CAP_TABLE_VP,
     SCREEN_DEMO,
     SCREEN_BANKID,
+    SCREEN_CREATE_CAP_TABLE_PRIVATE_TOKEN_TRANSFER_VP,
 } from "../hooks/useLocalNavigation";
 import { useNavigationWithResult } from "../hooks/useNavigationWithResult";
-import { CreateCapTableVPParams } from "../types/capTableTypes";
+import {
+    CapTablePrivateTokenTransferParams,
+    CreateCapTableVPParams,
+} from "../types/capTableTypes";
 import { makeBankIDRequest } from "../types/paramTypes";
+import { NationalIdentityVC } from "../verifiableCredentials/NationalIdentityVC";
+import {
+    TermsOfUseForvaltVC,
+    TermsOfUseSymfoniVC,
+} from "../verifiableCredentials/TermsOfUseVC";
 
 export function DemoScreen() {
-    const { findTermsOfUseVC, findNationalIdentityVC } = useSymfoniContext();
+    const { findVCByType } = useSymfoniContext();
     const { navigateWithResult } = useNavigationWithResult();
 
     return (
         <>
             <Button
-                title="Demo: Lag ny legitimasjon"
+                title="Demo: Opprett aksjeeierbok"
                 onPress={async () => {
                     const request =
                         formatJsonRpcRequest<CreateCapTableVPParams>(
@@ -41,21 +50,31 @@ export function DemoScreen() {
                 }}
             />
             <Button
-                title="Demo: Bruk eksisterende legitimasjon dersom finnes"
+                title="Demo: Opprett aksjeeierbok (med gjenbruk)"
                 onPress={async () => {
-                    const capTableTermsOfUseVC = await findTermsOfUseVC();
-                    const nationalIdentityVC = await findNationalIdentityVC();
+                    const termsOfUseForvaltVC = (await findVCByType(
+                        "TermsOfUseForvaltVC"
+                    )) as TermsOfUseForvaltVC;
+
+                    const termsOfUseSymfoniVC = (await findVCByType(
+                        "TermsOfUseSymfoniVC"
+                    )) as TermsOfUseSymfoniVC;
+
+                    const nationalIdentityVC = (await findVCByType(
+                        "NationalIdentityVC"
+                    )) as NationalIdentityVC;
 
                     const request =
                         formatJsonRpcRequest<CreateCapTableVPParams>(
                             "symfoniID_createCapTableVP",
                             {
                                 verifier: "demo",
-                                capTableForm: {
+                                capTable: {
                                     organizationNumber: "demo",
                                     shareholders: [],
                                 },
-                                capTableTermsOfUseVC,
+                                termsOfUseForvaltVC,
+                                termsOfUseSymfoniVC,
                                 nationalIdentityVC,
                             }
                         );
@@ -63,6 +82,65 @@ export function DemoScreen() {
 
                     const result = await navigateWithResult(
                         SCREEN_CREATE_CAP_TABLE_VP,
+                        request
+                    );
+                    console.info({ result });
+                }}
+            />
+            <Button
+                title="Demo: Overføre Aksjer"
+                onPress={async () => {
+                    const request =
+                        formatJsonRpcRequest<CapTablePrivateTokenTransferParams>(
+                            "symfoniID_createCapTablePrivateTokenTransferVP",
+                            {
+                                verifier: "demo",
+                                toShareholder: {
+                                    name: "Jon Ramvi",
+                                    amount: "22",
+                                },
+                            }
+                        );
+
+                    const result = await navigateWithResult(
+                        SCREEN_CREATE_CAP_TABLE_PRIVATE_TOKEN_TRANSFER_VP,
+                        request
+                    );
+                    console.info({ result });
+                }}
+            />
+            <Button
+                title="Demo: Overføre Aksjer (med gjenbruk)"
+                onPress={async () => {
+                    const nationalIdentityVC = (await findVCByType(
+                        "NationalIdentityVC"
+                    )) as NationalIdentityVC;
+
+                    const termsOfUseForvaltVC = (await findVCByType(
+                        "TermsOfUseForvaltVC"
+                    )) as TermsOfUseForvaltVC;
+
+                    const termsOfUseSymfoniVC = (await findVCByType(
+                        "TermsOfUseSymfoniVC"
+                    )) as TermsOfUseSymfoniVC;
+
+                    const request =
+                        formatJsonRpcRequest<CapTablePrivateTokenTransferParams>(
+                            "symfoniID_createCapTablePrivateTokenTransferVP",
+                            {
+                                verifier: "demo",
+                                toShareholder: {
+                                    name: "Jon Ramvi",
+                                    amount: "22",
+                                },
+                                nationalIdentityVC,
+                                termsOfUseSymfoniVC,
+                                termsOfUseForvaltVC,
+                            }
+                        );
+
+                    const result = await navigateWithResult(
+                        SCREEN_CREATE_CAP_TABLE_PRIVATE_TOKEN_TRANSFER_VP,
                         request
                     );
                     console.info({ result });

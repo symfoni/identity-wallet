@@ -1,39 +1,31 @@
 import { JsonRpcResult } from "@json-rpc-tools/types";
+import { useNavigation } from "@react-navigation/core";
 import React, { useContext, useState } from "react";
 import {
     ActivityIndicator,
     SafeAreaView,
     StatusBar,
     StyleSheet,
-    Text,
     View,
 } from "react-native";
 import { useAsyncEffect } from "use-async-effect";
 import { ColorContext, ColorSystem } from "../colorContext";
 import { Scanner } from "../components/scanner";
 import { useSymfoniContext } from "../context";
-import { SCREEN_CREATE_CAP_TABLE_VP } from "../hooks/useLocalNavigation";
+import {
+    SCREEN_CREATE_CAP_TABLE_PRIVATE_TOKEN_TRANSFER_VP,
+    SCREEN_CREATE_CAP_TABLE_VP,
+} from "../hooks/useLocalNavigation";
 import { useNavigationWithResult } from "../hooks/useNavigationWithResult";
 import { CreateCapTableVPResult } from "../types/capTableTypes";
-import { CreateCapTableVP } from "../verifiablePresentations/CreateCapTableVP";
+import { NationalIdentityVC } from "../verifiableCredentials/NationalIdentityVC";
 
 export const Home = (props: {
     route: { params?: JsonRpcResult<CreateCapTableVPResult> };
 }) => {
-    const {
-        pair,
-        loading,
-        findNationalIdentityVC,
-        findTermsOfUseVC,
-        consumeEvent,
-        sendResponse,
-    } = useSymfoniContext();
+    const { pair, loading } = useSymfoniContext();
     const { colors } = useContext(ColorContext);
     const styles = makeStyles(colors);
-
-    const { navigateWithResult } = useNavigationWithResult(props.route.params);
-
-    const [loadingRequest, setLoadingRequest] = useState(false);
 
     async function onScanQR(maybeURI: any) {
         console.log("onRead", maybeURI);
@@ -57,36 +49,10 @@ export const Home = (props: {
             console.warn("ERROR: await pair(URI): ", err);
             return;
         }
-        setLoadingRequest(true);
     }
 
-    useAsyncEffect(async () => {
-        while (sendResponse) {
-            const { topic, request } = await consumeEvent(
-                "symfoniID_createCapTableVP"
-            );
-            setLoadingRequest(false);
-
-            // Get existing VCs if exist.
-            request.params = request.params[0];
-            request.params.capTableTermsOfUseVC = await findTermsOfUseVC();
-            request.params.nationalIdentityVC = await findNationalIdentityVC();
-
-            const result = await navigateWithResult(
-                SCREEN_CREATE_CAP_TABLE_VP,
-                request
-            );
-
-            console.log({ result });
-            sendResponse(topic, {
-                ...result,
-                result: {
-                    ...result.result,
-                    createCapTableVP: result.result.createCapTableVP.proof.jwt,
-                },
-            });
-        }
-    }, [sendResponse]);
+    useEffectCreateCapTableVP(props.route.params);
+    useEffectCreateCapTablePrivateTokenTransferVP(props.route.params);
 
     return (
         <>
@@ -97,7 +63,6 @@ export const Home = (props: {
                 ) : (
                     <View style={styles.actionContainer}>
                         <Scanner onInput={onScanQR} />
-                        {loadingRequest && <Text>Loading request...</Text>}
                     </View>
                 )}
             </SafeAreaView>
@@ -118,3 +83,94 @@ const makeStyles = (colors: ColorSystem) => {
         },
     });
 };
+
+/**
+ * Listen, navigate, get navigation result and send response
+ */
+function useEffectCreateCapTableVP(
+    params?: JsonRpcResult<CreateCapTableVPResult>
+) {
+    const { consumeEvent, findVCByType, sendResponse } = useSymfoniContext();
+
+    const { navigateWithResult } = useNavigationWithResult(params);
+
+    useAsyncEffect(async () => {
+        while (true) {
+            const { topic, request } = await consumeEvent(
+                "symfoniID_createCapTableVP"
+            );
+
+            // Get existing VCs if exist.
+            request.params = request.params[0];
+            request.params.termsOfUseForvaltVC = await findVCByType(
+                "TermsOfUseForvaltVC"
+            );
+            request.params.termsOfUseSymfoniVC = await findVCByType(
+                "TermsOfUseSymfoniVC"
+            );
+            request.params.nationalIdentityVC = (await findVCByType(
+                "NationalIdentityVC"
+            )) as NationalIdentityVC;
+
+            const result = await navigateWithResult(
+                SCREEN_CREATE_CAP_TABLE_VP,
+                request
+            );
+
+            console.log({ result });
+            sendResponse(topic, {
+                ...result,
+                result: {
+                    ...result.result,
+                    createCapTableVP: result.result.createCapTableVP.proof.jwt,
+                },
+            });
+        }
+    }, []);
+}
+
+/**
+ * Listen, navigate, get navigation result and send response
+ */
+function useEffectCreateCapTablePrivateTokenTransferVP(
+    params?: JsonRpcResult<CreateCapTableVPResult>
+) {
+    const { consumeEvent, findVCByType, sendResponse } = useSymfoniContext();
+
+    const { navigateWithResult } = useNavigationWithResult(params);
+
+    useAsyncEffect(async () => {
+        while (true) {
+            const { topic, request } = await consumeEvent(
+                "symfoniID_createCapTablePrivateTokenTransferVP"
+            );
+
+            // Get existing VCs if exist.
+            // TODO get correct terms of use
+            request.params = request.params[0];
+            request.params.termsOfUseForvaltVC = await findVCByType(
+                "TermsOfUseForvaltVC"
+            );
+            request.params.termsOfUseSymfoniVC = await findVCByType(
+                "TermsOfUseSymfoniVC"
+            );
+            request.params.nationalIdentityVC = (await findVCByType(
+                "NationalIdentityVC"
+            )) as NationalIdentityVC;
+
+            const result = await navigateWithResult(
+                SCREEN_CREATE_CAP_TABLE_PRIVATE_TOKEN_TRANSFER_VP,
+                request
+            );
+
+            console.log({ result });
+            sendResponse(topic, {
+                ...result,
+                result: {
+                    ...result.result,
+                    createCapTableVP: result.result.createCapTableVP.proof.jwt,
+                },
+            });
+        }
+    }, []);
+}
