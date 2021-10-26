@@ -28,7 +28,7 @@ import {
     DEFAULT_RPC_PROVIDER_TEST,
     DEFAULT_TEST_CHAINS,
 } from "./constants/default";
-import { CapTable } from "./types/capTableTypes";
+import { CapTable, CreateCapTableVPParams } from "./types/capTableTypes";
 import { JwtPayload } from "./types/JwtPayload";
 import { VerifyOptions } from "./types/VerifyOptions";
 import { useVeramo } from "./utils/useVeramo";
@@ -88,10 +88,7 @@ export interface IContext {
         evidence: { type: "BankID"; jwt: string }
     ) => Promise<NationalIdentityVC>;
     createCreateCapTableVP: (
-        verifier: string,
-        capTable: CapTableVC,
-        capTableTermsOfUseVC: TermsOfUseVC,
-        nationalIdentityVC: NationalIdentityVC
+        request: CreateCapTableVPParams
     ) => Promise<CreateCapTableVP>;
     createCapTablePrivateTransferVP: (
         verifier: string,

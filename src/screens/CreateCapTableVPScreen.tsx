@@ -7,7 +7,7 @@ import React, {
     useState,
 } from "react";
 import styled from "styled-components/native";
-import { ActivityIndicator, Linking, ScrollView } from "react-native";
+import { ActivityIndicator, Linking } from "react-native";
 import {
     SCREEN_CREATE_CAP_TABLE_VP,
     SCREEN_BANKID,
@@ -62,8 +62,9 @@ export function CreateCapTableVPScreen(props: {
         useState(false);
 
     const presentable =
-        !!request?.params.capTableTermsOfUseVC &&
-        !!request?.params.nationalIdentityVC;
+        request?.params.termsOfUseForvaltVC &&
+        request?.params.termsOfUseSymfoniVC &&
+        request?.params.nationalIdentityVC;
 
     // createNationalIdentityVC
     const onSignNationalIdentityVC = useCallback(async () => {
@@ -102,10 +103,12 @@ export function CreateCapTableVPScreen(props: {
         }
     }, [request, createNationalIdentityVC, navigateWithResult]);
 
-    // createTermsOfUseVC
-    const onSignCapTableTermsOfUse = async (readAndAcceptedID: string) => {
+    const onSignTermsOfUse = async (
+        VCtype: string,
+        readAndAcceptedID: string
+    ) => {
         if (!request) {
-            console.error("CreateCapTableVPScreen.tsx: !request");
+            console.warn("onSignCapTableTermsOfUse(): !request");
             return;
         }
 
@@ -117,16 +120,16 @@ export function CreateCapTableVPScreen(props: {
                 return;
             }
 
-            const capTableTermsOfUseVC = (await createTermsOfUseVC(
-                "TermsOfUseForvaltVC",
+            const termsOfVC = await createTermsOfUseVC(
+                VCtype,
                 readAndAcceptedID
-            )) as TermsOfUseForvaltVC;
-
+            );
             setRequest({
                 ...request,
                 params: {
                     ...request.params,
-                    capTableTermsOfUseVC,
+                    [VCtype.charAt(0).toLowerCase() + VCtype.slice(1)]:
+                        termsOfVC,
                 },
             });
         } finally {
@@ -137,12 +140,14 @@ export function CreateCapTableVPScreen(props: {
     // presentCreateCapTableVP
     const presentCreateCapTableVP = async () => {
         if (
-            !request ||
-            !request.params.capTableTermsOfUseVC ||
-            !request.params.nationalIdentityVC
+            !request?.params.termsOfUseForvaltVC ||
+            !request?.params.termsOfUseSymfoniVC ||
+            !request?.params.nationalIdentityVC
         ) {
-            console.error(
-                `CreateCapTableVPScreen.tsx: !request || !request.params.capTableTermsOfUseVC || !request.params.nationalIdentityVC`
+            console.warn(
+                `            !request?.params.termsOfUseForvaltVC ||
+            !request?.params.termsOfUseSymfoniVC ||
+            !request?.params.nationalIdentityVC`
             );
             return;
         }
@@ -152,14 +157,23 @@ export function CreateCapTableVPScreen(props: {
         // @note Creating the capTableVC behind the scenes, without asking the user...
         // @TODO Maybe ask user to sign this VC?
         const capTableVC = await createCapTableVC(request.params.capTable);
+        setRequest({
+            ...request,
+            params: {
+                ...request.params,
+                capTableVC,
+            },
+        });
+        let _request = {
+            ...request,
+            params: {
+                ...request.params,
+                capTableVC,
+            },
+        };
 
         // Creating the VP
-        const createCapTableVP = await createCreateCapTableVP(
-            request.params.verifier,
-            capTableVC,
-            request.params.capTableTermsOfUseVC,
-            request.params.nationalIdentityVC
-        );
+        const createCapTableVP = await createCreateCapTableVP(_request);
 
         const result = formatJsonRpcResult<CreateCapTableVPResult>(request.id, {
             createCapTableVP,
@@ -194,16 +208,18 @@ export function CreateCapTableVPScreen(props: {
                 <BigText>Opprette aksjeeierbok</BigText>
 
                 <TermsOfUseVCCard
-                    vc={request?.params.capTableTermsOfUseVC}
+                    vc={request?.params.termsOfUseForvaltVC}
                     loading={loadingSigningTermsOfUseVC}
-                    termsOfUseID="https://brreg.no/TOA"
-                    onSign={onSignCapTableTermsOfUse}
+                    VCType="TermsOfUseForvaltVC"
+                    termsOfUseID="https://forvalt.no/TOA"
+                    onSign={onSignTermsOfUse}
                 />
                 <TermsOfUseVCCard
-                    vc={request?.params.capTableTermsOfUseVC}
+                    vc={request?.params.termsOfUseSymfoniVC}
                     loading={loadingSigningTermsOfUseVC}
+                    VCType="TermsOfUseSymfoniVC"
                     termsOfUseID="https://symfoni.id/TOA"
-                    onSign={onSignCapTableTermsOfUse}
+                    onSign={onSignTermsOfUse}
                 />
                 <NationalIdentityVCCard
                     vc={request?.params.nationalIdentityVC}
@@ -269,13 +285,15 @@ function NationalIdentityVCCard({
 function TermsOfUseVCCard({
     vc,
     loading,
+    VCType,
     termsOfUseID,
     onSign,
 }: {
     vc: TermsOfUseVC | undefined;
     loading: boolean;
+    VCType: string;
     termsOfUseID: string;
-    onSign: (termsOfUse: string) => {};
+    onSign: (VCType: string, termsOfUse: string) => {};
 }) {
     const signed = !!vc;
 
@@ -290,7 +308,7 @@ function TermsOfUseVCCard({
                 signed={signed}
                 loading={loading}
                 expirationDate={vc?.expirationDate}
-                onPress={() => onSign(termsOfUseID)}
+                onPress={() => onSign(VCType, termsOfUseID)}
             />
         </VCCard>
     );

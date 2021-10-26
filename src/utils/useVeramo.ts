@@ -21,12 +21,16 @@ import { normalizePresentation } from "did-jwt-vc";
 import { ethers } from "ethers";
 import { useEffect, useState } from "react";
 import { BankidJWTPayload } from "../types/bankid.types";
-import { CapTable } from "../types/capTableTypes";
+import { CapTable, CreateCapTableVPParams } from "../types/capTableTypes";
 import { JwtPayload } from "../types/JwtPayload";
 import { VerifyOptions } from "../types/VerifyOptions";
 import { CapTableVC } from "../verifiableCredentials/CapTableVC";
 import { NationalIdentityVC } from "../verifiableCredentials/NationalIdentityVC";
-import { TermsOfUseVC } from "../verifiableCredentials/TermsOfUseVC";
+import {
+    TermsOfUseForvaltVC,
+    TermsOfUseSymfoniVC,
+    TermsOfUseVC,
+} from "../verifiableCredentials/TermsOfUseVC";
 import { agent as _agent, deleteVeramoData } from "./../utils/VeramoUtils";
 import { CapTablePrivateTokenTransferVC } from "../verifiableCredentials/CapTablePrivateTokenTransferVC";
 
@@ -224,10 +228,12 @@ export const useVeramo = (chainId: string) => {
     };
 
     const createCreateCapTableVP = async (
-        verifier: string,
-        capTableVC: CapTableVC,
-        capTableTermsOfUseVC: TermsOfUseVC,
-        nationalIdentityVC: NationalIdentityVC
+        request: CreateCapTableVPParams & {
+            capTableVC: CapTableVC;
+            nationalIdentityVC: NationalIdentityVC;
+            termsOfUseSymfoniVC: TermsOfUseSymfoniVC;
+            termsOfUseForvaltVC: TermsOfUseForvaltVC;
+        }
     ) => {
         if (!identity) {
             throw Error("Cant create VP, identity not initilized");
@@ -235,11 +241,12 @@ export const useVeramo = (chainId: string) => {
         const vp = await agent.createVerifiablePresentation({
             presentation: {
                 holder: identity.did,
-                verifier: [verifier],
+                verifier: [request.verifier],
                 verifiableCredential: [
-                    capTableVC,
-                    capTableTermsOfUseVC,
-                    nationalIdentityVC,
+                    request.capTableVC,
+                    request.termsOfUseForvaltVC,
+                    request.termsOfUseSymfoniVC,
+                    request.nationalIdentityVC,
                 ],
             },
             proofFormat: "jwt",

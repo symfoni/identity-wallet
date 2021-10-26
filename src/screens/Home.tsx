@@ -12,7 +12,10 @@ import { useAsyncEffect } from "use-async-effect";
 import { ColorContext, ColorSystem } from "../colorContext";
 import { Scanner } from "../components/scanner";
 import { useSymfoniContext } from "../context";
-import { SCREEN_CREATE_CAP_TABLE_VP } from "../hooks/useLocalNavigation";
+import {
+    SCREEN_CREATE_CAP_TABLE_PRIVATE_TOKEN_TRANSFER_VP,
+    SCREEN_CREATE_CAP_TABLE_VP,
+} from "../hooks/useLocalNavigation";
 import { useNavigationWithResult } from "../hooks/useNavigationWithResult";
 import { CreateCapTableVPResult } from "../types/capTableTypes";
 import { NationalIdentityVC } from "../verifiableCredentials/NationalIdentityVC";
@@ -92,15 +95,18 @@ function useEffectCreateCapTableVP(
     const { navigateWithResult } = useNavigationWithResult(params);
 
     useAsyncEffect(async () => {
-        while (sendResponse) {
+        while (true) {
             const { topic, request } = await consumeEvent(
                 "symfoniID_createCapTableVP"
             );
 
             // Get existing VCs if exist.
             request.params = request.params[0];
-            request.params.capTableTermsOfUseVC = await findVCByType(
-                "TermsOfUseVC"
+            request.params.termsOfUseForvaltVC = await findVCByType(
+                "TermsOfUseForvaltVC"
+            );
+            request.params.termsOfUseSymfoniVC = await findVCByType(
+                "TermsOfUseSymfoniVC"
             );
             request.params.nationalIdentityVC = (await findVCByType(
                 "NationalIdentityVC"
@@ -120,7 +126,7 @@ function useEffectCreateCapTableVP(
                 },
             });
         }
-    }, [sendResponse]);
+    }, []);
 }
 
 /**
@@ -134,7 +140,7 @@ function useEffectCreateCapTablePrivateTokenTransferVP(
     const { navigateWithResult } = useNavigationWithResult(params);
 
     useAsyncEffect(async () => {
-        while (sendResponse) {
+        while (true) {
             const { topic, request } = await consumeEvent(
                 "symfoniID_createCapTablePrivateTokenTransferVP"
             );
@@ -142,15 +148,18 @@ function useEffectCreateCapTablePrivateTokenTransferVP(
             // Get existing VCs if exist.
             // TODO get correct terms of use
             request.params = request.params[0];
-            request.params.capTableTermsOfUseVC = await findVCByType(
-                "TermsOfUseVC"
+            request.params.termsOfUseForvaltVC = await findVCByType(
+                "TermsOfUseForvaltVC"
+            );
+            request.params.termsOfUseSymfoniVC = await findVCByType(
+                "TermsOfUseSymfoniVC"
             );
             request.params.nationalIdentityVC = (await findVCByType(
                 "NationalIdentityVC"
             )) as NationalIdentityVC;
 
             const result = await navigateWithResult(
-                SCREEN_CREATE_CAP_TABLE_VP,
+                SCREEN_CREATE_CAP_TABLE_PRIVATE_TOKEN_TRANSFER_VP,
                 request
             );
 
@@ -163,5 +172,5 @@ function useEffectCreateCapTablePrivateTokenTransferVP(
                 },
             });
         }
-    }, [sendResponse]);
+    }, []);
 }

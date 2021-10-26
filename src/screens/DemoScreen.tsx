@@ -27,7 +27,7 @@ export function DemoScreen() {
     return (
         <>
             <Button
-                title="Demo: Lag ny legitimasjon"
+                title="Demo: Opprett aksjeeierbok"
                 onPress={async () => {
                     const request =
                         formatJsonRpcRequest<CreateCapTableVPParams>(
@@ -50,11 +50,16 @@ export function DemoScreen() {
                 }}
             />
             <Button
-                title="Demo: Bruk eksisterende legitimasjon dersom finnes"
+                title="Demo: Opprett aksjeeierbok (med gjenbruk)"
                 onPress={async () => {
-                    const capTableTermsOfUseVC = (await findVCByType(
+                    const termsOfUseForvaltVC = (await findVCByType(
                         "TermsOfUseForvaltVC"
                     )) as TermsOfUseForvaltVC;
+
+                    const termsOfUseSymfoniVC = (await findVCByType(
+                        "TermsOfUseSymfoniVC"
+                    )) as TermsOfUseSymfoniVC;
+
                     const nationalIdentityVC = (await findVCByType(
                         "NationalIdentityVC"
                     )) as NationalIdentityVC;
@@ -68,7 +73,8 @@ export function DemoScreen() {
                                     organizationNumber: "demo",
                                     shareholders: [],
                                 },
-                                capTableTermsOfUseVC,
+                                termsOfUseForvaltVC,
+                                termsOfUseSymfoniVC,
                                 nationalIdentityVC,
                             }
                         );
@@ -82,22 +88,29 @@ export function DemoScreen() {
                 }}
             />
             <Button
-                title="Demo: BankID"
+                title="Demo: Overføre Aksjer"
                 onPress={async () => {
-                    const request = makeBankIDRequest({
-                        resultScreen: SCREEN_DEMO,
-                    });
+                    const request =
+                        formatJsonRpcRequest<CapTablePrivateTokenTransferParams>(
+                            "symfoniID_createCapTablePrivateTokenTransferVP",
+                            {
+                                verifier: "demo",
+                                toShareholder: {
+                                    name: "Jon Ramvi",
+                                    amount: "22",
+                                },
+                            }
+                        );
 
                     const result = await navigateWithResult(
-                        SCREEN_BANKID,
+                        SCREEN_CREATE_CAP_TABLE_PRIVATE_TOKEN_TRANSFER_VP,
                         request
                     );
-
                     console.info({ result });
                 }}
             />
             <Button
-                title="Demo: TransferShare"
+                title="Demo: Overføre Aksjer (med gjenbruk)"
                 onPress={async () => {
                     const nationalIdentityVC = (await findVCByType(
                         "NationalIdentityVC"
@@ -108,7 +121,7 @@ export function DemoScreen() {
                     )) as TermsOfUseForvaltVC;
 
                     const termsOfUseSymfoniVC = (await findVCByType(
-                        "TermsOfUseSymfonVC"
+                        "TermsOfUseSymfoniVC"
                     )) as TermsOfUseSymfoniVC;
 
                     const request =
@@ -131,32 +144,23 @@ export function DemoScreen() {
                         request
                     );
                     console.info({ result });
-                }}>
-                Demo: Transfer Share
-            </Button>
+                }}
+            />
             <Button
-                title="Demo: Transfer Share uten storage"
+                title="Demo: BankID"
                 onPress={async () => {
-                    const request =
-                        formatJsonRpcRequest<CapTablePrivateTokenTransferParams>(
-                            "symfoniID_createCapTablePrivateTokenTransferVP",
-                            {
-                                verifier: "demo",
-                                toShareholder: {
-                                    name: "Jon Ramvi",
-                                    amount: "22",
-                                },
-                            }
-                        );
+                    const request = makeBankIDRequest({
+                        resultScreen: SCREEN_DEMO,
+                    });
 
                     const result = await navigateWithResult(
-                        SCREEN_CREATE_CAP_TABLE_PRIVATE_TOKEN_TRANSFER_VP,
+                        SCREEN_BANKID,
                         request
                     );
+
                     console.info({ result });
-                }}>
-                Demo: Transfer Share
-            </Button>
+                }}
+            />
         </>
     );
 }
