@@ -142,7 +142,7 @@ function useEffectCreateCapTablePrivateTokenTransferVP(
     useAsyncEffect(async () => {
         while (true) {
             const { topic, request } = await consumeEvent(
-                "symfoniID_createCapTablePrivateTokenTransferVP"
+                "symfoniID_capTablePrivateTokenTransferVP"
             );
 
             // Get existing VCs if exist.

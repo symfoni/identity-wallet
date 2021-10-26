@@ -23,6 +23,7 @@ export const DEFAULT_EIP155_METHODS = [
     // "eth_signTypedData",
     // "eth_signTransaction",
     "symfoniID_createCapTableVP",
+    "symfonID_capTablePrivateTransferTokenVP",
 ];
 
 export const DEFAULT_LOGGER = "debug";
