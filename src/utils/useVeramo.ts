@@ -113,7 +113,10 @@ export const useVeramo = (chainId: string) => {
         return vc as CapTableVC;
     };
 
-    const createTermsOfUseVC = async (readAndAcceptedID: string) => {
+    const createTermsOfUseVC = async (
+        type: string,
+        readAndAcceptedID: string
+    ) => {
         if (!identity) {
             throw Error("Cant create VC, identity not initilized");
         }
@@ -125,7 +128,7 @@ export const useVeramo = (chainId: string) => {
                     "https://www.w3.org/2018/credentials/v1",
                     "https://www.symfoni.dev/credentials/v1",
                 ],
-                type: ["VerifiableCredential", "TermsOfUseVC"],
+                type: ["VerifiableCredential", type],
                 issuer: {
                     id: identity.did,
                 },
@@ -177,6 +180,45 @@ export const useVeramo = (chainId: string) => {
         });
 
         console.info(`useVeramo.ts: createNationalIdentityVC() -> vc`);
+
+        return vc;
+    };
+
+    const createCapTablePrivateTransferVC = async (toShareholder: {
+        amount: string;
+        name: string;
+    }) => {
+        if (!identity) {
+            throw Error("Cant create VC, identity not initilized");
+        }
+
+        const vc = await agent.createVerifiableCredential({
+            proofFormat: "jwt",
+            save: true,
+            credential: {
+                "@context": [
+                    "https://www.w3.org/2018/credentials/v1",
+                    "https://www.symfoni.dev/credentials/v1",
+                ],
+                type: [
+                    "VerifiableCredential",
+                    "CapTablePrivateTokenTransferVC",
+                ],
+                issuer: {
+                    id: identity.did,
+                },
+                credentialSubject: {
+                    id: identity.did,
+                    toShareholder,
+                },
+                // 24 hours expiration
+                expirationDate: new Date(
+                    new Date().setDate(new Date().getDate() + 1)
+                ).toISOString(),
+            },
+        });
+
+        console.info(`useVeramo.ts: createCapTablePrivateTransferVC() -> vc`);
 
         return vc;
     };
@@ -428,26 +470,12 @@ export const useVeramo = (chainId: string) => {
         return credentials;
     };
 
-    const findNationalIdentityVC = async () => {
+    const findVCByType = async (type: string) => {
         const res = await findVC({
             where: [
                 {
                     column: "type",
-                    value: ["VerifiableCredential,NationalIdentityVC"],
-                },
-            ],
-        });
-        // TODO - Handle picking the most recent or ??? credential
-
-        return res[0]?.verifiableCredential;
-    };
-
-    const findTermsOfUseVC = async () => {
-        const res = await findVC({
-            where: [
-                {
-                    column: "type",
-                    value: ["VerifiableCredential,TermsOfUseVC"],
+                    value: [`VerifiableCredential,${type}`],
                 },
             ],
         });
@@ -485,6 +513,7 @@ export const useVeramo = (chainId: string) => {
         accounts,
         identity,
         findVC,
+        findVCByType,
         saveVP,
         createVC,
         createVP,
@@ -493,11 +522,10 @@ export const useVeramo = (chainId: string) => {
         signEthTreansaction,
         deleteVeramoData,
         createCapTableVC,
+        createCapTablePrivateTransferVC,
         createCapTablePrivateTransferVP,
         createTermsOfUseVC,
         createNationalIdentityVC,
         createCreateCapTableVP,
-        findNationalIdentityVC,
-        findTermsOfUseVC,
     };
 };

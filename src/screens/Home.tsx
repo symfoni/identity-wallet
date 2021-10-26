@@ -15,6 +15,7 @@ import { useSymfoniContext } from "../context";
 import { SCREEN_CREATE_CAP_TABLE_VP } from "../hooks/useLocalNavigation";
 import { useNavigationWithResult } from "../hooks/useNavigationWithResult";
 import { CreateCapTableVPResult } from "../types/capTableTypes";
+import { NationalIdentityVC } from "../verifiableCredentials/NationalIdentityVC";
 
 export const Home = (props: {
     route: { params?: JsonRpcResult<CreateCapTableVPResult> };
@@ -86,12 +87,7 @@ const makeStyles = (colors: ColorSystem) => {
 function useEffectCreateCapTableVP(
     params?: JsonRpcResult<CreateCapTableVPResult>
 ) {
-    const {
-        consumeEvent,
-        findNationalIdentityVC,
-        findTermsOfUseVC,
-        sendResponse,
-    } = useSymfoniContext();
+    const { consumeEvent, findVCByType, sendResponse } = useSymfoniContext();
 
     const { navigateWithResult } = useNavigationWithResult(params);
 
@@ -103,8 +99,12 @@ function useEffectCreateCapTableVP(
 
             // Get existing VCs if exist.
             request.params = request.params[0];
-            request.params.capTableTermsOfUseVC = await findTermsOfUseVC();
-            request.params.nationalIdentityVC = await findNationalIdentityVC();
+            request.params.capTableTermsOfUseVC = await findVCByType(
+                "TermsOfUseVC"
+            );
+            request.params.nationalIdentityVC = (await findVCByType(
+                "NationalIdentityVC"
+            )) as NationalIdentityVC;
 
             const result = await navigateWithResult(
                 SCREEN_CREATE_CAP_TABLE_VP,
@@ -129,12 +129,7 @@ function useEffectCreateCapTableVP(
 function useEffectCreateCapTablePrivateTokenTransferVP(
     params?: JsonRpcResult<CreateCapTableVPResult>
 ) {
-    const {
-        consumeEvent,
-        findNationalIdentityVC,
-        findTermsOfUseVC,
-        sendResponse,
-    } = useSymfoniContext();
+    const { consumeEvent, findVCByType, sendResponse } = useSymfoniContext();
 
     const { navigateWithResult } = useNavigationWithResult(params);
 
@@ -147,8 +142,12 @@ function useEffectCreateCapTablePrivateTokenTransferVP(
             // Get existing VCs if exist.
             // TODO get correct terms of use
             request.params = request.params[0];
-            request.params.capTableTermsOfUseVC = await findTermsOfUseVC();
-            request.params.nationalIdentityVC = await findNationalIdentityVC();
+            request.params.capTableTermsOfUseVC = await findVCByType(
+                "TermsOfUseVC"
+            );
+            request.params.nationalIdentityVC = (await findVCByType(
+                "NationalIdentityVC"
+            )) as NationalIdentityVC;
 
             const result = await navigateWithResult(
                 SCREEN_CREATE_CAP_TABLE_VP,

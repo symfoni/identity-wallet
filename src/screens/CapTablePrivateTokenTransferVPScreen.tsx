@@ -9,13 +9,13 @@ import React, {
     useMemo,
     useState,
 } from "react";
-import { ActivityIndicator, Linking } from "react-native";
+import { ActivityIndicator, Linking, ScrollView } from "react-native";
 import styled from "styled-components/native";
 import { Context } from "../context";
 import { useDeviceAuthentication } from "../hooks/useDeviceAuthentication";
 import {
     SCREEN_BANKID,
-    SCREEN_CREATE_CAP_TABLE_VP,
+    SCREEN_CREATE_CAP_TABLE_PRIVATE_TOKEN_TRANSFER_VP,
     useLocalNavigation,
 } from "../hooks/useLocalNavigation";
 import { useNavigationWithResult } from "../hooks/useNavigationWithResult";
@@ -44,13 +44,9 @@ export function CapTablePrivateTokenTransferVPScreen(props: {
     const {
         createTermsOfUseVC,
         createNationalIdentityVC,
+        createCapTablePrivateTransferVC,
         createCapTablePrivateTransferVP,
     } = useContext(Context);
-
-    // Local data
-    const [nationalIdentityNumber, setNationalIdentityNumber] = useState<
-        string | null
-    >(null);
 
     const [request, setRequest] = useState<
         JsonRpcRequest<CapTablePrivateTokenTransferParams> | undefined
@@ -64,18 +60,20 @@ export function CapTablePrivateTokenTransferVPScreen(props: {
         useState(false);
 
     const presentable =
-        !!request?.params.capTableTermsOfUseVC &&
-        !!request?.params.nationalIdentityVC;
+        request?.params.termsOfUseForvaltVC &&
+        request?.params.termsOfUseSymfoniVC &&
+        request?.params.capTablePrivateTokenTransferVC &&
+        request?.params.nationalIdentityVC;
 
     // createNationalIdentityVC
     const onSignNationalIdentityVC = useCallback(async () => {
         if (!request) {
-            console.error("CreateCapTableVPScreen.tsx: !request");
+            console.error("onSignNationalIdentityVC(): !request");
             return;
         }
 
         const bankIDRequest = makeBankIDRequest({
-            resultScreen: SCREEN_CREATE_CAP_TABLE_VP,
+            resultScreen: SCREEN_CREATE_CAP_TABLE_PRIVATE_TOKEN_TRANSFER_VP,
         });
 
         const result = await navigateWithResult(SCREEN_BANKID, bankIDRequest);
@@ -104,10 +102,12 @@ export function CapTablePrivateTokenTransferVPScreen(props: {
         }
     }, [request, createNationalIdentityVC, navigateWithResult]);
 
-    // createTermsOfUseVC
-    const onSignCapTableTermsOfUse = async (readAndAcceptedID: string) => {
+    const onSignTermsOfUse = async (
+        VCtype: string,
+        readAndAcceptedID: string
+    ) => {
         if (!request) {
-            console.error("CapTablePrivateTransferVPScreen.tsx: !request");
+            console.warn("onSignCapTableTermsOfUse(): !request");
             return;
         }
 
@@ -119,14 +119,16 @@ export function CapTablePrivateTokenTransferVPScreen(props: {
                 return;
             }
 
-            const capTableTermsOfUseVC = await createTermsOfUseVC(
+            const termsOfVC = await createTermsOfUseVC(
+                VCtype,
                 readAndAcceptedID
             );
             setRequest({
                 ...request,
                 params: {
                     ...request.params,
-                    capTableTermsOfUseVC,
+                    [VCtype.charAt(0).toLowerCase() + VCtype.slice(1)]:
+                        termsOfVC,
                 },
             });
         } finally {
@@ -134,19 +136,48 @@ export function CapTablePrivateTokenTransferVPScreen(props: {
         }
     };
 
+    const onSignTransfer = async (toShareholder: {
+        name: string;
+        amount: string;
+    }) => {
+        if (!request) {
+            console.error("CapTablePrivateTransferVPScreen.tsx: !request");
+            return;
+        }
+
+        try {
+            const authenticated = await checkDeviceAuthentication();
+            if (!authenticated) {
+                return;
+            }
+
+            const capTablePrivateTokenTransferVC =
+                await createCapTablePrivateTransferVC(toShareholder);
+            setRequest({
+                ...request,
+                params: {
+                    ...request.params,
+                    capTablePrivateTokenTransferVC,
+                },
+            });
+        } catch (err) {
+            console.warn("onSignTransfer(): error: ", err);
+        }
+    };
+
     // presentCapTablePrivateTokenTransferVP
     const presentCapTablePrivateTokenTransferVP = async () => {
         if (
-            !request ||
-            !request.params.capTableTermsOfUseVC ||
-            !request.params.capTablePrivateTokenTransferVC ||
-            !request.params.nationalIdentityVC
+            !request?.params.termsOfUseForvaltVC ||
+            !request?.params.termsOfUseSymfoniVC ||
+            !request?.params.capTablePrivateTokenTransferVC ||
+            !request?.params.nationalIdentityVC
         ) {
-            console.error(
-                `!request ||
-            !request.params.capTableTermsOfUseVC ||
-            !request.params.capTablePrivateTokenTransferVC ||
-            !request.params.nationalIdentityVC`
+            console.warn(
+                `!request?.params.termsOfUseForvaltVC ||
+                !request?.params.termsOfUseSymfoniVC ||
+                !request?.params.capTablePrivateTokenTransferVC ||
+                !request?.params.nationalIdentityVC`
             );
             return;
         }
@@ -177,9 +208,12 @@ export function CapTablePrivateTokenTransferVPScreen(props: {
             | undefined;
 
         switch (maybeRequest?.method) {
-            case "symfoniID_createCapTableVP":
+            case "symfoniID_createCapTablePrivateTokenTransferVP":
                 setRequest(maybeRequest);
                 break;
+            default: {
+                console.warn("unhandle method: ", maybeRequest?.method);
+            }
         }
     }, [props.route.params]);
 
@@ -195,26 +229,31 @@ export function CapTablePrivateTokenTransferVPScreen(props: {
 
                 <SmallText>For å kunne</SmallText>
                 <BigText>Overføre aksjer</BigText>
-
+                {request?.params.toShareholder && (
+                    <PrivateTransferVCCard
+                        toShareholder={request?.params.toShareholder}
+                        vc={request?.params.capTablePrivateTokenTransferVC}
+                        onSign={onSignTransfer}
+                    />
+                )}
                 <TermsOfUseVCCard
-                    vc={request?.params.capTableTermsOfUseVC}
+                    vc={request?.params.termsOfUseForvaltVC}
                     loading={loadingSigningTermsOfUseVC}
-                    termsOfUseID="https://brreg.no/TOA"
-                    onSign={onSignCapTableTermsOfUse}
+                    VCType="TermsOfUseForvaltVC"
+                    termsOfUseID="https://forvalt.no/TOA"
+                    onSign={onSignTermsOfUse}
                 />
                 <TermsOfUseVCCard
-                    vc={request?.params.capTableTermsOfUseVC}
+                    vc={request?.params.termsOfUseSymfoniVC}
                     loading={loadingSigningTermsOfUseVC}
+                    VCType="TermsOfUseSymfoniVC"
                     termsOfUseID="https://symfoni.id/TOA"
-                    onSign={onSignCapTableTermsOfUse}
+                    onSign={onSignTermsOfUse}
                 />
                 <NationalIdentityVCCard
                     vc={request?.params.nationalIdentityVC}
                     loading={loadingNationalIdentityVC}
                     onSign={onSignNationalIdentityVC}
-                />
-                <PrivateTransferVCCard
-                    vc={request?.params.capTablePrivateTokenTransferVC}
                 />
             </Content>
             {presentable && (
@@ -230,7 +269,7 @@ export function CapTablePrivateTokenTransferVPScreen(props: {
     );
 }
 
-const Screen = styled.View`
+const Screen = styled.ScrollView`
     height: 100%;
     background: white;
     border: 1px solid white;
@@ -243,19 +282,33 @@ const Content = styled.View`
 `;
 
 function PrivateTransferVCCard({
+    toShareholder,
     vc,
+    onSign,
 }: {
+    toShareholder: { name: string; amount: string };
     vc: CapTablePrivateTokenTransferVC | undefined;
+    onSign: (toShareholder: { name: string; amount: string }) => Promise<void>;
 }) {
+    const signed = !!vc;
+    const amount =
+        vc?.credentialSubject.toShareholder.amount ?? toShareholder.amount;
+    const name = vc?.credentialSubject.name ?? toShareholder.name;
+
     // TODO hvordan skal denne se ut?
     return (
         <VCCard>
             <VCPropLabel>Overfør</VCPropLabel>
-            <VCPropText>
-                {vc?.credentialSubject?.toShareHolder.amount}
-            </VCPropText>
+            <VCPropText>{amount} aksjer</VCPropText>
             <VCPropLabel>Til</VCPropLabel>
-            <VCPropText>{vc?.credentialSubject?.toShareHolder.name}</VCPropText>
+            <VCPropText>{name}</VCPropText>
+            <SignButton
+                valid={true}
+                loading={false}
+                signed={signed}
+                expirationDate={vc?.expirationDate}
+                onPress={() => (!signed ? onSign(toShareholder) : null)}
+            />
         </VCCard>
     );
 }
@@ -293,13 +346,15 @@ function NationalIdentityVCCard({
 function TermsOfUseVCCard({
     vc,
     loading,
+    VCType,
     termsOfUseID,
     onSign,
 }: {
     vc: TermsOfUseVC | undefined;
     loading: boolean;
+    VCType: string;
     termsOfUseID: string;
-    onSign: (termsOfUse: string) => {};
+    onSign: (VCType: string, termsOfUse: string) => {};
 }) {
     const signed = !!vc;
 
@@ -314,7 +369,7 @@ function TermsOfUseVCCard({
                 signed={signed}
                 loading={loading}
                 expirationDate={vc?.expirationDate}
-                onPress={() => onSign(termsOfUseID)}
+                onPress={() => onSign(VCType, termsOfUseID)}
             />
         </VCCard>
     );

@@ -14,7 +14,10 @@ import {
     useLocalNavigation,
 } from "../hooks/useLocalNavigation";
 import { Context } from "../context";
-import { TermsOfUseVC } from "../verifiableCredentials/TermsOfUseVC";
+import {
+    TermsOfUseForvaltVC,
+    TermsOfUseVC,
+} from "../verifiableCredentials/TermsOfUseVC";
 import { NationalIdentityVC } from "../verifiableCredentials/NationalIdentityVC";
 import {
     CreateCapTableVPParams,
@@ -46,11 +49,6 @@ export function CreateCapTableVPScreen(props: {
         createNationalIdentityVC,
         createCreateCapTableVP,
     } = useContext(Context);
-
-    // Local data
-    const [nationalIdentityNumber, setNationalIdentityNumber] = useState<
-        string | null
-    >(null);
 
     const [request, setRequest] = useState<
         JsonRpcRequest<CreateCapTableVPParams> | undefined
@@ -119,9 +117,11 @@ export function CreateCapTableVPScreen(props: {
                 return;
             }
 
-            const capTableTermsOfUseVC = await createTermsOfUseVC(
+            const capTableTermsOfUseVC = (await createTermsOfUseVC(
+                "TermsOfUseForvaltVC",
                 readAndAcceptedID
-            );
+            )) as TermsOfUseForvaltVC;
+
             setRequest({
                 ...request,
                 params: {

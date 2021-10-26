@@ -14,9 +14,14 @@ import {
     CreateCapTableVPParams,
 } from "../types/capTableTypes";
 import { makeBankIDRequest } from "../types/paramTypes";
+import { NationalIdentityVC } from "../verifiableCredentials/NationalIdentityVC";
+import {
+    TermsOfUseForvaltVC,
+    TermsOfUseSymfoniVC,
+} from "../verifiableCredentials/TermsOfUseVC";
 
 export function DemoScreen() {
-    const { findTermsOfUseVC, findNationalIdentityVC } = useSymfoniContext();
+    const { findVCByType } = useSymfoniContext();
     const { navigateWithResult } = useNavigationWithResult();
 
     return (
@@ -47,8 +52,12 @@ export function DemoScreen() {
             <Button
                 title="Demo: Bruk eksisterende legitimasjon dersom finnes"
                 onPress={async () => {
-                    const capTableTermsOfUseVC = await findTermsOfUseVC();
-                    const nationalIdentityVC = await findNationalIdentityVC();
+                    const capTableTermsOfUseVC = (await findVCByType(
+                        "TermsOfUseForvaltVC"
+                    )) as TermsOfUseForvaltVC;
+                    const nationalIdentityVC = (await findVCByType(
+                        "NationalIdentityVC"
+                    )) as NationalIdentityVC;
 
                     const request =
                         formatJsonRpcRequest<CreateCapTableVPParams>(
@@ -90,12 +99,53 @@ export function DemoScreen() {
             <Button
                 title="Demo: TransferShare"
                 onPress={async () => {
+                    const nationalIdentityVC = (await findVCByType(
+                        "NationalIdentityVC"
+                    )) as NationalIdentityVC;
+
+                    const termsOfUseForvaltVC = (await findVCByType(
+                        "TermsOfUseForvaltVC"
+                    )) as TermsOfUseForvaltVC;
+
+                    const termsOfUseSymfoniVC = (await findVCByType(
+                        "TermsOfUseSymfonVC"
+                    )) as TermsOfUseSymfoniVC;
+
                     const request =
                         formatJsonRpcRequest<CapTablePrivateTokenTransferParams>(
                             "symfoniID_createCapTablePrivateTokenTransferVP",
                             {
                                 verifier: "demo",
-                                capTablePrivateTokenTransfer: "hei",
+                                toShareholder: {
+                                    name: "Jon Ramvi",
+                                    amount: "22",
+                                },
+                                nationalIdentityVC,
+                                termsOfUseSymfoniVC,
+                                termsOfUseForvaltVC,
+                            }
+                        );
+
+                    const result = await navigateWithResult(
+                        SCREEN_CREATE_CAP_TABLE_PRIVATE_TOKEN_TRANSFER_VP,
+                        request
+                    );
+                    console.info({ result });
+                }}>
+                Demo: Transfer Share
+            </Button>
+            <Button
+                title="Demo: Transfer Share uten storage"
+                onPress={async () => {
+                    const request =
+                        formatJsonRpcRequest<CapTablePrivateTokenTransferParams>(
+                            "symfoniID_createCapTablePrivateTokenTransferVP",
+                            {
+                                verifier: "demo",
+                                toShareholder: {
+                                    name: "Jon Ramvi",
+                                    amount: "22",
+                                },
                             }
                         );
 

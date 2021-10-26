@@ -1,13 +1,19 @@
 import { CapTablePrivateTokenTransferVP } from "./../verifiablePresentations/CapTablePrivateTokenTransferVP";
 import { NationalIdentityVC } from "../verifiableCredentials/NationalIdentityVC";
-import { TermsOfUseVC } from "../verifiableCredentials/TermsOfUseVC";
+import {
+    TermsOfUseSymfoniVC,
+    TermsOfUseForvaltVC,
+} from "../verifiableCredentials/TermsOfUseVC";
 import { CreateCapTableVP } from "../verifiablePresentations/CreateCapTableVP";
+import { CapTablePrivateTokenTransferVC } from "../verifiableCredentials/CapTablePrivateTokenTransferVC";
 
 export type CapTablePrivateTokenTransferParams = {
     verifier: string;
-    capTablePrivateTokenTransfer: string;
+    toShareholder: { name: string; amount: string };
+    capTablePrivateTokenTransferVC?: CapTablePrivateTokenTransferVC;
     nationalIdentityVC?: NationalIdentityVC;
-    capTableTermsOfUseVC?: TermsOfUseVC;
+    termsOfUseSymfoniVC?: TermsOfUseSymfoniVC;
+    termsOfUseForvaltVC?: TermsOfUseForvaltVC;
 };
 
 export type CapTablePrivateTokenTransferResult = {
@@ -18,7 +24,7 @@ export type CreateCapTableVPParams = {
     verifier: string;
     capTable: CapTable;
     nationalIdentityVC?: NationalIdentityVC;
-    capTableTermsOfUseVC?: TermsOfUseVC;
+    capTableTermsOfUseVC?: TermsOfUseForvaltVC;
 };
 
 export type CreateCapTableVPResult = {

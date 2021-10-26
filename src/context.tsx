@@ -75,12 +75,14 @@ export interface IContext {
     findVC: (
         args: FindArgs<TCredentialColumns>
     ) => Promise<UniqueVerifiableCredential[]>;
-    findNationalIdentityVC: () => Promise<NationalIdentityVC | undefined>;
-    findTermsOfUseVC: () => Promise<TermsOfUseVC | undefined>;
+    findVCByType: (type: string) => Promise<VerifiableCredential | undefined>;
     saveVP: (vp: VerifiablePresentation | string) => Promise<string>;
     pair: (uri: string) => Promise<void>;
     createCapTableVC: (capTable: CapTable) => Promise<CapTableVC>;
-    createTermsOfUseVC: (readAndAcceptedId: string) => Promise<TermsOfUseVC>;
+    createTermsOfUseVC: (
+        type: string,
+        readAndAcceptedId: string
+    ) => Promise<TermsOfUseVC>;
     createNationalIdentityVC: (
         nationalIdentityNumber: string,
         evidence: { type: "BankID"; jwt: string }
@@ -96,6 +98,10 @@ export interface IContext {
         capTablePrivateTokenTransferVC: CapTablePrivateTokenTransferVC,
         nationalIdentityVC: NationalIdentityVC
     ) => Promise<CapTablePrivateTokenTransferVP>;
+    createCapTablePrivateTransferVC: (toShareholder: {
+        amount: string;
+        name: string;
+    }) => Promise<CapTablePrivateTokenTransferVC>;
     consumeEvent: (method: string) => Promise<SessionTypes.RequestEvent>;
     sendResponse: (topic: string, response: JsonRpcResponse<any>) => void;
 }
