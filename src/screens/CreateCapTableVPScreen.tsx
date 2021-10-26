@@ -7,7 +7,7 @@ import React, {
     useState,
 } from "react";
 import styled from "styled-components/native";
-import { ActivityIndicator, Linking } from "react-native";
+import { ActivityIndicator, Linking, ScrollView } from "react-native";
 import {
     SCREEN_CREATE_CAP_TABLE_VP,
     SCREEN_BANKID,
@@ -218,7 +218,7 @@ export function CreateCapTableVPScreen(props: {
     );
 }
 
-const Screen = styled.View`
+const Screen = styled.ScrollView`
     height: 100%;
     background: white;
     border: 1px solid white;
