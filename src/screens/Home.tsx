@@ -17,7 +17,10 @@ import {
     SCREEN_CREATE_CAP_TABLE_VP,
 } from "../hooks/useLocalNavigation";
 import { useNavigationWithResult } from "../hooks/useNavigationWithResult";
-import { CreateCapTableVPResult } from "../types/capTableTypes";
+import {
+    CapTablePrivateTokenTransferResult,
+    CreateCapTableVPResult,
+} from "../types/capTableTypes";
 import { NationalIdentityVC } from "../verifiableCredentials/NationalIdentityVC";
 
 export const Home = (props: {
@@ -133,7 +136,7 @@ function useEffectCreateCapTableVP(
  * Listen, navigate, get navigation result and send response
  */
 function useEffectCreateCapTablePrivateTokenTransferVP(
-    params?: JsonRpcResult<CreateCapTableVPResult>
+    params?: JsonRpcResult<CapTablePrivateTokenTransferResult>
 ) {
     const { consumeEvent, findVCByType, sendResponse } = useSymfoniContext();
 
@@ -167,8 +170,8 @@ function useEffectCreateCapTablePrivateTokenTransferVP(
             sendResponse(topic, {
                 ...result,
                 result: {
-                    ...result.result,
-                    createCapTableVP: result.result.createCapTableVP.proof.jwt,
+                    capTablePrivateTransferTokenVP:
+                        result.result.capTablePrivateTokenTransferVP.proof.jwt,
                 },
             });
         }

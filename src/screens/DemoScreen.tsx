@@ -92,7 +92,7 @@ export function DemoScreen() {
                 onPress={async () => {
                     const request =
                         formatJsonRpcRequest<CapTablePrivateTokenTransferParams>(
-                            "symfoniID_createCapTablePrivateTokenTransferVP",
+                            "symfoniID_capTablePrivateTokenTransferVP",
                             {
                                 verifier: "demo",
                                 toShareholder: {
@@ -126,7 +126,7 @@ export function DemoScreen() {
 
                     const request =
                         formatJsonRpcRequest<CapTablePrivateTokenTransferParams>(
-                            "symfoniID_createCapTablePrivateTokenTransferVP",
+                            "symfoniID_capTablePrivateTokenTransferVP",
                             {
                                 verifier: "demo",
                                 toShareholder: {

@@ -208,7 +208,7 @@ export function CapTablePrivateTokenTransferVPScreen(props: {
             | undefined;
 
         switch (maybeRequest?.method) {
-            case "symfoniID_createCapTablePrivateTokenTransferVP":
+            case "symfoniID_capTablePrivateTokenTransferVP":
                 setRequest(maybeRequest);
                 break;
             default: {
