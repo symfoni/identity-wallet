@@ -487,6 +487,9 @@ export const useVeramo = (chainId: string) => {
             ],
         });
         // TODO - Handle picking the most recent or ??? credential
+        console.info(
+            `findVCByType("${type}") -> Found: ${res[0]?.verifiableCredential.type}`
+        );
         return res[0]?.verifiableCredential;
     };
 
