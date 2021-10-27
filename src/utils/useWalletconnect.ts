@@ -72,16 +72,15 @@ export const useWalletconnect = (
         console.log("PairResult", pairResult);
     };
 
-    const sendResponse = useCallback(
-        (topic: string, response: JsonRpcResponse<any>) => {
-            if (!client) {
-                console.warn("useWalletConnect(): sendResponse: !client");
-                return;
-            }
-            client?.respond({ topic, response });
-        },
-        [client]
-    );
+
+    const sendResponse = (topic: string, response: JsonRpcResponse<any>) => {
+        if (!client) {
+            console.warn("useWalletConnect(): sendResponse: !client");
+            return;
+        }
+        client?.respond({ topic, response });
+    };
+
 
     const handlePruposal = useCallback(
         async (proposal: SessionTypes.Proposal) => {
