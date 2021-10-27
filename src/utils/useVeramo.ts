@@ -60,7 +60,7 @@ export const useVeramo = (chainId: string) => {
                     provider: "did:ethr:421611",
                 });
             } catch (error) {
-                console.error(error);
+                console.warn(error);
             }
         };
         const initWallet = async () => {
@@ -322,7 +322,7 @@ export const useVeramo = (chainId: string) => {
         try {
             const valid = await verifyJWT(jwt);
             if (!valid) {
-                console.error("TODO : Not valid JWT");
+                console.warn("TODO : Not valid JWT");
             }
             const payload = JSON.parse(
                 Buffer.from(jwt.split(".")[1], "base64").toString()

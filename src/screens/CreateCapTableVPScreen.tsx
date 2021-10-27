@@ -69,7 +69,7 @@ export function CreateCapTableVPScreen(props: {
     // createNationalIdentityVC
     const onSignNationalIdentityVC = useCallback(async () => {
         if (!request) {
-            console.error("CreateCapTableVPScreen.tsx: !request");
+            console.warn("CreateCapTableVPScreen.tsx: !request");
             return;
         }
 
