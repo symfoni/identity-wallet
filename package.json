@@ -46,6 +46,7 @@
         "date-fns": "^2.21.1",
         "ethers": "^5.4.4",
         "keyvaluestorage": "^0.7.1",
+        "metro-minify-terser": "^0.66.2",
         "react": "17.0.1",
         "react-native": "0.64.1",
         "react-native-bootsplash": "^3.2.5",

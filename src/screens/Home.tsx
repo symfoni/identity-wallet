@@ -24,7 +24,11 @@ import {
 import { NationalIdentityVC } from "../verifiableCredentials/NationalIdentityVC";
 
 export const Home = (props: {
-    route: { params?: JsonRpcResult<CreateCapTableVPResult> };
+    route: {
+        params?: JsonRpcResult<
+            CreateCapTableVPResult | CapTablePrivateTokenTransferResult
+        >;
+    };
 }) => {
     const { pair, loading } = useSymfoniContext();
     const { colors } = useContext(ColorContext);
@@ -91,14 +95,17 @@ const makeStyles = (colors: ColorSystem) => {
  * Listen, navigate, get navigation result and send response
  */
 function useEffectCreateCapTableVP(
-    params?: JsonRpcResult<CreateCapTableVPResult>
+    params?: JsonRpcResult<
+        CreateCapTableVPResult | CapTablePrivateTokenTransferResult
+    >
 ) {
-    const { consumeEvent, findVCByType, sendResponse } = useSymfoniContext();
+    const { consumeEvent, findVCByType, sendResponse, client } =
+        useSymfoniContext();
 
     const { navigateWithResult } = useNavigationWithResult(params);
 
     useAsyncEffect(async () => {
-        while (true) {
+        while (client) {
             const { topic, request } = await consumeEvent(
                 "symfoniID_createCapTableVP"
             );
@@ -115,10 +122,10 @@ function useEffectCreateCapTableVP(
                 "NationalIdentityVC"
             )) as NationalIdentityVC;
 
-            const result = await navigateWithResult(
+            const result = (await navigateWithResult(
                 SCREEN_CREATE_CAP_TABLE_VP,
                 request
-            );
+            )) as JsonRpcResult<CreateCapTableVPResult>;
 
             console.log({ result });
             sendResponse(topic, {
@@ -129,21 +136,24 @@ function useEffectCreateCapTableVP(
                 },
             });
         }
-    }, []);
+    }, [client]);
 }
 
 /**
  * Listen, navigate, get navigation result and send response
  */
 function useEffectCreateCapTablePrivateTokenTransferVP(
-    params?: JsonRpcResult<CapTablePrivateTokenTransferResult>
+    params?: JsonRpcResult<
+        CapTablePrivateTokenTransferResult | CreateCapTableVPResult
+    >
 ) {
-    const { consumeEvent, findVCByType, sendResponse } = useSymfoniContext();
+    const { consumeEvent, findVCByType, sendResponse, client } =
+        useSymfoniContext();
 
     const { navigateWithResult } = useNavigationWithResult(params);
 
     useAsyncEffect(async () => {
-        while (true) {
+        while (client) {
             const { topic, request } = await consumeEvent(
                 "symfoniID_capTablePrivateTokenTransferVP"
             );
@@ -161,10 +171,10 @@ function useEffectCreateCapTablePrivateTokenTransferVP(
                 "NationalIdentityVC"
             )) as NationalIdentityVC;
 
-            const result = await navigateWithResult(
+            const result = (await navigateWithResult(
                 SCREEN_CREATE_CAP_TABLE_PRIVATE_TOKEN_TRANSFER_VP,
                 request
-            );
+            )) as JsonRpcResult<CapTablePrivateTokenTransferResult>;
 
             console.log({ result });
             sendResponse(topic, {
@@ -175,5 +185,5 @@ function useEffectCreateCapTablePrivateTokenTransferVP(
                 },
             });
         }
-    }, []);
+    }, [client]);
 }
