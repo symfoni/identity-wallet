@@ -56,7 +56,7 @@ export const useWalletconnect = (
                 setClient(_client);
             } catch (e) {
                 console.log("Failed to start Client!");
-                console.error(e);
+                console.warn(e);
             }
         };
         initClient();
@@ -75,7 +75,7 @@ export const useWalletconnect = (
     const sendResponse = useCallback(
         (topic: string, response: JsonRpcResponse<any>) => {
             if (!client) {
-                console.error("useWalletConnect(): sendResponse: !client");
+                console.warn("useWalletConnect(): sendResponse: !client");
                 return;
             }
             client?.respond({ topic, response });
@@ -88,7 +88,7 @@ export const useWalletconnect = (
             console.log("Received PROPOSAL: ", proposal);
             // Approve connection
             if (typeof client === "undefined") {
-                console.error(`handleProposal: typeof client === "undefined"`);
+                console.warn(`handleProposal: typeof client === "undefined"`);
                 return;
             }
 
@@ -100,7 +100,7 @@ export const useWalletconnect = (
                 unsupportedChains.push(chainId);
             });
             if (unsupportedChains.length) {
-                console.error(`handleProposal: unsupportedChains.length`);
+                console.warn(`handleProposal: unsupportedChains.length`);
                 return client.reject({ proposal });
             }
             const unsupportedMethods: string[] = [];
@@ -111,14 +111,14 @@ export const useWalletconnect = (
                 unsupportedMethods.push(method);
             });
             if (unsupportedMethods.length) {
-                console.error(`handleProposal: unsupportedMethods.length`);
+                console.warn(`handleProposal: unsupportedMethods.length`);
 
                 return client.reject({ proposal: proposal });
             }
 
             // Approve connection
             if (typeof client === "undefined") {
-                console.error(`handleProposal: typeof client === "undefined"`);
+                console.warn(`handleProposal: typeof client === "undefined"`);
                 return;
             }
             const _accounts = veramo.accounts.filter((account) => {
@@ -133,7 +133,7 @@ export const useWalletconnect = (
             try {
                 await client.approve({ proposal, response });
             } catch (err) {
-                console.error(
+                console.warn(
                     "handleProposal: await client.approve({ proposal, response }); failed with error: ",
                     err
                 );
@@ -169,7 +169,7 @@ export const useWalletconnect = (
                 console.log("Subscribed request");
             } catch (e) {
                 console.log("Failed to subscribe Client!");
-                console.error(e);
+                console.warn(e);
             }
         };
         subscribeClient();

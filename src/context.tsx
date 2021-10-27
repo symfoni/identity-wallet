@@ -158,7 +158,7 @@ export const ContextProvider = (props: any) => {
     //                         ],
     //                     })
     //                     .catch((err) => {
-    //                         console.error(err.message);
+    //                         console.warn(err.message);
     //                         throw err;
     //                     });
     //                 const hasRegistered = vc.find((vc) => {

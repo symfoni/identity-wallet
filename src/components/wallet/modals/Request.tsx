@@ -41,7 +41,7 @@ export const Request = (props: RequestProps) => {
                 setMetadata(session.peer.metadata);
             } catch (e) {
                 setLoading(false);
-                console.error(e);
+                console.warn(e);
             }
         };
         getMetadata();

@@ -22,7 +22,7 @@ export const Settings = () => {
             const vc = await findVC({
                 where: [],
             }).catch((err) => {
-                console.error(err.message);
+                console.warn(err.message);
                 throw err;
             });
             console.log("settings vc", vc);
