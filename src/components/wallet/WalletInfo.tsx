@@ -38,8 +38,8 @@ export const WalletInfo = () => {
                 if (!address) {
                     return;
                 }
-                const balance = await provider.getBalance(address);
-                setBalance(balance);
+                const _balance = await provider.getBalance(address);
+                setBalance(_balance);
             } catch (error) {
                 console.warn("Could not fetch balance for address", address);
             }
@@ -88,7 +88,7 @@ export const WalletInfo = () => {
                 <SymfoniButton
                     style={{ marginEnd: 10, maxHeight: 100, maxWidth: 200 }}
                     type="primary"
-                    text="Delete Local Data"
+                    text="Delete WalletConnect Data"
                     onPress={() => clearAsyncStorage()}
                 />
             </View>
