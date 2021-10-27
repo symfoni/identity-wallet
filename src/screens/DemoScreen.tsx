@@ -29,7 +29,7 @@ export function DemoScreen() {
     return (
         <>
             <Button
-                title="Demo: Vis Legitimasjon"
+                title="Demo: Generic VP Screen"
                 onPress={async () => {
                     const request = demoVerifiablePresentationScreenRequest();
 
@@ -192,10 +192,18 @@ export function demoVerifiablePresentationScreenRequest(): JsonRpcRequest<Verifi
         {
             verifier: {
                 id: "https://www.example.com",
-                name: "Demo",
-                reason: "Demonstrere verifiserbar legg",
+                name: "Demo skjerm",
+                reason: "Demonstrere generisk VPskjerm",
             },
-            verifiableCredentials: [],
+            verifiableCredentials: [
+                {
+                    "@context": [
+                        "https://www.w3.org/2018/credentials/v1",
+                        "https://www.symfoni.id/credentials/v1",
+                    ],
+                    type: ["VerifiableCredential", "NationalIdentityVC"],
+                } as NationalIdentityVC,
+            ],
         }
     );
 }

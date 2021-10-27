@@ -17,6 +17,8 @@ export function useVerifiableCredentialCards(
     const cards = useMemo(
         () =>
             verifiableCredentials.map((vc) => {
+                const key = `${vc["@context"].join(",")}+${vc.type.join(",")}`;
+
                 switch (vc["@context"][0]) {
                     case "https://www.w3.org/2018/credentials/v1": {
                         switch (vc["@context"][1]) {
@@ -27,6 +29,7 @@ export function useVerifiableCredentialCards(
                                             case "NationalIdentityVC": {
                                                 return (
                                                     <NationalIdentityVCCard
+                                                        key={key}
                                                         vc={
                                                             vc as NationalIdentityVC
                                                         }
@@ -37,6 +40,7 @@ export function useVerifiableCredentialCards(
                                             case "TermsOfUseForvaltVC": {
                                                 return (
                                                     <TermsOfUseVCCard
+                                                        key={key}
                                                         vc={
                                                             vc as TermsOfUseForvaltVC
                                                         }
@@ -49,6 +53,7 @@ export function useVerifiableCredentialCards(
                                             case "TermsOfUseSymfoniVC": {
                                                 return (
                                                     <TermsOfUseVCCard
+                                                        key={key}
                                                         vc={
                                                             vc as TermsOfUseSymfoniVC
                                                         }

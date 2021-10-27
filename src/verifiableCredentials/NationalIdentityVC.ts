@@ -6,17 +6,17 @@ export type NationalIdentityVC = {
     ];
     type: ["VerifiableCredential", "NationalIdentityVC"];
 
-    credentialSubject: {
+    credentialSubject?: {
         nationalIdentityNumber: string;
     };
     // Signature
-    issuer: {
+    issuer?: {
         id: string;
     };
-    issuanceDate: string;
-    expirationDate: string;
-    proof: {
-        type?: string;
+    issuanceDate?: string;
+    expirationDate?: string;
+    proof?: {
+        type: string;
         jwt: string;
     };
 };

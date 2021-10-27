@@ -128,7 +128,9 @@ export function VerifiablePresentationScreen(props: {
                 <BigText>{request.params.verifier.name}</BigText>
 
                 <SmallText>For å kunne</SmallText>
-                <BigText>{request.params.verifier.reason[0].text}</BigText>
+                <BigText>{request.params.verifier.reason}</BigText>
+
+                {cards}
             </Content>
             {presentable && (
                 <PresentButton onPress={onPresent}>Vis</PresentButton>
