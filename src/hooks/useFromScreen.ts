@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
-export function useScreenFromScreen(params?: {
+export function useFromScreen(params?: {
     fromScreen: string | never;
 }): [string | undefined, Dispatch<SetStateAction<string | undefined>>] {
     const [_fromScreen, _setFromScreen] = useState<string | undefined>(
