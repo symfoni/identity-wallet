@@ -41,7 +41,7 @@ export const WalletInfo = () => {
                 const balance = await provider.getBalance(address);
                 setBalance(balance);
             } catch (error) {
-                console.error("Could not fetch balance for address", address);
+                console.warn("Could not fetch balance for address", address);
             }
         };
         doAsync();

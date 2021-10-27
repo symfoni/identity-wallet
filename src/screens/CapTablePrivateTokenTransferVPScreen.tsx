@@ -68,7 +68,7 @@ export function CapTablePrivateTokenTransferVPScreen(props: {
     // createNationalIdentityVC
     const onSignNationalIdentityVC = useCallback(async () => {
         if (!request) {
-            console.error("onSignNationalIdentityVC(): !request");
+            console.warn("onSignNationalIdentityVC(): !request");
             return;
         }
 
@@ -141,7 +141,7 @@ export function CapTablePrivateTokenTransferVPScreen(props: {
         amount: string;
     }) => {
         if (!request) {
-            console.error("CapTablePrivateTransferVPScreen.tsx: !request");
+            console.warn("CapTablePrivateTransferVPScreen.tsx: !request");
             return;
         }
 
