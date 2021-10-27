@@ -13,12 +13,13 @@ export function useNavigationWithResult<Result>(
 
     const navigateWithResult = <Param>(
         toScreen: string,
+        fromScreen: string,
         request: JsonRpcRequest<Param>
     ) => {
         console.info(
-            `useNavigationResult(): Navigating to screen: ${toScreen} with request.id: ${request.id}`
+            `useNavigationResult(): Navigating toScreen: ${toScreen}, fromScreen: ${fromScreen}, with request.id: ${request.id}`
         );
-        navigation.navigate(toScreen, request);
+        navigation.navigate(toScreen, { fromScreen, request });
 
         return new Promise<JsonRpcResult<Result>>((resolve) => {
             resultMap.current.set(request.id, resolve);

@@ -1,4 +1,4 @@
-import { formatJsonRpcRequest } from "@json-rpc-tools/utils";
+import { formatJsonRpcRequest, JsonRpcRequest } from "@json-rpc-tools/utils";
 import React from "react";
 import { Button } from "react-native";
 import { useSymfoniContext } from "../context";
@@ -7,6 +7,7 @@ import {
     SCREEN_DEMO,
     SCREEN_BANKID,
     SCREEN_CREATE_CAP_TABLE_PRIVATE_TOKEN_TRANSFER_VP,
+    SCREEN_VERIFIABLE_PRESENTATION,
 } from "../hooks/useLocalNavigation";
 import { useNavigationWithResult } from "../hooks/useNavigationWithResult";
 import {
@@ -19,6 +20,7 @@ import {
     TermsOfUseForvaltVC,
     TermsOfUseSymfoniVC,
 } from "../verifiableCredentials/TermsOfUseVC";
+import { VerifiablePresentationParams } from "../verifiablePresentations/VerifiablePresentationScreen";
 
 export function DemoScreen() {
     const { findVCByType } = useSymfoniContext();
@@ -29,12 +31,11 @@ export function DemoScreen() {
             <Button
                 title="Demo: Vis Legitimasjon"
                 onPress={async () => {
-                    const request = makeBankIDRequest({
-                        resultScreen: SCREEN_DEMO,
-                    });
+                    const request = demoVerifiablePresentationScreenRequest();
 
                     const result = await navigateWithResult(
-                        SCREEN_BANKID,
+                        SCREEN_VERIFIABLE_PRESENTATION,
+                        SCREEN_DEMO,
                         request
                     );
 
@@ -59,6 +60,7 @@ export function DemoScreen() {
 
                     const result = await navigateWithResult(
                         SCREEN_CREATE_CAP_TABLE_VP,
+                        SCREEN_DEMO,
                         request
                     );
                     console.info({ result });
@@ -97,6 +99,7 @@ export function DemoScreen() {
 
                     const result = await navigateWithResult(
                         SCREEN_CREATE_CAP_TABLE_VP,
+                        SCREEN_DEMO,
                         request
                     );
                     console.info({ result });
@@ -119,6 +122,7 @@ export function DemoScreen() {
 
                     const result = await navigateWithResult(
                         SCREEN_CREATE_CAP_TABLE_PRIVATE_TOKEN_TRANSFER_VP,
+                        SCREEN_DEMO,
                         request
                     );
                     console.info({ result });
@@ -156,6 +160,7 @@ export function DemoScreen() {
 
                     const result = await navigateWithResult(
                         SCREEN_CREATE_CAP_TABLE_PRIVATE_TOKEN_TRANSFER_VP,
+                        SCREEN_DEMO,
                         request
                     );
                     console.info({ result });
@@ -170,6 +175,7 @@ export function DemoScreen() {
 
                     const result = await navigateWithResult(
                         SCREEN_BANKID,
+                        SCREEN_DEMO,
                         request
                     );
 
@@ -177,5 +183,19 @@ export function DemoScreen() {
                 }}
             />
         </>
+    );
+}
+
+export function demoVerifiablePresentationScreenRequest(): JsonRpcRequest<VerifiablePresentationParams> {
+    return formatJsonRpcRequest<VerifiablePresentationParams>(
+        "https://symfoni.id/jsonrpc/v2021-10-27/requestVerifiablePresentation",
+        {
+            verifier: {
+                id: "https://www.example.com",
+                name: "Demo",
+            },
+            reason: [{ locale: "no", text: "For demonstration purposes" }],
+            verifiableCredential: [],
+        }
     );
 }
