@@ -27,6 +27,21 @@ export function DemoScreen() {
     return (
         <>
             <Button
+                title="Demo: Vis Legitimasjon"
+                onPress={async () => {
+                    const request = makeBankIDRequest({
+                        resultScreen: SCREEN_DEMO,
+                    });
+
+                    const result = await navigateWithResult(
+                        SCREEN_BANKID,
+                        request
+                    );
+
+                    console.info({ result });
+                }}
+            />
+            <Button
                 title="Demo: Opprett aksjeeierbok"
                 onPress={async () => {
                     const request =

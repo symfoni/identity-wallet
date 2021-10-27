@@ -9,7 +9,7 @@ import React, {
     useMemo,
     useState,
 } from "react";
-import { ActivityIndicator, Linking, ScrollView } from "react-native";
+import { ActivityIndicator, Linking } from "react-native";
 import styled from "styled-components/native";
 import { Context } from "../context";
 import { useDeviceAuthentication } from "../hooks/useDeviceAuthentication";
