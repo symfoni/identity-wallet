@@ -1,5 +1,5 @@
 // React
-import React from "react";
+import React, { useState } from "react";
 
 // Third party
 import styled from "styled-components/native";
@@ -11,29 +11,28 @@ import { SignButton } from "./components/SignButton";
 // Card
 export function NationalIdentityVCCard({
     vc,
-    loading,
-    onSign,
+    onSigned,
 }: {
     vc: NationalIdentityVC | undefined;
-    loading: boolean;
-    onSign: () => Promise<void>;
+    onSigned: (vc: NationalIdentityVC) => void;
 }) {
+    const [loading, setLoading] = useState(false);
     const signed = !!vc;
-    const valid = true;
+
+    const onSign = () => {};
 
     return (
         <VCCard>
             <VCPropLabel>Fødselsnummer</VCPropLabel>
-            <VCPropText placeholder={valid && !signed}>
+            <VCPropText placeholder={!signed}>
                 {vc?.credentialSubject?.nationalIdentityNumber ??
                     "123456 54321"}
             </VCPropText>
             <SignButton
-                valid={valid}
                 loading={loading}
                 signed={signed}
                 expirationDate={vc?.expirationDate}
-                onPress={() => (valid && !signed ? onSign() : null)}
+                onPress={onSign}
             />
         </VCCard>
     );

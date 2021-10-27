@@ -14,10 +14,7 @@ import {
     useLocalNavigation,
 } from "../hooks/useLocalNavigation";
 import { Context } from "../context";
-import {
-    TermsOfUseForvaltVC,
-    TermsOfUseVC,
-} from "../verifiableCredentials/TermsOfUseVC";
+import { TermsOfUseVC } from "../verifiableCredentials/TermsOfUseVC";
 import { NationalIdentityVC } from "../verifiableCredentials/NationalIdentityVC";
 import {
     CreateCapTableVPParams,

@@ -193,9 +193,9 @@ export function demoVerifiablePresentationScreenRequest(): JsonRpcRequest<Verifi
             verifier: {
                 id: "https://www.example.com",
                 name: "Demo",
+                reason: "Demonstrere verifiserbar legg",
             },
-            reason: [{ locale: "no", text: "For demonstration purposes" }],
-            verifiableCredential: [],
+            verifiableCredentials: [],
         }
     );
 }

@@ -1,5 +1,5 @@
 // React
-import React from "react";
+import React, { useState } from "react";
 import { Linking } from "react-native";
 
 // Third party
@@ -12,18 +12,18 @@ import { TermsOfUseVC } from "./TermsOfUseVC";
 // Card
 export function TermsOfUseVCCard({
     vc,
-    loading,
     VCType,
     termsOfUseID,
-    onSign,
+    onSigned,
 }: {
-    vc: TermsOfUseVC | undefined;
-    loading: boolean;
+    vc: TermsOfUseVC;
     VCType: string;
     termsOfUseID: string;
-    onSign: (VCType: string, termsOfUse: string) => void;
+    onSigned: (vc: TermsOfUseVC) => void;
 }) {
     const signed = !!vc;
+    const [loading, setLoading] = useState(false);
+    const onSign = () => {};
 
     return (
         <VCCard>
@@ -32,11 +32,10 @@ export function TermsOfUseVCCard({
                 {termsOfUseID}
             </VCPropHyperlink>
             <SignButton
-                valid={true}
                 signed={signed}
                 loading={loading}
                 expirationDate={vc?.expirationDate}
-                onPress={() => onSign(VCType, termsOfUseID)}
+                onPress={onSign}
             />
         </VCCard>
     );

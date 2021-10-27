@@ -1,42 +1,191 @@
-import { JsonRpcRequest, JsonRpcResult } from "@json-rpc-tools/types";
+// React
+import React, { ReactNode, useMemo } from "react";
 import { useNavigation } from "@react-navigation/core";
-import { VerifiableCredential } from "@veramo/core";
-import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { Button, Text } from "react-native";
-import { useScreenFromScreen } from "../hooks/useScreenFromScreen";
+
+// Third party
+import styled from "styled-components/native";
+import { VerifiableCredential, VerifiablePresentation } from "@veramo/core";
+
+// Local
+import { useFromScreen } from "../hooks/useFromScreen";
 import { useScreenRequest } from "../hooks/useScreenRequest";
-import { useScreenResult } from "../hooks/useScreenResult";
 import { ScreenRequest } from "../types/ScreenRequest";
 import { ScreenResult } from "../types/ScreenResult";
+import { ActivityIndicator, Text } from "react-native";
+import { useVerifiableCredentialCards } from "../verifiableCredentials/useVerifiableCredentialCards";
+import { SupportedVerifiableCredential } from "../verifiableCredentials/SupportedVerifiableCredentials";
+import { useSymfoniContext } from "../context";
+import { formatJsonRpcResult } from "@json-rpc-tools/utils";
 
-export function VerifiablePresentationScreen(props: {
-    route: {
-        params?:
-            | ScreenRequest<VerifiablePresentationParams>
-            | ScreenResult<any>; // @TODO change 'any' -> 'some types'
-    };
-}) {
-    const { navigate } = useNavigation();
-    const [fromScreen, setFromScreen] = useScreenFromScreen(props.route.params);
-    const [request, setRequest] = useScreenRequest(props.route.params);
-    const [result, setResult] = useScreenResult(props.route.params);
-
-    return (
-        <>
-            <Text>Hei</Text>
-
-            {fromScreen && (
-                <Button title="Vis" onPress={() => navigate(fromScreen)} />
-            )}
-        </>
-    );
-}
-
+// Screen
 export type VerifiablePresentationParams = {
     verifier: {
         id: string;
         name: string;
+        reason: string;
     };
-    reason: { locale: "en" | "no"; text: string }[];
-    verifiableCredential: VerifiableCredential[];
+    verifiableCredentials: SupportedVerifiableCredential[];
 };
+
+export type VerifiablePresentationResult = {
+    verifiablePresenation: VerifiablePresentation;
+};
+
+type VerifiablePresentationScreenRequest =
+    ScreenRequest<VerifiablePresentationParams>;
+
+export function VerifiablePresentationScreen(props: {
+    route: {
+        params?: VerifiablePresentationScreenRequest | ScreenResult<any>; // @TODO change 'any' -> 'some types'
+    };
+}) {
+    const { createVP } = useSymfoniContext();
+    const { navigate } = useNavigation();
+    const [fromScreen, setFromScreen] = useFromScreen(props.route.params);
+    const [request, setRequest] = useScreenRequest(props.route.params);
+
+    const presentable = useMemo(
+        () => !!request?.params.verifiableCredentials.every((vc) => !!vc.proof),
+        [request]
+    );
+
+    const onSignedVC = (signedVC: SupportedVerifiableCredential) => {
+        setRequest((current) => {
+            if (!current) {
+                return undefined;
+            }
+            const foundIndex = current.params.verifiableCredentials.findIndex(
+                (vc) => vc.type.join(",") === signedVC.type.join(",")
+            );
+
+            // Merge signed VC into existing array of vcs.. @TODO use a utility library for merging arrays instead?
+            return {
+                ...current,
+                params: {
+                    ...current.params,
+                    verifiableCredentials: [
+                        ...current.params.verifiableCredentials.splice(
+                            0,
+                            foundIndex
+                        ),
+                        signedVC,
+                        ...current.params.verifiableCredentials.splice(
+                            foundIndex + 1
+                        ),
+                    ],
+                },
+            };
+        });
+    };
+
+    const cards = useVerifiableCredentialCards(
+        request?.params.verifiableCredentials ?? [],
+        onSignedVC
+    );
+
+    const onPresent = async () => {
+        if (!fromScreen) {
+            console.warn("onPresent(): !fromScreen");
+            return;
+        }
+        if (!request) {
+            console.warn("onPresent(): !request");
+            return;
+        }
+        if (request.params.verifiableCredentials.some((vc) => !vc.proof)) {
+            console.warn(
+                "onPresent(): request.params.verifiableCredentials.some((vc) => !vc.proof)"
+            );
+            return;
+        }
+
+        const vp = await createVP(
+            request.params.verifier.id,
+            request.params.verifiableCredentials
+        );
+
+        const result = formatJsonRpcResult<VerifiablePresentationResult>(
+            request.id,
+            { verifiablePresenation: vp }
+        );
+
+        navigate(fromScreen, result);
+    };
+
+    if (!request) {
+        return (
+            <>
+                <Text>Loading request...</Text>
+                <ActivityIndicator />
+            </>
+        );
+    }
+
+    return (
+        <Screen>
+            <Content>
+                <SmallText>Til</SmallText>
+                <BigText>{request.params.verifier.name}</BigText>
+
+                <SmallText>For å kunne</SmallText>
+                <BigText>{request.params.verifier.reason[0].text}</BigText>
+            </Content>
+            {presentable && (
+                <PresentButton onPress={onPresent}>Vis</PresentButton>
+            )}
+        </Screen>
+    );
+}
+
+const Screen = styled.ScrollView`
+    height: 100%;
+    background: white;
+    border: 1px solid white;
+`;
+const Content = styled.View`
+    flex: 1;
+    padding-horizontal: 30px;
+    padding-vertical: 30px;
+`;
+const SmallText = styled.Text`
+    margin-left: 5px;
+`;
+const BigText = styled.Text`
+    font-size: 22px;
+    padding-bottom: 20px;
+    margin-left: 5px;
+`;
+
+function PresentButton({
+    children,
+    onPress,
+}: {
+    children: ReactNode;
+    onPress: () => void;
+}) {
+    return (
+        <PresentButtonView onPress={onPress}>
+            <PresentButtonText>{children}</PresentButtonText>
+        </PresentButtonView>
+    );
+}
+
+const PresentButtonView = styled.TouchableOpacity`
+    background-color: rgb(52, 199, 89);
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    height: 44px;
+    margin-horizontal: 30px;
+    margin-top: 20px;
+    margin-bottom: 50px;
+    border-radius: 10px;
+    width: 200px;
+    align-self: center;
+`;
+const PresentButtonText = styled.Text`
+    color: rgb(255, 255, 255);
+    font-weight: 500;
+    font-size: 16px;
+`;

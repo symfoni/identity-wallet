@@ -36,6 +36,7 @@ import { useWalletconnect } from "./utils/useWalletconnect";
 import { CapTablePrivateTokenTransferVC } from "./verifiableCredentials/CapTablePrivateTokenTransferVC";
 import { CapTableVC } from "./verifiableCredentials/CapTableVC";
 import { NationalIdentityVC } from "./verifiableCredentials/NationalIdentityVC";
+import { SupportedVerifiableCredential } from "./verifiableCredentials/SupportedVerifiableCredentials";
 import { TermsOfUseVC } from "./verifiableCredentials/TermsOfUseVC";
 import { CapTablePrivateTokenTransferVP } from "./verifiablePresentations/CapTablePrivateTokenTransferVP";
 import { CreateCapTableVP } from "./verifiablePresentations/CreateCapTableVP";
@@ -66,7 +67,7 @@ export interface IContext {
     createVC: (data: Record<string, any>) => Promise<VerifiableCredential>;
     createVP: (
         verifier: string,
-        verifiableCredentials: VerifiableCredential[] | string[]
+        verifiableCredentials: SupportedVerifiableCredential[]
     ) => Promise<VerifiablePresentation>;
     decodeJWT: (
         jwt: string,

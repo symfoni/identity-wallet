@@ -5,37 +5,25 @@ import { ActivityIndicator } from "react-native";
 // Third party
 import styled from "styled-components/native";
 
-// Component
+// Button
 export function SignButton({
-    valid,
     loading,
     signed,
     expirationDate,
     onPress,
 }: {
-    valid: boolean;
     loading: boolean;
     signed: boolean;
     expirationDate?: string;
     onPress: () => void;
 }) {
     const backgroundColor = useMemo(() => {
-        if (!valid) {
-            return "rgba(255,255,255,0.3)";
-        } else if (!signed) {
+        if (!signed) {
             return "rgba(0, 122, 255, 0.9)";
         } else {
             return "rgba(52, 199, 89, 0.9)";
         }
-    }, [valid, signed]);
-
-    const color = useMemo(() => {
-        if (!valid) {
-            return "rgba(255,255,255,0.3)";
-        } else {
-            return "white";
-        }
-    }, [valid]);
+    }, [signed]);
 
     const text = useMemo(() => {
         if (!loading && !signed) {
@@ -47,15 +35,15 @@ export function SignButton({
         }
     }, [loading, signed]);
 
-    const onPressWhenValidAndNotSigned = useMemo(() => {
-        if (valid && !signed) {
+    const onPressWhenNotSigned = useMemo(() => {
+        if (!signed) {
             return onPress;
         } else {
             return () => {
                 console.info("Button disabled");
             };
         }
-    }, [onPress, valid, signed]);
+    }, [onPress, signed]);
 
     const expirationDateText = useMemo(() => {
         if (!expirationDate) {
@@ -68,11 +56,11 @@ export function SignButton({
 
     return (
         <DateView>
-            <DateText color={color}>{expirationDateText}</DateText>
+            <DateText>{expirationDateText}</DateText>
             <StatusButtonTouchable
-                onPress={onPressWhenValidAndNotSigned}
+                onPress={onPressWhenNotSigned}
                 backgroundColor={backgroundColor}>
-                <StatusButtonText color={color}>{text}</StatusButtonText>
+                <StatusButtonText>{text}</StatusButtonText>
             </StatusButtonTouchable>
         </DateView>
     );
@@ -86,7 +74,7 @@ const DateView = styled.View`
 `;
 const DateText = styled.Text`
     margin-right: 10px;
-    color: ${(props: { color: string }) => props.color};
+    color: white;
 `;
 const StatusButtonTouchable = styled.TouchableOpacity`
     background-color: ${(props: { backgroundColor: string }) =>
@@ -102,7 +90,7 @@ const StatusButtonTouchable = styled.TouchableOpacity`
 `;
 
 const StatusButtonText = styled.Text`
-    color: ${(props: { color: string }) => props.color};
+    color: white;
     font-weight: 600;
     font-size: 13px;
 `;

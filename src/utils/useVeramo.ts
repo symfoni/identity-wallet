@@ -33,6 +33,7 @@ import {
 } from "../verifiableCredentials/TermsOfUseVC";
 import { agent as _agent, deleteVeramoData } from "./../utils/VeramoUtils";
 import { CapTablePrivateTokenTransferVC } from "../verifiableCredentials/CapTablePrivateTokenTransferVC";
+import { SupportedVerifiableCredential } from "../verifiableCredentials/SupportedVerifiableCredentials";
 
 export type Agent = TAgent<
     IDIDManager &
@@ -299,7 +300,7 @@ export const useVeramo = (chainId: string) => {
 
     const createVP = async (
         verifier: string,
-        verifiableCredentials: VerifiableCredential[] | string[]
+        verifiableCredentials: SupportedVerifiableCredential[]
     ) => {
         if (!identity) {
             throw Error("Cant create VC, identity not initilized");
