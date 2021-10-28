@@ -1,30 +1,16 @@
-import {
-    formatJsonRpcRequest,
-    formatJsonRpcResult,
-    JsonRpcRequest,
-} from "@json-rpc-tools/utils";
-
-export function makeBankIDRequest(params: BankIDParam) {
-    return formatJsonRpcRequest("SymfoniID_requestBankID", params);
-}
-
-export function makeBankIDResult(
-    request: JsonRpcRequest<BankIDParam>,
-    result: BankIDResult
-) {
-    return formatJsonRpcResult(request.id, result);
-}
-
-export type BankIDParam = {
-    resultScreen: string;
-};
-
-export type BankIDResult = {
-    bankIDToken: string;
-};
+import { SupportedVerifiableCredential } from "../verifiableCredentials/SupportedVerifiableCredentials";
 
 export type ParamPresentCredentialDemo = {
     type: "PARAM_PRESENT_CREDENTIAL_DEMO";
     demoBankIDPersonnummer: string;
     demoEmail: string;
+};
+
+export type VerifiablePresentationParams = {
+    verifier: {
+        id: string;
+        name: string;
+        reason: string;
+    };
+    verifiableCredentials: SupportedVerifiableCredential[];
 };

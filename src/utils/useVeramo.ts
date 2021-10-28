@@ -10,7 +10,10 @@ import {
     VerifiableCredential,
     VerifiablePresentation,
 } from "@veramo/core";
-import { ICredentialIssuer } from "@veramo/credential-w3c";
+import {
+    ICreateVerifiableCredentialArgs,
+    ICredentialIssuer,
+} from "@veramo/credential-w3c";
 import {
     FindArgs,
     IDataStoreORM,
@@ -247,7 +250,7 @@ export const useVeramo = (chainId: string) => {
                     request.capTableVC,
                     request.termsOfUseForvaltVC,
                     request.termsOfUseSymfoniVC,
-                    request.nationalIdentityVC,
+                    request.nationalIdentityVC as VerifiableCredential,
                 ],
             },
             proofFormat: "jwt",
@@ -270,7 +273,7 @@ export const useVeramo = (chainId: string) => {
                 verifier,
                 verifiableCredential: [
                     capTablePrivateTokenTransferVC,
-                    nationalIdentityVC,
+                    nationalIdentityVC as VerifiableCredential,
                 ],
             },
             proofFormat: "jwt",
@@ -279,7 +282,9 @@ export const useVeramo = (chainId: string) => {
         return vp;
     };
 
-    const createVC = async (data: Record<string, any>) => {
+    const createVC = async (
+        vcArgs: Partial<ICreateVerifiableCredentialArgs>
+    ) => {
         if (!identity) {
             throw Error("Cant create VC, identity not initilized");
         }
@@ -287,9 +292,10 @@ export const useVeramo = (chainId: string) => {
             credential: {
                 type: ["VerifiableCredential", "PersonCredential"],
                 credentialSubject: {
-                    ...data,
+                    ...(vcArgs?.credential?.credentialSubject ?? {}),
                     id: identity?.did,
                 },
+                ...(vcArgs.credential ?? {}),
                 issuer: identity.did,
             },
             proofFormat: "jwt",
@@ -309,7 +315,8 @@ export const useVeramo = (chainId: string) => {
             presentation: {
                 holder: identity.did,
                 verifier: [verifier],
-                verifiableCredential: verifiableCredentials,
+                verifiableCredential:
+                    verifiableCredentials as VerifiableCredential[],
             },
             proofFormat: "jwt",
         });

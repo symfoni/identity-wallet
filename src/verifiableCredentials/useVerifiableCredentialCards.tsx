@@ -8,11 +8,13 @@ import { NationalIdentityVCCard } from "./NationalIdentityVCCard";
 import { TermsOfUseForvaltVC, TermsOfUseSymfoniVC } from "./TermsOfUseVC";
 import { SupportedVerifiableCredential } from "./SupportedVerifiableCredentials";
 import { TermsOfUseVCCard } from "./TermsOfUseVCCard";
+import { VerifiablePresentationScreenParams } from "../types/ScreenParams";
 
 // Hook
 export function useVerifiableCredentialCards(
     verifiableCredentials: SupportedVerifiableCredential[],
-    onSigned: (vc: SupportedVerifiableCredential) => void
+    onSigned: (vc: SupportedVerifiableCredential) => void,
+    screenParams?: VerifiablePresentationScreenParams
 ) {
     const cards = useMemo(
         () =>
@@ -30,6 +32,9 @@ export function useVerifiableCredentialCards(
                                                 return (
                                                     <NationalIdentityVCCard
                                                         key={key}
+                                                        screenParams={
+                                                            screenParams
+                                                        }
                                                         vc={
                                                             vc as NationalIdentityVC
                                                         }

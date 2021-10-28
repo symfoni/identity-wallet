@@ -11,7 +11,10 @@ import {
     VerifiableCredential,
     VerifiablePresentation,
 } from "@veramo/core";
-import { ICredentialIssuer } from "@veramo/credential-w3c";
+import {
+    ICreateVerifiableCredentialArgs,
+    ICredentialIssuer,
+} from "@veramo/credential-w3c";
 import {
     FindArgs,
     IDataStoreORM,
@@ -64,7 +67,9 @@ export interface IContext {
     provider: ethers.providers.Provider;
     identity?: IIdentifier;
     deleteVeramoData: () => void;
-    createVC: (data: Record<string, any>) => Promise<VerifiableCredential>;
+    createVC: (
+        vcArgs: Partial<ICreateVerifiableCredentialArgs>
+    ) => Promise<VerifiableCredential>;
     createVP: (
         verifier: string,
         verifiableCredentials: SupportedVerifiableCredential[]

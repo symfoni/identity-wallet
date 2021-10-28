@@ -1,47 +1,31 @@
 // React
 import React, { ReactNode, useMemo } from "react";
 import { useNavigation } from "@react-navigation/core";
+import { ActivityIndicator, Text } from "react-native";
+import { formatJsonRpcResult } from "@json-rpc-tools/utils";
 
 // Third party
 import styled from "styled-components/native";
-import { VerifiableCredential, VerifiablePresentation } from "@veramo/core";
 
 // Local
 import { useFromScreen } from "../hooks/useFromScreen";
 import { useScreenRequest } from "../hooks/useScreenRequest";
-import { ScreenRequest } from "../types/ScreenRequest";
-import { ScreenResult } from "../types/ScreenResult";
-import { ActivityIndicator, Text } from "react-native";
 import { useVerifiableCredentialCards } from "../verifiableCredentials/useVerifiableCredentialCards";
 import { SupportedVerifiableCredential } from "../verifiableCredentials/SupportedVerifiableCredentials";
 import { useSymfoniContext } from "../context";
-import { formatJsonRpcResult } from "@json-rpc-tools/utils";
+import { VerifiablePresentationScreenParams } from "../types/ScreenParams";
+import { VerifiablePresentationResult } from "../types/resultTypes";
 
 // Screen
-export type VerifiablePresentationParams = {
-    verifier: {
-        id: string;
-        name: string;
-        reason: string;
-    };
-    verifiableCredentials: SupportedVerifiableCredential[];
-};
-
-export type VerifiablePresentationResult = {
-    verifiablePresenation: VerifiablePresentation;
-};
-
-type VerifiablePresentationScreenRequest =
-    ScreenRequest<VerifiablePresentationParams>;
 
 export function VerifiablePresentationScreen(props: {
     route: {
-        params?: VerifiablePresentationScreenRequest | ScreenResult<any>; // @TODO change 'any' -> 'some types'
+        params?: VerifiablePresentationScreenParams;
     };
 }) {
     const { createVP } = useSymfoniContext();
     const { navigate } = useNavigation();
-    const [fromScreen, setFromScreen] = useFromScreen(props.route.params);
+    const fromScreen = useFromScreen(props.route.params);
     const [request, setRequest] = useScreenRequest(props.route.params);
 
     const presentable = useMemo(
@@ -80,7 +64,8 @@ export function VerifiablePresentationScreen(props: {
 
     const cards = useVerifiableCredentialCards(
         request?.params.verifiableCredentials ?? [],
-        onSignedVC
+        onSignedVC,
+        props.route.params
     );
 
     const onPresent = async () => {

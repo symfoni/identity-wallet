@@ -2,7 +2,7 @@ import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
 export function useFromScreen(params?: {
     fromScreen: string | never;
-}): [string | undefined, Dispatch<SetStateAction<string | undefined>>] {
+}): string | undefined {
     const [_fromScreen, _setFromScreen] = useState<string | undefined>(
         undefined
     );
@@ -13,5 +13,5 @@ export function useFromScreen(params?: {
         }
     }, [params?.fromScreen]);
 
-    return [_fromScreen, _setFromScreen];
+    return _fromScreen;
 }
