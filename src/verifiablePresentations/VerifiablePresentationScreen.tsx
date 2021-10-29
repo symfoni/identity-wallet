@@ -19,7 +19,10 @@ import {
 } from "../types/resultTypes";
 import { ScreenRequest } from "../types/ScreenRequest";
 import { VerifiablePresentationParams } from "../types/paramTypes";
-import { ScreenResult } from "../types/ScreenResults";
+import {
+    makeVerifiablePresentationScreenResult,
+    ScreenResult,
+} from "../types/ScreenResults";
 
 // Screen
 export function VerifiablePresentationScreen(props: {
@@ -49,8 +52,6 @@ export function VerifiablePresentationScreen(props: {
     );
 
     const onSignedVC = (signedVC: SupportedVerifiableCredential) => {
-        console.log({ signedVC });
-
         setRequest((current) => {
             if (!current) {
                 return undefined;
@@ -59,21 +60,14 @@ export function VerifiablePresentationScreen(props: {
                 (vc) => vc.type.join(",") === signedVC.type.join(",")
             );
 
-            // Merge signed VC into existing array of vcs.. @TODO use a utility library for merging arrays instead?
+            const copy = [...current.params.verifiableCredentials];
+            copy[foundIndex] = signedVC;
+
             return {
                 ...current,
                 params: {
                     ...current.params,
-                    verifiableCredentials: [
-                        ...current.params.verifiableCredentials.splice(
-                            0,
-                            foundIndex
-                        ),
-                        signedVC,
-                        ...current.params.verifiableCredentials.splice(
-                            foundIndex + 1
-                        ),
-                    ],
+                    verifiableCredentials: copy,
                 },
             };
         });
@@ -82,19 +76,8 @@ export function VerifiablePresentationScreen(props: {
     const cards = useVerifiableCredentialCards(
         verifiableCredentials,
         onSignedVC,
-        props.route.params
+        props.route.params?.result
     );
-
-    useEffect(() => {
-        console.log(
-            "verifiablePresentationScreen.tsx: vcs.length: ",
-            verifiableCredentials.length
-        );
-        console.log(
-            "verifiablePresentationScreen.tsx: signedVcs.length: ",
-            signedVerifiableCredentials.length
-        );
-    }, [signedVerifiableCredentials, verifiableCredentials]);
 
     const onPresent = async () => {
         if (!fromScreen) {
@@ -117,10 +100,9 @@ export function VerifiablePresentationScreen(props: {
             request.params.verifiableCredentials
         );
 
-        const result = formatJsonRpcResult<VerifiablePresentationResult>(
-            request.id,
-            { verifiablePresenation: vp }
-        );
+        const result = makeVerifiablePresentationScreenResult(request, {
+            verifiablePresenation: vp,
+        });
 
         navigate(fromScreen, result);
     };

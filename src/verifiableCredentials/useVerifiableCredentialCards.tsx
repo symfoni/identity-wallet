@@ -23,19 +23,20 @@ import {
 } from "../hooks/useLocalNavigation";
 import { BankidJWTPayload } from "../types/bankid.types";
 import { useSymfoniContext } from "../context";
+import { JsonRpcResult } from "@json-rpc-tools/types";
+import { useDeviceAuthentication } from "../hooks/useDeviceAuthentication";
 
 // Hook
 export function useVerifiableCredentialCards(
     verifiableCredentials: SupportedVerifiableCredential[],
     onSigned: (vc: SupportedVerifiableCredential) => void,
-    screenResult?: ScreenResult<BankIDResult>
+    result?: JsonRpcResult<BankIDResult>
 ) {
     const { createVC } = useSymfoniContext();
-    const { navigateWithResult } = useNavigationWithResult(
-        screenResult?.result
-    );
+    const { navigateWithResult } = useNavigationWithResult(result);
+    const { checkDeviceAuthentication } = useDeviceAuthentication();
 
-    const onPressSignNationalIdentityCard = async (vc) => {
+    const onPressSignNationalIdentityCard = async (vc: NationalIdentityVC) => {
         const request = makeBankIDScreenRequest(
             SCREEN_VERIFIABLE_PRESENTATION,
             "navigate-to-bankid-screen-from-national-identity-card-and-wait-for-result",
@@ -62,13 +63,34 @@ export function useVerifiableCredentialCards(
             onSigned(signedVC);
         } catch (err) {
             console.warn(
-                "NationalIdentityVCCard.tsx: await createVC -> error: ",
+                "useVerifiableCredentialCards.tsx: onPressSignNationalIdentityCard(): await veramo.createVC() -> error: ",
                 err
             );
         }
     };
 
-    const onPressSignTermsOfUseCard = async (vc: TermsOfUseVC) => {};
+    const onPressSignTermsOfUseCard = async (vc: TermsOfUseVC) => {
+        const authenticated = await checkDeviceAuthentication();
+        if (!authenticated) {
+            console.warn(
+                "useVerifiableCredentialCards.tsx: onPressSignTermsOfUseCard(): !authenticated "
+            );
+            return;
+        }
+        try {
+            const signedVC = (await createVC({
+                credential: {
+                    ...vc,
+                },
+            })) as TermsOfUseVC;
+            onSigned(signedVC);
+        } catch (err) {
+            console.warn(
+                "useVerifiableCredentialCards.tsx: : onPressSignTermsOfUseCard(): await veramo.createVC() -> error: ",
+                err
+            );
+        }
+    };
 
     const cards = useMemo(
         () =>

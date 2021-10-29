@@ -14,7 +14,7 @@ export function TermsOfUseVCCard({
     vc: TermsOfUseVC;
     onPressSign: (vc: TermsOfUseVC) => void;
 }) {
-    const signed = !!vc;
+    const signed = !!vc.proof;
     const [loading, setLoading] = useState(false);
 
     const readAndAccepted = vc.credentialSubject?.readAndAccepted?.id;
