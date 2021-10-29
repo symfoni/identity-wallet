@@ -6,15 +6,10 @@ import { decodeJWT } from "did-jwt";
 // Local
 import { NationalIdentityVC } from "./NationalIdentityVC";
 import { NationalIdentityVCCard } from "./NationalIdentityVCCard";
-import {
-    TermsOfUseForvaltVC,
-    TermsOfUseSymfoniVC,
-    TermsOfUseVC,
-} from "./TermsOfUseVC";
+import { TermsOfUseVC } from "./TermsOfUseVC";
 import { SupportedVerifiableCredential } from "./SupportedVerifiableCredentials";
 import { TermsOfUseVCCard } from "./TermsOfUseVCCard";
 import { useNavigationWithResult } from "../hooks/useNavigationWithResult";
-import { ScreenResult } from "../types/ScreenResults";
 import { makeBankIDScreenRequest } from "../types/ScreenRequest";
 import { BankIDResult } from "../types/resultTypes";
 import {
@@ -25,6 +20,10 @@ import { BankidJWTPayload } from "../types/bankid.types";
 import { useSymfoniContext } from "../context";
 import { JsonRpcResult } from "@json-rpc-tools/types";
 import { useDeviceAuthentication } from "../hooks/useDeviceAuthentication";
+import { CapTableVCCard } from "./CapTableVCCard";
+import { CapTablePrivateTokenTransferVCCard } from "./CapTablePrivateTokenTransferVCCard";
+import { CapTableVC } from "./CapTableVC";
+import { CapTablePrivateTokenTransferVC } from "./CapTablePrivateTokenTransferVC";
 
 // Hook
 export function useVerifiableCredentialCards(
@@ -36,6 +35,7 @@ export function useVerifiableCredentialCards(
     const { navigateWithResult } = useNavigationWithResult(result);
     const { checkDeviceAuthentication } = useDeviceAuthentication();
 
+    // CALLBACK
     const onPressSignNationalIdentityCard = async (vc: NationalIdentityVC) => {
         const request = makeBankIDScreenRequest(
             SCREEN_VERIFIABLE_PRESENTATION,
@@ -58,6 +58,7 @@ export function useVerifiableCredentialCards(
                         type: "BankID",
                         jwt: result.bankIDToken,
                     },
+                    expirationDate: expiresInBankID(bankID.exp),
                 },
             })) as NationalIdentityVC;
             onSigned(signedVC);
@@ -69,11 +70,15 @@ export function useVerifiableCredentialCards(
         }
     };
 
-    const onPressSignTermsOfUseCard = async (vc: TermsOfUseVC) => {
+    // CALLBACK
+    async function onPressSignCard(
+        vc: SupportedVerifiableCredential,
+        expirationDate: string
+    ) {
         const authenticated = await checkDeviceAuthentication();
         if (!authenticated) {
             console.warn(
-                "useVerifiableCredentialCards.tsx: onPressSignTermsOfUseCard(): !authenticated "
+                "useVerifiableCredentialCards.tsx: onPressSignCard(): !authenticated "
             );
             return;
         }
@@ -81,17 +86,19 @@ export function useVerifiableCredentialCards(
             const signedVC = (await createVC({
                 credential: {
                     ...vc,
+                    expirationDate,
                 },
-            })) as TermsOfUseVC;
+            })) as SupportedVerifiableCredential;
             onSigned(signedVC);
         } catch (err) {
             console.warn(
-                "useVerifiableCredentialCards.tsx: : onPressSignTermsOfUseCard(): await veramo.createVC() -> error: ",
+                "useVerifiableCredentialCards.tsx: : onPressSignCard(): await veramo.createVC() -> error: ",
                 err
             );
         }
-    };
+    }
 
+    // MEMO
     const cards = useMemo(
         () =>
             verifiableCredentials.map((vc) => {
@@ -122,8 +129,41 @@ export function useVerifiableCredentialCards(
                                                     <TermsOfUseVCCard
                                                         key={key}
                                                         vc={vc as TermsOfUseVC}
-                                                        onPressSign={
-                                                            onPressSignTermsOfUseCard
+                                                        onPressSign={(vc) =>
+                                                            onPressSignCard(
+                                                                vc,
+                                                                expiresIn50Years()
+                                                            )
+                                                        }
+                                                    />
+                                                );
+                                            }
+                                            case "CapTableVC": {
+                                                return (
+                                                    <CapTableVCCard
+                                                        key={key}
+                                                        vc={vc as CapTableVC}
+                                                        onPressSign={(vc) =>
+                                                            onPressSignCard(
+                                                                vc,
+                                                                expiresIn24Hours()
+                                                            )
+                                                        }
+                                                    />
+                                                );
+                                            }
+                                            case "CapTablePrivateTokenTransferVC": {
+                                                return (
+                                                    <CapTablePrivateTokenTransferVCCard
+                                                        key={key}
+                                                        vc={
+                                                            vc as CapTablePrivateTokenTransferVC
+                                                        }
+                                                        onPressSign={(vc) =>
+                                                            onPressSignCard(
+                                                                vc,
+                                                                expiresIn24Hours()
+                                                            )
                                                         }
                                                     />
                                                 );
@@ -186,4 +226,17 @@ export function useVerifiableCredentialCards(
     );
 
     return cards;
+}
+
+function expiresInBankID(exp: number) {
+    return new Date(exp * 1000).toISOString();
+}
+function expiresIn24Hours() {
+    return new Date(new Date().setDate(new Date().getDate() + 1)).toISOString();
+}
+
+function expiresIn50Years() {
+    return new Date(
+        new Date().setFullYear(new Date().getFullYear() + 50)
+    ).toISOString();
 }

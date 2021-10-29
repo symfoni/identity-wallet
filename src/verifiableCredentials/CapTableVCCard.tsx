@@ -3,30 +3,28 @@ import React, { useState } from "react";
 import styled from "styled-components/native";
 
 // Local
-import { NationalIdentityVC } from "./NationalIdentityVC";
 import { SignButton } from "./components/SignButton";
+import { CapTableVC } from "./CapTableVC";
 
-// Card
-export function NationalIdentityVCCard({
+export function CapTableVCCard({
     vc,
     onPressSign,
 }: {
-    vc: NationalIdentityVC;
-    onPressSign: (vc: NationalIdentityVC) => void;
+    vc: CapTableVC;
+    onPressSign: (vc: CapTableVC) => void;
 }) {
+    const signed = !!vc.proof;
     const [loading, setLoading] = useState(false);
-    const signed = !!vc?.proof;
 
     return (
         <VCCard>
-            <VCPropLabel>Fødselsnummer</VCPropLabel>
-            <VCPropText placeholder={!signed}>
-                {vc?.credentialSubject?.nationalIdentityNumber ??
-                    "123456 54321"}
+            <VCPropLabel>Organisasjonsnummer</VCPropLabel>
+            <VCPropText>
+                {vc.credentialSubject?.capTable.organizationNumber}
             </VCPropText>
             <SignButton
-                loading={loading}
                 signed={signed}
+                loading={loading}
                 expirationDate={vc?.expirationDate}
                 onPress={() => onPressSign(vc)}
             />
@@ -50,8 +48,7 @@ const VCPropLabel = styled.Text`
 `;
 
 const VCPropText = styled.Text`
-    color: ${(props: { placeholder: boolean }) =>
-        props.placeholder ? "rgba(255,255,255,0.2)" : "white"};
+    color: white;
     font-weight: bold;
     font-size: 19px;
     margin-bottom: 7px;
