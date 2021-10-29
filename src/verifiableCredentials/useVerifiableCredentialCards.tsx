@@ -13,6 +13,7 @@ import { useNavigationWithResult } from "../hooks/useNavigationWithResult";
 import { makeBankIDScreenRequest } from "../types/ScreenRequest";
 import { BankIDResult } from "../types/resultTypes";
 import {
+    NAVIGATOR_ROOT,
     SCREEN_BANKID,
     SCREEN_VERIFIABLE_PRESENTATION,
 } from "../hooks/useLocalNavigation";
@@ -39,6 +40,7 @@ export function useVerifiableCredentialCards(
     const onPressSignNationalIdentityCard = async (vc: NationalIdentityVC) => {
         const request = makeBankIDScreenRequest(
             SCREEN_VERIFIABLE_PRESENTATION,
+            NAVIGATOR_ROOT,
             "navigate-to-bankid-screen-from-national-identity-card-and-wait-for-result",
             {}
         );
@@ -47,6 +49,13 @@ export function useVerifiableCredentialCards(
         const bankID = decodeJWT(result.bankIDToken)
             .payload as BankidJWTPayload;
 
+        const evidence = [
+            {
+                type: "BankID",
+                jwt: result.bankIDToken,
+            },
+        ];
+
         try {
             const signedVC = (await createVC({
                 credential: {
@@ -54,13 +63,15 @@ export function useVerifiableCredentialCards(
                     credentialSubject: {
                         nationalIdentityNumber: bankID.socialno,
                     },
-                    evidence: {
-                        type: "BankID",
-                        jwt: result.bankIDToken,
-                    },
+                    evidence,
                     expirationDate: expiresInBankID(bankID.exp),
-                },
+                } as NationalIdentityVC,
             })) as NationalIdentityVC;
+
+            console.log(
+                "onPressSignNationalIdentityCard:",
+                JSON.stringify(signedVC, null, 2)
+            );
             onSigned(signedVC);
         } catch (err) {
             console.warn(

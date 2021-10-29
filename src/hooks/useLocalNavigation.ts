@@ -2,6 +2,7 @@ import { useNavigation } from "@react-navigation/native";
 import { ParamPresentCredentialDemo } from "../types/paramTypes";
 
 export const NAVIGATOR_TABS = "Tabs";
+export const NAVIGATOR_ROOT = "Root";
 
 export const SCREEN_HOME = "Home";
 export const SCREEN_SCANNER = "Scanner";

@@ -7,6 +7,7 @@ import {
     SCREEN_DEMO,
     SCREEN_BANKID,
     SCREEN_VERIFIABLE_PRESENTATION,
+    NAVIGATOR_ROOT,
 } from "../hooks/useLocalNavigation";
 import { useNavigationWithResult } from "../hooks/useNavigationWithResult";
 import {
@@ -15,7 +16,6 @@ import {
 } from "../types/resultTypes";
 import {
     makeBankIDScreenRequest,
-    makeCreateCapTableVPScreenRequest,
     makeVerifiablePresentationScreenRequest,
 } from "../types/ScreenRequest";
 import { ScreenResult } from "../types/ScreenResults";
@@ -46,6 +46,7 @@ export function DemoScreen(props: {
                 onPress={async () => {
                     const request = makeVerifiablePresentationScreenRequest(
                         SCREEN_DEMO,
+                        NAVIGATOR_ROOT,
                         "demo_requestVerifiablePresentation",
                         {
                             verifier: demoVerifier,
@@ -70,6 +71,7 @@ export function DemoScreen(props: {
                 onPress={async () => {
                     const request = makeVerifiablePresentationScreenRequest(
                         SCREEN_DEMO,
+                        NAVIGATOR_ROOT,
                         "demo_createCapTableVP",
                         {
                             verifier: demoVerifier,
@@ -112,6 +114,7 @@ export function DemoScreen(props: {
 
                     const request = makeVerifiablePresentationScreenRequest(
                         SCREEN_DEMO,
+                        NAVIGATOR_ROOT,
                         "demo_createCapTableVP-reuseable",
                         {
                             verifier: demoVerifier,
@@ -139,6 +142,7 @@ export function DemoScreen(props: {
                 onPress={async () => {
                     const request = makeVerifiablePresentationScreenRequest(
                         SCREEN_DEMO,
+                        NAVIGATOR_ROOT,
                         "demo_capTablePrivateTokenTransferVP",
                         {
                             verifier: demoVerifier,
@@ -179,6 +183,7 @@ export function DemoScreen(props: {
 
                     const request = makeVerifiablePresentationScreenRequest(
                         SCREEN_DEMO,
+                        NAVIGATOR_ROOT,
                         "demo_capTablePrivateTokenTransferVP",
                         {
                             verifier: demoVerifier,
@@ -203,6 +208,7 @@ export function DemoScreen(props: {
                 onPress={async () => {
                     const request = makeBankIDScreenRequest(
                         SCREEN_DEMO,
+                        NAVIGATOR_ROOT,
                         "Demo_bankIDRequest",
                         {}
                     );

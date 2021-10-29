@@ -8,6 +8,7 @@ import { BankIDParams, VerifiablePresentationParams } from "./paramTypes";
 
 export function makeBankIDScreenRequest(
     fromScreen: string,
+    fromNavigator: string,
     method: string,
     params: BankIDParams
 ) {
@@ -15,19 +16,23 @@ export function makeBankIDScreenRequest(
 
     return {
         fromScreen,
+        fromNavigator,
         request,
     } as ScreenRequest<BankIDParams>;
 }
 
 export function makeVerifiablePresentationScreenRequest(
     fromScreen: string,
+    fromNavigator: string,
     method: string,
-    params: VerifiablePresentationParams
+    params: VerifiablePresentationParams,
+    id?: number
 ) {
-    const request = formatJsonRpcRequest(method, params);
+    const request = formatJsonRpcRequest(method, params, id);
 
     return {
         fromScreen,
+        fromNavigator,
         request,
     } as ScreenRequest<VerifiablePresentationParams>;
 }
@@ -61,5 +66,6 @@ export function makeCapTablePrivateTokenTransferScreenRequest(
 export type ScreenRequest<Params> = {
     request: JsonRpcRequest<Params>;
     fromScreen: string;
+    fromNavigator: string;
     result: never;
 };

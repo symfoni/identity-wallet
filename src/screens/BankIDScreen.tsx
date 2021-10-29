@@ -15,7 +15,7 @@ import { BankIDParams } from "../types/paramTypes";
 export function BankIDScreen(props: {
     route: { params: ScreenRequest<BankIDParams> };
 }) {
-    const fromScreen = useFromScreen(props.route.params);
+    const { fromScreen, fromNavigator } = useFromScreen(props.route.params);
     const [request] = useScreenRequest(props.route.params);
     const { navigate } = useNavigation();
     const [errors, setErrors] = useState<string[]>([]);
@@ -38,6 +38,7 @@ export function BankIDScreen(props: {
             bankIDToken,
         });
 
+        console.log({ fromScreen, result });
         navigate(fromScreen, result);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [request, fromScreen, bankIDToken]);

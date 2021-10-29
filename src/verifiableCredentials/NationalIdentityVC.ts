@@ -15,6 +15,7 @@ export type NationalIdentityVC = {
     };
     issuanceDate?: string;
     expirationDate?: string;
+    evidence?: { type: string; jwt: string }[];
     proof?: {
         type: string;
         jwt: string;

@@ -23,6 +23,7 @@ export function makeVerifiablePresentationScreenResult(
 
 export type ScreenResult<Result> = {
     fromScreen: never;
+    fromNavigator: never;
     request: never;
     result: JsonRpcResult<Result>;
 };

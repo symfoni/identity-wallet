@@ -1,8 +1,7 @@
 // React
-import React, { ReactNode, useEffect, useMemo } from "react";
+import React, { ReactNode, useMemo } from "react";
 import { useNavigation } from "@react-navigation/core";
 import { ActivityIndicator, Text } from "react-native";
-import { formatJsonRpcResult } from "@json-rpc-tools/utils";
 
 // Third party
 import styled from "styled-components/native";
@@ -13,10 +12,7 @@ import { useScreenRequest } from "../hooks/useScreenRequest";
 import { useVerifiableCredentialCards } from "../verifiableCredentials/useVerifiableCredentialCards";
 import { SupportedVerifiableCredential } from "../verifiableCredentials/SupportedVerifiableCredentials";
 import { useSymfoniContext } from "../context";
-import {
-    BankIDResult,
-    VerifiablePresentationResult,
-} from "../types/resultTypes";
+import { BankIDResult } from "../types/resultTypes";
 import { ScreenRequest } from "../types/ScreenRequest";
 import { VerifiablePresentationParams } from "../types/paramTypes";
 import {
@@ -34,7 +30,7 @@ export function VerifiablePresentationScreen(props: {
 }) {
     const { createVP } = useSymfoniContext();
     const { navigate } = useNavigation();
-    const fromScreen = useFromScreen(props.route.params);
+    const { fromScreen, fromNavigator } = useFromScreen(props.route.params);
     const [request, setRequest] = useScreenRequest(props.route.params);
 
     const verifiableCredentials = useMemo(
@@ -104,7 +100,12 @@ export function VerifiablePresentationScreen(props: {
             verifiablePresenation: vp,
         });
 
-        navigate(fromScreen, result);
+        console.log({ fromNavigator, fromScreen, result });
+
+        navigate(fromNavigator, {
+            screen: fromScreen,
+            params: result,
+        });
     };
 
     if (!request) {

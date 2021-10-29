@@ -3,20 +3,21 @@ import { useNavigation } from "@react-navigation/core";
 import { useEffect, useRef } from "react";
 import { ScreenRequest } from "../types/ScreenRequest";
 
+const ref = new Map<number, (result: JsonRpcResult<any>) => void>();
+
 export function useNavigationWithResult<Result extends JsonRpcResult<any>>(
     result?: Result
 ) {
     const navigation = useNavigation();
-    const navigationResults = useRef(
-        new Map<number, (result: JsonRpcResult<any>) => void>()
-    );
+    const navigationResults = useRef(ref);
 
     const navigateWithResult = <Param>(
         toScreen: string,
         screenRequest: ScreenRequest<Param>
     ) => {
         console.info(
-            `useNavigationResult(): Navigating toScreen: ${toScreen}, fromScreen: ${screenRequest.fromScreen}, with request.id: ${screenRequest.request.id}`
+            `useNavigationResult():  Navigating with --------------------------------- request.id: ${screenRequest.request.id}`,
+            { screenRequest }
         );
         navigation.navigate(toScreen, screenRequest);
 
@@ -34,9 +35,15 @@ export function useNavigationWithResult<Result extends JsonRpcResult<any>>(
         }
         console.info(
             "useNavigationResult(): Got result with --------------------------------- request.id: ",
-            result.id
+            result.id,
+            result
         );
-        navigationResults.current.get(result.id)?.(result);
+        const resolve = navigationResults.current.get(result.id);
+        if (!resolve) {
+            console.info("useNavigationResult(): !resolve ", result.id);
+            return;
+        }
+        resolve(result);
         navigationResults.current.delete(result.id);
     }, [result, navigationResults]);
 
