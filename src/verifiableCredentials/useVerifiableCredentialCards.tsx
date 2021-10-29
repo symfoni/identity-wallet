@@ -129,9 +129,9 @@ export function useVerifiableCredentialCards(
                                                     <TermsOfUseVCCard
                                                         key={key}
                                                         vc={vc as TermsOfUseVC}
-                                                        onPressSign={(vc) =>
+                                                        onPressSign={(_vc) =>
                                                             onPressSignCard(
-                                                                vc,
+                                                                _vc,
                                                                 expiresIn50Years()
                                                             )
                                                         }
@@ -143,9 +143,9 @@ export function useVerifiableCredentialCards(
                                                     <CapTableVCCard
                                                         key={key}
                                                         vc={vc as CapTableVC}
-                                                        onPressSign={(vc) =>
+                                                        onPressSign={(_vc) =>
                                                             onPressSignCard(
-                                                                vc,
+                                                                _vc,
                                                                 expiresIn24Hours()
                                                             )
                                                         }
@@ -159,9 +159,9 @@ export function useVerifiableCredentialCards(
                                                         vc={
                                                             vc as CapTablePrivateTokenTransferVC
                                                         }
-                                                        onPressSign={(vc) =>
+                                                        onPressSign={(_vc) =>
                                                             onPressSignCard(
-                                                                vc,
+                                                                _vc,
                                                                 expiresIn24Hours()
                                                             )
                                                         }

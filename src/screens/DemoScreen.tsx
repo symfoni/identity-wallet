@@ -68,15 +68,18 @@ export function DemoScreen(props: {
             <Button
                 title="Demo: Opprett aksjeeierbok"
                 onPress={async () => {
-                    const request = makeCreateCapTableVPScreenRequest(
+                    const request = makeVerifiablePresentationScreenRequest(
                         SCREEN_DEMO,
                         "demo_createCapTableVP",
                         {
-                            verifier: "demo",
-                            capTable: {
-                                organizationNumber: "demo",
-                                shareholders: [],
-                            },
+                            verifier: demoVerifier,
+
+                            verifiableCredentials: [
+                                demoCapTableVC,
+                                demoNationalIdentityVC,
+                                demoTermsOfUseForvaltVC,
+                                demoTermsOfUseSymfoniVC,
+                            ],
                         }
                     );
 
