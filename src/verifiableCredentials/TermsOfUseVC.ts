@@ -1,36 +1,35 @@
-import { VerifiableCredential } from "@veramo/core";
-
-export type TermsOfUseVC = TermsOfUseForvaltVC | TermsOfUseSymfoniVC;
-export type TermsOfUseForvaltVC = VerifiableCredential & {
-    "@context": [
-        "https://www.w3.org/2018/credentials/v1",
-        "https://www.symfoni.dev/credentials/v1"
-    ];
-    type: ["VerifiableCredential", "TermsOfUseForvaltVC"];
-    issuer: string;
-    credentialSubject: {
-        id: string;
-        readAndAccepted: {
-            id: string;
-        };
-    };
-    issuanceDate: string;
-    expirationDate: string;
+export type TermsOfUseForvaltVC = BaseTermsOfUseVC & {
+    type: ["VerifiableCredential", "TermsOfUseVC", "TermsOfUseForvaltVC"];
 };
 
-export type TermsOfUseSymfoniVC = VerifiableCredential & {
+export type TermsOfUseSymfoniVC = BaseTermsOfUseVC & {
+    type: ["VerifiableCredential", "TermsOfUseVC", "TermsOfUseSymfoniVC"];
+};
+
+export type TermsOfUseVC = BaseTermsOfUseVC & {
+    type: ["VerifiableCredential", "TermsOfUseVC"];
+};
+
+type BaseTermsOfUseVC = {
     "@context": [
         "https://www.w3.org/2018/credentials/v1",
-        "https://www.symfoni.dev/credentials/v1"
+        "https://www.symfoni.id/credentials/v1"
     ];
-    type: ["VerifiableCredential", "TermsOfUseSymfoniVC"];
-    issuer: string;
+
     credentialSubject: {
-        id: string;
         readAndAccepted: {
             id: string;
         };
+        id?: string;
     };
-    issuanceDate: string;
-    expirationDate: string;
+    // Signature
+    issuer?: {
+        id: string;
+    };
+    issuanceDate?: string;
+    expirationDate?: string;
+    proof?: {
+        type?: string;
+        jwt: string;
+    };
 };

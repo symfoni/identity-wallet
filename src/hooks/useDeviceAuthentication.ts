@@ -20,7 +20,7 @@ export function useDeviceAuthentication() {
             setHasDeviceAuthentication(true);
         } catch (err) {
             console.warn(
-                "useDeviceAuthentication.ts: setGenericPassword -> ERROR:",
+                "useDeviceAuthentication.ts: setGenericPassword() -> ERROR:",
                 { err }
             );
         }
@@ -35,13 +35,13 @@ export function useDeviceAuthentication() {
                 service: "SymfoniID",
             });
             console.info(
-                "useDeviceAuthentication.ts: checkDeviceAuthentication -> OK:",
+                "useDeviceAuthentication.ts: checkDeviceAuthentication() -> OK:",
                 { res }
             );
             return true;
         } catch (err) {
             console.warn(
-                "useDeviceAuthentication.ts: checkDeviceAuthentication -> ERROR:",
+                "useDeviceAuthentication.ts: checkDeviceAuthentication() -> ERROR:",
                 { err }
             );
             return false;

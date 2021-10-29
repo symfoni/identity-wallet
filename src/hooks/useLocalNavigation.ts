@@ -2,6 +2,7 @@ import { useNavigation } from "@react-navigation/native";
 import { ParamPresentCredentialDemo } from "../types/paramTypes";
 
 export const NAVIGATOR_TABS = "Tabs";
+export const NAVIGATOR_ROOT = "Root";
 
 export const SCREEN_HOME = "Home";
 export const SCREEN_SCANNER = "Scanner";
@@ -10,6 +11,7 @@ export const SCREEN_BANKID = "BankIDScreen";
 export const SCREEN_CREATE_CAP_TABLE_VP = "CreateCapTableVPScreen";
 export const SCREEN_CREATE_CAP_TABLE_PRIVATE_TOKEN_TRANSFER_VP =
     "CreateCapTablePrivateTokenTransferVP";
+export const SCREEN_VERIFIABLE_PRESENTATION = "VerifiablePresentationScreen";
 
 export function useLocalNavigation() {
     const navigation = useNavigation();

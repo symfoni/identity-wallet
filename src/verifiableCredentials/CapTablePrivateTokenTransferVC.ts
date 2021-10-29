@@ -1,18 +1,39 @@
 import { PrivateERC1400TokenTransfer } from "./../types/requestTypes";
-import { VerifiableCredential } from "@veramo/core";
 
-// @see https://www.notion.so/symfoni/CapTableVC-e7cd19ae4eb845979db304d57f77ba19
-export type CapTablePrivateTokenTransferVC = VerifiableCredential & {
+export function makeCapTablePrivateTokenTransferVC(toShareholder: {
+    name: string;
+    amount: string;
+}): CapTablePrivateTokenTransferVC {
+    return {
+        "@context": [
+            "https://www.w3.org/2018/credentials/v1",
+            "https://www.symfoni.id/credentials/v1",
+        ],
+        type: ["VerifiableCredential", "CapTablePrivateTokenTransferVC"],
+        credentialSubject: {
+            toShareholder,
+        },
+    };
+}
+export type CapTablePrivateTokenTransferVC = {
     "@context": [
         "https://www.w3.org/2018/credentials/v1",
-        "https://www.symfoni.dev/credentials/v1"
+        "https://www.symfoni.id/credentials/v1"
     ];
     type: ["VerifiableCredential", "CapTablePrivateTokenTransferVC"];
-    issuer: string;
     credentialSubject: {
-        id: string;
-        toShareholder: PrivateERC1400TokenTransfer;
+        toShareholder: { name: string; amount: string };
+        // Signature
+        id?: string;
     };
-    issuanceDate: string;
-    expirationDate: string;
+    // Signature
+    issuer?: {
+        id: string;
+    };
+    issuanceDate?: string;
+    expirationDate?: string;
+    proof?: {
+        type: string;
+        jwt: string;
+    };
 };

@@ -11,7 +11,10 @@ import {
     VerifiableCredential,
     VerifiablePresentation,
 } from "@veramo/core";
-import { ICredentialIssuer } from "@veramo/credential-w3c";
+import {
+    ICreateVerifiableCredentialArgs,
+    ICredentialIssuer,
+} from "@veramo/credential-w3c";
 import {
     FindArgs,
     IDataStoreORM,
@@ -36,6 +39,7 @@ import { useWalletconnect } from "./utils/useWalletconnect";
 import { CapTablePrivateTokenTransferVC } from "./verifiableCredentials/CapTablePrivateTokenTransferVC";
 import { CapTableVC } from "./verifiableCredentials/CapTableVC";
 import { NationalIdentityVC } from "./verifiableCredentials/NationalIdentityVC";
+import { SupportedVerifiableCredential } from "./verifiableCredentials/SupportedVerifiableCredentials";
 import { TermsOfUseVC } from "./verifiableCredentials/TermsOfUseVC";
 import { CapTablePrivateTokenTransferVP } from "./verifiablePresentations/CapTablePrivateTokenTransferVP";
 import { CreateCapTableVP } from "./verifiablePresentations/CreateCapTableVP";
@@ -63,10 +67,12 @@ export interface IContext {
     provider: ethers.providers.Provider;
     identity?: IIdentifier;
     deleteVeramoData: () => void;
-    createVC: (data: Record<string, any>) => Promise<VerifiableCredential>;
+    createVC: (
+        vcArgs: Partial<ICreateVerifiableCredentialArgs>
+    ) => Promise<VerifiableCredential>;
     createVP: (
         verifier: string,
-        verifiableCredentials: VerifiableCredential[] | string[]
+        verifiableCredentials: SupportedVerifiableCredential[]
     ) => Promise<VerifiablePresentation>;
     decodeJWT: (
         jwt: string,
@@ -75,7 +81,7 @@ export interface IContext {
     findVC: (
         args: FindArgs<TCredentialColumns>
     ) => Promise<UniqueVerifiableCredential[]>;
-    findVCByType: (type: string) => Promise<VerifiableCredential | undefined>;
+    findVCByType: (type: string[]) => Promise<VerifiableCredential | undefined>;
     saveVP: (vp: VerifiablePresentation | string) => Promise<string>;
     pair: (uri: string) => Promise<void>;
     createCapTableVC: (capTable: CapTable) => Promise<CapTableVC>;

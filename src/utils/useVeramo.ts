@@ -10,7 +10,10 @@ import {
     VerifiableCredential,
     VerifiablePresentation,
 } from "@veramo/core";
-import { ICredentialIssuer } from "@veramo/credential-w3c";
+import {
+    ICreateVerifiableCredentialArgs,
+    ICredentialIssuer,
+} from "@veramo/credential-w3c";
 import {
     FindArgs,
     IDataStoreORM,
@@ -33,6 +36,7 @@ import {
 } from "../verifiableCredentials/TermsOfUseVC";
 import { agent as _agent, deleteVeramoData } from "./../utils/VeramoUtils";
 import { CapTablePrivateTokenTransferVC } from "../verifiableCredentials/CapTablePrivateTokenTransferVC";
+import { SupportedVerifiableCredential } from "../verifiableCredentials/SupportedVerifiableCredentials";
 
 export type Agent = TAgent<
     IDIDManager &
@@ -246,7 +250,7 @@ export const useVeramo = (chainId: string) => {
                     request.capTableVC,
                     request.termsOfUseForvaltVC,
                     request.termsOfUseSymfoniVC,
-                    request.nationalIdentityVC,
+                    request.nationalIdentityVC as VerifiableCredential,
                 ],
             },
             proofFormat: "jwt",
@@ -269,7 +273,7 @@ export const useVeramo = (chainId: string) => {
                 verifier,
                 verifiableCredential: [
                     capTablePrivateTokenTransferVC,
-                    nationalIdentityVC,
+                    nationalIdentityVC as VerifiableCredential,
                 ],
             },
             proofFormat: "jwt",
@@ -278,7 +282,9 @@ export const useVeramo = (chainId: string) => {
         return vp;
     };
 
-    const createVC = async (data: Record<string, any>) => {
+    const createVC = async (
+        partialVC: Partial<ICreateVerifiableCredentialArgs>
+    ) => {
         if (!identity) {
             throw Error("Cant create VC, identity not initilized");
         }
@@ -286,9 +292,10 @@ export const useVeramo = (chainId: string) => {
             credential: {
                 type: ["VerifiableCredential", "PersonCredential"],
                 credentialSubject: {
-                    ...data,
+                    ...(partialVC?.credential?.credentialSubject ?? {}),
                     id: identity?.did,
                 },
+                ...(partialVC.credential ?? {}),
                 issuer: identity.did,
             },
             proofFormat: "jwt",
@@ -299,7 +306,7 @@ export const useVeramo = (chainId: string) => {
 
     const createVP = async (
         verifier: string,
-        verifiableCredentials: VerifiableCredential[] | string[]
+        verifiableCredentials: SupportedVerifiableCredential[]
     ) => {
         if (!identity) {
             throw Error("Cant create VC, identity not initilized");
@@ -308,7 +315,8 @@ export const useVeramo = (chainId: string) => {
             presentation: {
                 holder: identity.did,
                 verifier: [verifier],
-                verifiableCredential: verifiableCredentials,
+                verifiableCredential:
+                    verifiableCredentials as VerifiableCredential[],
             },
             proofFormat: "jwt",
         });
@@ -477,12 +485,12 @@ export const useVeramo = (chainId: string) => {
         return credentials;
     };
 
-    const findVCByType = async (type: string) => {
+    const findVCByType = async (type: string[]) => {
         const res = await findVC({
             where: [
                 {
                     column: "type",
-                    value: [`VerifiableCredential,${type}`],
+                    value: [type.join(",")],
                 },
             ],
         });

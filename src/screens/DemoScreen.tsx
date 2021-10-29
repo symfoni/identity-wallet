@@ -1,49 +1,94 @@
-import { formatJsonRpcRequest } from "@json-rpc-tools/utils";
 import React from "react";
 import { Button } from "react-native";
+
+// Local
 import { useSymfoniContext } from "../context";
 import {
-    SCREEN_CREATE_CAP_TABLE_VP,
     SCREEN_DEMO,
     SCREEN_BANKID,
-    SCREEN_CREATE_CAP_TABLE_PRIVATE_TOKEN_TRANSFER_VP,
+    SCREEN_VERIFIABLE_PRESENTATION,
+    NAVIGATOR_ROOT,
 } from "../hooks/useLocalNavigation";
 import { useNavigationWithResult } from "../hooks/useNavigationWithResult";
 import {
-    CapTablePrivateTokenTransferParams,
-    CreateCapTableVPParams,
-} from "../types/capTableTypes";
-import { makeBankIDRequest } from "../types/paramTypes";
+    BankIDResult,
+    VerifiablePresentationResult,
+} from "../types/resultTypes";
+import {
+    makeBankIDScreenRequest,
+    makeVerifiablePresentationScreenRequest,
+} from "../types/ScreenRequest";
+import { ScreenResult } from "../types/ScreenResults";
+import { CapTablePrivateTokenTransferVC } from "../verifiableCredentials/CapTablePrivateTokenTransferVC";
+import { CapTableVC } from "../verifiableCredentials/CapTableVC";
 import { NationalIdentityVC } from "../verifiableCredentials/NationalIdentityVC";
 import {
     TermsOfUseForvaltVC,
     TermsOfUseSymfoniVC,
 } from "../verifiableCredentials/TermsOfUseVC";
 
-export function DemoScreen() {
+export function DemoScreen(props: {
+    route: {
+        params?:
+            | ScreenResult<BankIDResult>
+            | ScreenResult<VerifiablePresentationResult>;
+    };
+}) {
     const { findVCByType } = useSymfoniContext();
-    const { navigateWithResult } = useNavigationWithResult();
+    const { navigateWithResult } = useNavigationWithResult(
+        props.route.params?.result
+    );
 
     return (
         <>
             <Button
+                title="Demo: Generic VP Screen"
+                onPress={async () => {
+                    const request = makeVerifiablePresentationScreenRequest(
+                        SCREEN_DEMO,
+                        NAVIGATOR_ROOT,
+                        "demo_requestVerifiablePresentation",
+                        {
+                            verifier: demoVerifier,
+                            verifiableCredentials: [
+                                demoNationalIdentityVC,
+                                demoTermsOfUseForvaltVC,
+                                demoTermsOfUseSymfoniVC,
+                            ],
+                        }
+                    );
+
+                    const result = await navigateWithResult(
+                        SCREEN_VERIFIABLE_PRESENTATION,
+                        request
+                    );
+
+                    console.info({ result });
+                }}
+            />
+            <Button
                 title="Demo: Opprett aksjeeierbok"
                 onPress={async () => {
-                    const request =
-                        formatJsonRpcRequest<CreateCapTableVPParams>(
-                            "symfoniID_createCapTableVP",
-                            {
-                                verifier: "demo",
-                                capTable: {
-                                    organizationNumber: "demo",
-                                    shareholders: [],
-                                },
-                            }
-                        );
+                    const request = makeVerifiablePresentationScreenRequest(
+                        SCREEN_DEMO,
+                        NAVIGATOR_ROOT,
+                        "demo_createCapTableVP",
+                        {
+                            verifier: demoVerifier,
+
+                            verifiableCredentials: [
+                                demoCapTableVC,
+                                demoNationalIdentityVC,
+                                demoTermsOfUseForvaltVC,
+                                demoTermsOfUseSymfoniVC,
+                            ],
+                        }
+                    );
+
                     console.info({ request });
 
                     const result = await navigateWithResult(
-                        SCREEN_CREATE_CAP_TABLE_VP,
+                        SCREEN_VERIFIABLE_PRESENTATION,
                         request
                     );
                     console.info({ result });
@@ -52,36 +97,41 @@ export function DemoScreen() {
             <Button
                 title="Demo: Opprett aksjeeierbok (med gjenbruk)"
                 onPress={async () => {
-                    const termsOfUseForvaltVC = (await findVCByType(
-                        "TermsOfUseForvaltVC"
-                    )) as TermsOfUseForvaltVC;
+                    const termsOfUseForvaltVC =
+                        ((await findVCByType(
+                            demoTermsOfUseForvaltVC.type
+                        )) as TermsOfUseForvaltVC) ?? demoTermsOfUseForvaltVC;
 
-                    const termsOfUseSymfoniVC = (await findVCByType(
-                        "TermsOfUseSymfoniVC"
-                    )) as TermsOfUseSymfoniVC;
+                    const termsOfUseSymfoniVC =
+                        ((await findVCByType(
+                            demoTermsOfUseSymfoniVC.type
+                        )) as TermsOfUseSymfoniVC) ?? demoTermsOfUseSymfoniVC;
 
-                    const nationalIdentityVC = (await findVCByType(
-                        "NationalIdentityVC"
-                    )) as NationalIdentityVC;
+                    const nationalIdentityVC =
+                        ((await findVCByType(
+                            demoNationalIdentityVC.type
+                        )) as NationalIdentityVC) ?? demoNationalIdentityVC;
 
-                    const request =
-                        formatJsonRpcRequest<CreateCapTableVPParams>(
-                            "symfoniID_createCapTableVP",
-                            {
-                                verifier: "demo",
-                                capTable: {
-                                    organizationNumber: "demo",
-                                    shareholders: [],
-                                },
+                    const request = makeVerifiablePresentationScreenRequest(
+                        SCREEN_DEMO,
+                        NAVIGATOR_ROOT,
+                        "demo_createCapTableVP-reuseable",
+                        {
+                            verifier: demoVerifier,
+
+                            verifiableCredentials: [
+                                demoCapTableVC,
+                                nationalIdentityVC,
                                 termsOfUseForvaltVC,
                                 termsOfUseSymfoniVC,
-                                nationalIdentityVC,
-                            }
-                        );
+                            ],
+                        }
+                    );
+
                     console.info({ request });
 
                     const result = await navigateWithResult(
-                        SCREEN_CREATE_CAP_TABLE_VP,
+                        SCREEN_VERIFIABLE_PRESENTATION,
                         request
                     );
                     console.info({ result });
@@ -90,20 +140,24 @@ export function DemoScreen() {
             <Button
                 title="Demo: Overføre Aksjer"
                 onPress={async () => {
-                    const request =
-                        formatJsonRpcRequest<CapTablePrivateTokenTransferParams>(
-                            "symfoniID_capTablePrivateTokenTransferVP",
-                            {
-                                verifier: "demo",
-                                toShareholder: {
-                                    name: "Jon Ramvi",
-                                    amount: "22",
-                                },
-                            }
-                        );
+                    const request = makeVerifiablePresentationScreenRequest(
+                        SCREEN_DEMO,
+                        NAVIGATOR_ROOT,
+                        "demo_capTablePrivateTokenTransferVP",
+                        {
+                            verifier: demoVerifier,
+
+                            verifiableCredentials: [
+                                demoCapTablePrivateTransferTokenVC,
+                                demoNationalIdentityVC,
+                                demoTermsOfUseForvaltVC,
+                                demoTermsOfUseSymfoniVC,
+                            ],
+                        }
+                    );
 
                     const result = await navigateWithResult(
-                        SCREEN_CREATE_CAP_TABLE_PRIVATE_TOKEN_TRANSFER_VP,
+                        SCREEN_VERIFIABLE_PRESENTATION,
                         request
                     );
                     console.info({ result });
@@ -112,35 +166,38 @@ export function DemoScreen() {
             <Button
                 title="Demo: Overføre Aksjer (med gjenbruk)"
                 onPress={async () => {
-                    const nationalIdentityVC = (await findVCByType(
-                        "NationalIdentityVC"
-                    )) as NationalIdentityVC;
+                    const termsOfUseForvaltVC =
+                        ((await findVCByType(
+                            demoTermsOfUseForvaltVC.type
+                        )) as TermsOfUseForvaltVC) ?? demoTermsOfUseForvaltVC;
 
-                    const termsOfUseForvaltVC = (await findVCByType(
-                        "TermsOfUseForvaltVC"
-                    )) as TermsOfUseForvaltVC;
+                    const termsOfUseSymfoniVC =
+                        ((await findVCByType(
+                            demoTermsOfUseSymfoniVC.type
+                        )) as TermsOfUseSymfoniVC) ?? demoTermsOfUseSymfoniVC;
 
-                    const termsOfUseSymfoniVC = (await findVCByType(
-                        "TermsOfUseSymfoniVC"
-                    )) as TermsOfUseSymfoniVC;
+                    const nationalIdentityVC =
+                        ((await findVCByType(
+                            demoNationalIdentityVC.type
+                        )) as NationalIdentityVC) ?? demoNationalIdentityVC;
 
-                    const request =
-                        formatJsonRpcRequest<CapTablePrivateTokenTransferParams>(
-                            "symfoniID_capTablePrivateTokenTransferVP",
-                            {
-                                verifier: "demo",
-                                toShareholder: {
-                                    name: "Jon Ramvi",
-                                    amount: "22",
-                                },
+                    const request = makeVerifiablePresentationScreenRequest(
+                        SCREEN_DEMO,
+                        NAVIGATOR_ROOT,
+                        "demo_capTablePrivateTokenTransferVP",
+                        {
+                            verifier: demoVerifier,
+                            verifiableCredentials: [
+                                demoCapTablePrivateTransferTokenVC,
                                 nationalIdentityVC,
-                                termsOfUseSymfoniVC,
                                 termsOfUseForvaltVC,
-                            }
-                        );
+                                termsOfUseSymfoniVC,
+                            ],
+                        }
+                    );
 
                     const result = await navigateWithResult(
-                        SCREEN_CREATE_CAP_TABLE_PRIVATE_TOKEN_TRANSFER_VP,
+                        SCREEN_VERIFIABLE_PRESENTATION,
                         request
                     );
                     console.info({ result });
@@ -149,9 +206,12 @@ export function DemoScreen() {
             <Button
                 title="Demo: BankID"
                 onPress={async () => {
-                    const request = makeBankIDRequest({
-                        resultScreen: SCREEN_DEMO,
-                    });
+                    const request = makeBankIDScreenRequest(
+                        SCREEN_DEMO,
+                        NAVIGATOR_ROOT,
+                        "Demo_bankIDRequest",
+                        {}
+                    );
 
                     const result = await navigateWithResult(
                         SCREEN_BANKID,
@@ -164,3 +224,71 @@ export function DemoScreen() {
         </>
     );
 }
+
+const demoVerifier = {
+    id: "https://www.example.com",
+    name: "Demo skjerm",
+    reason: "Demonstrere generisk VPskjerm",
+};
+
+const demoNationalIdentityVC = {
+    "@context": [
+        "https://www.w3.org/2018/credentials/v1",
+        "https://www.symfoni.id/credentials/v1",
+    ],
+    type: ["VerifiableCredential", "NationalIdentityVC"],
+} as NationalIdentityVC;
+
+const demoTermsOfUseForvaltVC = {
+    "@context": [
+        "https://www.w3.org/2018/credentials/v1",
+        "https://www.symfoni.id/credentials/v1",
+    ],
+    type: ["VerifiableCredential", "TermsOfUseVC", "TermsOfUseForvaltVC"],
+    credentialSubject: {
+        readAndAccepted: {
+            id: "https://forvalt.no/TOA",
+        },
+    },
+} as TermsOfUseForvaltVC;
+
+const demoTermsOfUseSymfoniVC = {
+    "@context": [
+        "https://www.w3.org/2018/credentials/v1",
+        "https://www.symfoni.id/credentials/v1",
+    ],
+    type: ["VerifiableCredential", "TermsOfUseVC", "TermsOfUseSymfoniVC"],
+    credentialSubject: {
+        readAndAccepted: {
+            id: "https://symfoni.id/TOA",
+        },
+    },
+} as TermsOfUseSymfoniVC;
+
+const demoCapTableVC = {
+    "@context": [
+        "https://www.w3.org/2018/credentials/v1",
+        "https://www.symfoni.id/credentials/v1",
+    ],
+    type: ["VerifiableCredential", "CapTableVC"],
+    credentialSubject: {
+        capTable: {
+            organizationNumber: "demo",
+            shareholders: [],
+        },
+    },
+} as CapTableVC;
+
+const demoCapTablePrivateTransferTokenVC = {
+    "@context": [
+        "https://www.w3.org/2018/credentials/v1",
+        "https://www.symfoni.id/credentials/v1",
+    ],
+    type: ["VerifiableCredential", "CapTablePrivateTokenTransferVC"],
+    credentialSubject: {
+        toShareholder: {
+            name: "Jon Ramvi",
+            amount: "22",
+        },
+    },
+} as CapTablePrivateTokenTransferVC;
