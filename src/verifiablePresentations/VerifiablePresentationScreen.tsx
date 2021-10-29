@@ -1,5 +1,5 @@
 // React
-import React, { ReactNode, useMemo } from "react";
+import React, { ReactNode, useEffect, useMemo } from "react";
 import { useNavigation } from "@react-navigation/core";
 import { ActivityIndicator, Text } from "react-native";
 import { formatJsonRpcResult } from "@json-rpc-tools/utils";
@@ -13,14 +13,20 @@ import { useScreenRequest } from "../hooks/useScreenRequest";
 import { useVerifiableCredentialCards } from "../verifiableCredentials/useVerifiableCredentialCards";
 import { SupportedVerifiableCredential } from "../verifiableCredentials/SupportedVerifiableCredentials";
 import { useSymfoniContext } from "../context";
-import { VerifiablePresentationScreenParams } from "../types/ScreenParams";
-import { VerifiablePresentationResult } from "../types/resultTypes";
+import {
+    BankIDResult,
+    VerifiablePresentationResult,
+} from "../types/resultTypes";
+import { ScreenRequest } from "../types/ScreenRequest";
+import { VerifiablePresentationParams } from "../types/paramTypes";
+import { ScreenResult } from "../types/ScreenResults";
 
 // Screen
-
 export function VerifiablePresentationScreen(props: {
     route: {
-        params?: VerifiablePresentationScreenParams;
+        params?:
+            | ScreenRequest<VerifiablePresentationParams>
+            | ScreenResult<BankIDResult>;
     };
 }) {
     const { createVP } = useSymfoniContext();
@@ -28,12 +34,23 @@ export function VerifiablePresentationScreen(props: {
     const fromScreen = useFromScreen(props.route.params);
     const [request, setRequest] = useScreenRequest(props.route.params);
 
-    const presentable = useMemo(
-        () => !!request?.params.verifiableCredentials.every((vc) => !!vc.proof),
+    const verifiableCredentials = useMemo(
+        () => request?.params.verifiableCredentials ?? [],
         [request]
+    );
+    const signedVerifiableCredentials = useMemo(
+        () => verifiableCredentials.filter((vc) => vc.proof),
+        [verifiableCredentials]
+    );
+    const presentable = useMemo(
+        () =>
+            verifiableCredentials.length === signedVerifiableCredentials.length,
+        [verifiableCredentials, signedVerifiableCredentials]
     );
 
     const onSignedVC = (signedVC: SupportedVerifiableCredential) => {
+        console.log({ signedVC });
+
         setRequest((current) => {
             if (!current) {
                 return undefined;
@@ -63,10 +80,21 @@ export function VerifiablePresentationScreen(props: {
     };
 
     const cards = useVerifiableCredentialCards(
-        request?.params.verifiableCredentials ?? [],
+        verifiableCredentials,
         onSignedVC,
         props.route.params
     );
+
+    useEffect(() => {
+        console.log(
+            "verifiablePresentationScreen.tsx: vcs.length: ",
+            verifiableCredentials.length
+        );
+        console.log(
+            "verifiablePresentationScreen.tsx: signedVcs.length: ",
+            signedVerifiableCredentials.length
+        );
+    }, [signedVerifiableCredentials, verifiableCredentials]);
 
     const onPresent = async () => {
         if (!fromScreen) {

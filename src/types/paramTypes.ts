@@ -6,6 +6,8 @@ export type ParamPresentCredentialDemo = {
     demoEmail: string;
 };
 
+export type BankIDParams = {};
+
 export type VerifiablePresentationParams = {
     verifier: {
         id: string;

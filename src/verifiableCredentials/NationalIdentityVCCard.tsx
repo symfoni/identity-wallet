@@ -1,68 +1,21 @@
-// React
-import React, { useState } from "react";
-
 // Third party
+import React, { useState } from "react";
 import styled from "styled-components/native";
-import { decodeJWT } from "did-jwt";
 
 // Local
 import { NationalIdentityVC } from "./NationalIdentityVC";
 import { SignButton } from "./components/SignButton";
-import { VerifiablePresentationScreenParams } from "../types/ScreenParams";
-import { BankIDResult } from "../types/resultTypes";
-import { useNavigateBankIDWithResult } from "../hooks/useNavigationWithResult";
-import { makeBankIDScreenRequest } from "../types/ScreenRequest";
-import { SCREEN_VERIFIABLE_PRESENTATION } from "../hooks/useLocalNavigation";
-import { useSymfoniContext } from "../context";
-import { BankidJWTPayload } from "../types/bankid.types";
 
 // Card
 export function NationalIdentityVCCard({
     vc,
-    screenParams,
-    onSigned,
+    onPressSign,
 }: {
-    vc: NationalIdentityVC | undefined;
-    screenParams?: VerifiablePresentationScreenParams;
-    onSigned: (vc: NationalIdentityVC) => void;
+    vc: NationalIdentityVC;
+    onPressSign: (vc: NationalIdentityVC) => void;
 }) {
-    const { createVC } = useSymfoniContext();
-    const { navigateBankIDWithResult } = useNavigateBankIDWithResult();
     const [loading, setLoading] = useState(false);
     const signed = !!vc?.proof;
-
-    const onSign = async () => {
-        const screenRequest = makeBankIDScreenRequest(
-            SCREEN_VERIFIABLE_PRESENTATION
-        );
-
-        const bankIDResult: BankIDResult = await navigateBankIDWithResult(
-            screenRequest
-        );
-
-        const bankID = decodeJWT(bankIDResult.bankIDToken)
-            .payload as BankidJWTPayload;
-
-        try {
-            const signedVC = (await createVC({
-                credential: {
-                    credentialSubject: {
-                        nationalIdentityNumber: bankID.socialno,
-                    },
-                    evidence: {
-                        type: "BankID",
-                        jwt: bankIDResult.bankIDToken,
-                    },
-                },
-            })) as NationalIdentityVC;
-            onSigned(signedVC);
-        } catch (err) {
-            console.warn(
-                "NationalIdentityVCCard.tsx: await createVC -> error: ",
-                err
-            );
-        }
-    };
 
     return (
         <VCCard>
@@ -75,7 +28,7 @@ export function NationalIdentityVCCard({
                 loading={loading}
                 signed={signed}
                 expirationDate={vc?.expirationDate}
-                onPress={onSign}
+                onPress={() => onPressSign(vc)}
             />
         </VCCard>
     );

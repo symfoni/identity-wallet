@@ -14,14 +14,10 @@ import styled from "styled-components/native";
 import { Context } from "../context";
 import { useDeviceAuthentication } from "../hooks/useDeviceAuthentication";
 import {
-    SCREEN_BANKID,
     SCREEN_CREATE_CAP_TABLE_PRIVATE_TOKEN_TRANSFER_VP,
     useLocalNavigation,
 } from "../hooks/useLocalNavigation";
-import {
-    useNavigateBankIDWithResult,
-    useNavigationWithResult,
-} from "../hooks/useNavigationWithResult";
+import { useNavigationWithResult } from "../hooks/useNavigationWithResult";
 import { BankidJWTPayload } from "../types/bankid.types";
 import {
     CapTablePrivateTokenTransferParams,

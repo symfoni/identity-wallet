@@ -1,20 +1,22 @@
+// Third party
 import React, { useEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import Toast from "react-native-toast-message";
 import styled from "styled-components/native";
+
+// Local
 import { BankidWebview } from "../components/bankid/BankidWebview";
-import { BankIDScreenRequest } from "../types/ScreenRequest";
 import { makeBankIDScreenResult } from "../types/ScreenResults";
 import { useScreenRequest } from "../hooks/useScreenRequest";
 import { useFromScreen } from "../hooks/useFromScreen";
+import { ScreenRequest } from "../types/ScreenRequest";
+import { BankIDParams } from "../types/paramTypes";
 
 export function BankIDScreen(props: {
-    route: { params: BankIDScreenRequest };
+    route: { params: ScreenRequest<BankIDParams> };
 }) {
-    console.debug("BankIDScreen: ", { props });
-
     const fromScreen = useFromScreen(props.route.params);
-    const [request, setRequest] = useScreenRequest(props.route.params);
+    const [request] = useScreenRequest(props.route.params);
     const { navigate } = useNavigation();
     const [errors, setErrors] = useState<string[]>([]);
     const [bankIDToken, setBankidToken] = useState<string | undefined>(

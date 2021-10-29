@@ -1,41 +1,37 @@
-// React
+// Third party
 import React, { useState } from "react";
 import { Linking } from "react-native";
-
-// Third party
 import styled from "styled-components/native";
 
 // Local
 import { SignButton } from "./components/SignButton";
 import { TermsOfUseVC } from "./TermsOfUseVC";
 
-// Card
 export function TermsOfUseVCCard({
     vc,
-    VCType,
-    termsOfUseID,
-    onSigned,
+    onPressSign,
 }: {
     vc: TermsOfUseVC;
-    VCType: string;
-    termsOfUseID: string;
-    onSigned: (vc: TermsOfUseVC) => void;
+    onPressSign: (vc: TermsOfUseVC) => void;
 }) {
     const signed = !!vc;
     const [loading, setLoading] = useState(false);
-    const onSign = () => {};
 
+    const readAndAccepted = vc.credentialSubject?.readAndAccepted?.id;
     return (
         <VCCard>
             <VCPropLabel>Lest og akseptert</VCPropLabel>
-            <VCPropHyperlink onPress={() => Linking.openURL(termsOfUseID)}>
-                {termsOfUseID}
+            <VCPropHyperlink
+                onPress={() =>
+                    readAndAccepted ? Linking.openURL(readAndAccepted) : null
+                }>
+                {readAndAccepted}
             </VCPropHyperlink>
             <SignButton
                 signed={signed}
                 loading={loading}
                 expirationDate={vc?.expirationDate}
-                onPress={onSign}
+                onPress={() => onPressSign(vc)}
             />
         </VCCard>
     );

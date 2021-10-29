@@ -283,7 +283,7 @@ export const useVeramo = (chainId: string) => {
     };
 
     const createVC = async (
-        vcArgs: Partial<ICreateVerifiableCredentialArgs>
+        partialVC: Partial<ICreateVerifiableCredentialArgs>
     ) => {
         if (!identity) {
             throw Error("Cant create VC, identity not initilized");
@@ -292,10 +292,10 @@ export const useVeramo = (chainId: string) => {
             credential: {
                 type: ["VerifiableCredential", "PersonCredential"],
                 credentialSubject: {
-                    ...(vcArgs?.credential?.credentialSubject ?? {}),
+                    ...(partialVC?.credential?.credentialSubject ?? {}),
                     id: identity?.did,
                 },
-                ...(vcArgs.credential ?? {}),
+                ...(partialVC.credential ?? {}),
                 issuer: identity.did,
             },
             proofFormat: "jwt",
