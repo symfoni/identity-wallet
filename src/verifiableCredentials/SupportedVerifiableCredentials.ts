@@ -1,3 +1,5 @@
+import { CapTablePrivateTokenTransferVC } from "./CapTablePrivateTokenTransferVC";
+import { CapTableVC } from "./CapTableVC";
 import { NationalIdentityVC } from "./NationalIdentityVC";
 import {
     TermsOfUseForvaltVC,
@@ -9,4 +11,6 @@ export type SupportedVerifiableCredential =
     | NationalIdentityVC
     | TermsOfUseVC
     | TermsOfUseForvaltVC
-    | TermsOfUseSymfoniVC;
+    | TermsOfUseSymfoniVC
+    | CapTablePrivateTokenTransferVC
+    | CapTableVC;

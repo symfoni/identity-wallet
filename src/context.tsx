@@ -81,7 +81,7 @@ export interface IContext {
     findVC: (
         args: FindArgs<TCredentialColumns>
     ) => Promise<UniqueVerifiableCredential[]>;
-    findVCByType: (type: string) => Promise<VerifiableCredential | undefined>;
+    findVCByType: (type: string[]) => Promise<VerifiableCredential | undefined>;
     saveVP: (vp: VerifiablePresentation | string) => Promise<string>;
     pair: (uri: string) => Promise<void>;
     createCapTableVC: (capTable: CapTable) => Promise<CapTableVC>;

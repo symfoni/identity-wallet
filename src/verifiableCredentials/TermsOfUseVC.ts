@@ -16,11 +16,11 @@ type BaseTermsOfUseVC = {
         "https://www.symfoni.id/credentials/v1"
     ];
 
-    credentialSubject?: {
-        id?: string;
-        readAndAccepted?: {
+    credentialSubject: {
+        readAndAccepted: {
             id: string;
         };
+        id?: string;
     };
     // Signature
     issuer?: {

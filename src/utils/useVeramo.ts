@@ -485,12 +485,12 @@ export const useVeramo = (chainId: string) => {
         return credentials;
     };
 
-    const findVCByType = async (type: string) => {
+    const findVCByType = async (type: string[]) => {
         const res = await findVC({
             where: [
                 {
                     column: "type",
-                    value: [`VerifiableCredential,${type}`],
+                    value: [type.join(",")],
                 },
             ],
         });
