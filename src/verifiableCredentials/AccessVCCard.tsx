@@ -18,11 +18,11 @@ export function AccessVCCard({
 
     return (
         <VCCard>
-            <VCPropLabel>Hvem får tilgang?</VCPropLabel>
+            <VCPropLabel>Hvem vil du dele med?</VCPropLabel>
             <VCPropText>
                 {vc.credentialSubject?.access.delegatedTo.id}
             </VCPropText>
-            <VCPropLabel>Hvilke data deles?</VCPropLabel>
+            <VCPropLabel>Hva skal deles?</VCPropLabel>
             {(vc.credentialSubject?.access.scopes ?? []).map((scope) => {
                 return <VCPropText key={scope.id}>{scope.name}</VCPropText>;
             })}

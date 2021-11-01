@@ -225,7 +225,7 @@ export function DemoScreen(props: {
                             verifier: {
                                 id: "https://www.example.com",
                                 name: "Brønnøysundregisteret",
-                                reason: "Gi tilgang til dine data",
+                                reason: "Dele dine data",
                             },
                             verifiableCredentials: [
                                 makeAccessVC({
