@@ -305,8 +305,8 @@ function useEffectAccessVP(
                     },
                     verifiableCredentials: [
                         makeAccessVC({
-                            delegatedTo: params.payload.access.delegatedTo,
-                            scopes: params.payload.access.scopes,
+                            delegatedTo: params.access.delegatedTo,
+                            scopes: params.access.scopes,
                         }),
                         nationalIdentityVC,
                     ],
@@ -315,18 +315,18 @@ function useEffectAccessVP(
             );
 
             // 4. Navigate and wait for result
-            const navigationResult = await navigateWithResult(
+            const screenResult = await navigateWithResult(
                 SCREEN_VERIFIABLE_PRESENTATION,
                 screenRequest
             );
 
-            console.log({ navigationResult });
+            console.log({ screenResult });
             // 5. Send response
             sendResponse(topic, {
-                ...navigationResult,
+                ...screenResult,
                 result: {
                     accessVP:
-                        navigationResult.result.verifiablePresenation.proof.jwt,
+                        screenResult.result.verifiablePresenation.proof.jwt,
                 },
             });
         }

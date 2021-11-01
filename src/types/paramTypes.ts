@@ -21,16 +21,14 @@ export type VerifiablePresentationParams = {
 
 export type AccessVPParams = {
     verifier: string;
-    payload: {
-        access: {
-            delegatedTo: {
-                id: string;
-            };
-            scopes: {
-                id: string;
-                name: string;
-            }[];
+    access: {
+        delegatedTo: {
+            id: string;
         };
+        scopes: {
+            id: string;
+            name: string;
+        }[];
     };
 };
 
