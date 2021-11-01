@@ -1,5 +1,4 @@
 import { useNavigation } from "@react-navigation/native";
-import { ParamPresentCredentialDemo } from "../types/paramTypes";
 
 export const NAVIGATOR_TABS = "Tabs";
 export const NAVIGATOR_ROOT = "Root";
@@ -22,10 +21,6 @@ export function useLocalNavigation() {
             params,
         });
 
-    const navigateCreateCapTableVP = (
-        params?: ParamPresentCredentialDemo | CreateCapTableVPRequest
-    ) => navigation.navigate(SCREEN_CREATE_CAP_TABLE_VP, params);
-
     const navigateScanner = () => navigation.navigate(SCREEN_SCANNER);
 
     const navigateDemo = () => navigation.navigate(SCREEN_DEMO);
@@ -34,6 +29,5 @@ export function useLocalNavigation() {
         navigateHome,
         navigateScanner,
         navigateDemo,
-        navigateCreateCapTableVP,
     };
 }

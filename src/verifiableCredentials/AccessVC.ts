@@ -1,26 +1,40 @@
-export function makeCapTablePrivateTokenTransferVC(toShareholder: {
-    name: string;
-    amount: string;
-}): CapTablePrivateTokenTransferVC {
+export function makeAccessVC(access: {
+    delegatedTo: {
+        id: string;
+    };
+    scopes: {
+        id: string;
+        name: string;
+    }[];
+}): AccessVC {
     return {
         "@context": [
             "https://www.w3.org/2018/credentials/v1",
             "https://www.symfoni.id/credentials/v1",
         ],
-        type: ["VerifiableCredential", "CapTablePrivateTokenTransferVC"],
+        type: ["VerifiableCredential", "AccessVC"],
         credentialSubject: {
-            toShareholder,
+            access: { ...access },
         },
     };
 }
-export type CapTablePrivateTokenTransferVC = {
+
+export type AccessVC = {
     "@context": [
         "https://www.w3.org/2018/credentials/v1",
         "https://www.symfoni.id/credentials/v1"
     ];
-    type: ["VerifiableCredential", "CapTablePrivateTokenTransferVC"];
+    type: ["VerifiableCredential", "AccessVC"];
     credentialSubject: {
-        toShareholder: { name: string; amount: string };
+        access: {
+            delegatedTo: {
+                id: string;
+            };
+            scopes: {
+                id: string;
+                name: string;
+            }[];
+        };
         // Signature
         id?: string;
     };
@@ -31,7 +45,7 @@ export type CapTablePrivateTokenTransferVC = {
     issuanceDate?: string;
     expirationDate?: string;
     proof?: {
-        type: string;
+        type?: string;
         jwt: string;
     };
 };

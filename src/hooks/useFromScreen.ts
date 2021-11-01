@@ -12,10 +12,8 @@ export function useFromScreen(params?: {
     );
 
     useEffect(() => {
-        if (params?.fromScreen && params?.fromNavigator) {
-            _setFromScreen(params?.fromScreen as string);
-            _setFromNavigator(params?.fromNavigator as string);
-        }
+        _setFromScreen(params?.fromScreen as string);
+        _setFromNavigator(params?.fromNavigator as string);
     }, [params]);
 
     return {
