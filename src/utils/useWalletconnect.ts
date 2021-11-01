@@ -72,7 +72,6 @@ export const useWalletconnect = (
         console.log("PairResult", pairResult);
     };
 
-
     const sendResponse = (topic: string, response: JsonRpcResponse<any>) => {
         if (!client) {
             console.warn("useWalletConnect(): sendResponse: !client");
@@ -81,51 +80,52 @@ export const useWalletconnect = (
         client?.respond({ topic, response });
     };
 
-
+    /**
+     * ## handleProposal()
+     *
+     * Handles a proposal to connect the wallet to a Dapp (example: Forvatlt)
+     * The proposal is usually initiated by using the wallet-app to scan a QR code presented by the Dapp.
+     * The connection is established once this function responds by running the `client.approve(response)`.
+     */
     const handlePruposal = useCallback(
         async (proposal: SessionTypes.Proposal) => {
             console.log("Received PROPOSAL: ", proposal);
-            // Approve connection
+
+            // 1. Check if client exists
             if (typeof client === "undefined") {
                 console.warn(`handleProposal: typeof client === "undefined"`);
                 return;
             }
 
-            const unsupportedChains = [];
-            proposal.permissions.blockchain.chains.forEach((chainId) => {
-                if (supportedChains.includes(chainId)) {
-                    return;
-                }
-                unsupportedChains.push(chainId);
-            });
-            if (unsupportedChains.length) {
-                console.warn(`handleProposal: unsupportedChains.length`);
+            // 2. Check if proposal has unsupportedChains
+            const unsupportedChains =
+                proposal.permissions.blockchain.chains.filter(
+                    (chainId) => !supportedChains.includes(chainId)
+                );
+            if (unsupportedChains.length > 0) {
+                console.warn(`handleProposal: unsupportedChains.length > 0`);
                 return client.reject({ proposal });
             }
-            const unsupportedMethods: string[] = [];
-            proposal.permissions.jsonrpc.methods.forEach((method) => {
-                if (DEFAULT_EIP155_METHODS.includes(method)) {
-                    return;
-                }
-                unsupportedMethods.push(method);
-            });
-            if (unsupportedMethods.length) {
-                console.warn(`handleProposal: unsupportedMethods.length`);
 
+            // 3. Check if proposal has unsupportedMethods
+            const unsupportedMethods =
+                proposal.permissions.jsonrpc.methods.filter(
+                    (method) => !DEFAULT_EIP155_METHODS.includes(method)
+                );
+            if (unsupportedMethods.length) {
+                console.warn(`handleProposal: unsupportedMethods.length > 0`);
                 return client.reject({ proposal: proposal });
             }
 
-            // Approve connection
-            if (typeof client === "undefined") {
-                console.warn(`handleProposal: typeof client === "undefined"`);
-                return;
-            }
+            // 4. Get accounts from veramo
             const _accounts = veramo.accounts.filter((account) => {
                 const [namespace, reference] = account.split(":");
                 return proposal.permissions.blockchain.chains.includes(
                     `${namespace}:${reference}`
                 );
             });
+
+            // 5. Approve proposal with accounts
             const response = {
                 state: { accounts: _accounts },
             };
