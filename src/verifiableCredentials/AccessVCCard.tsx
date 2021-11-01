@@ -18,7 +18,7 @@ export function AccessVCCard({
 
     return (
         <VCCard>
-            <VCPropLabel>Hvem får tilgang til mine data?</VCPropLabel>
+            <VCPropLabel>Hvem får tilgang?</VCPropLabel>
             <VCPropText>
                 {vc.credentialSubject?.access.delegatedTo.id}
             </VCPropText>
