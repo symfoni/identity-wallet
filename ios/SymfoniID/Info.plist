@@ -35,8 +35,10 @@
 			</dict>
 		</dict>
 	</dict>
+	<key>NSFaceIDUsageDescription</key>
+	<string>Symfoni ID needs faceID access to authenticate you.</string>
 	<key>NSCameraUsageDescription</key>
-	<string>Identity Wallet needs camera access to scan QR Codes</string>
+	<string>Symfoni ID needs camera access to scan QR Codes</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string></string>
 	<key>UILaunchStoryboardName</key>

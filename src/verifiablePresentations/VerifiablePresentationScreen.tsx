@@ -1,7 +1,7 @@
 // React
-import React, { ReactNode, useMemo } from "react";
+import React, { ReactNode, useCallback, useEffect, useMemo } from "react";
 import { useNavigation } from "@react-navigation/core";
-import { ActivityIndicator, Text } from "react-native";
+import { ActivityIndicator, Button, Text } from "react-native";
 
 // Third party
 import styled from "styled-components/native";
@@ -29,7 +29,7 @@ export function VerifiablePresentationScreen(props: {
     };
 }) {
     const { createVP } = useSymfoniContext();
-    const { navigate } = useNavigation();
+    const { navigate, setOptions, goBack } = useNavigation();
     const { fromScreen, fromNavigator } = useFromScreen(props.route.params);
     const [request, setRequest] = useScreenRequest(props.route.params);
 
@@ -75,7 +75,7 @@ export function VerifiablePresentationScreen(props: {
         props.route.params?.result
     );
 
-    const onPresent = async () => {
+    const onPresent = useCallback(async () => {
         if (!fromScreen) {
             console.warn("onPresent(): !fromScreen");
             return;
@@ -84,10 +84,8 @@ export function VerifiablePresentationScreen(props: {
             console.warn("onPresent(): !request");
             return;
         }
-        if (request.params.verifiableCredentials.some((vc) => !vc.proof)) {
-            console.warn(
-                "onPresent(): request.params.verifiableCredentials.some((vc) => !vc.proof)"
-            );
+        if (!presentable) {
+            console.warn("onPresent(): !presentable");
             return;
         }
 
@@ -99,14 +97,35 @@ export function VerifiablePresentationScreen(props: {
         const result = makeVerifiablePresentationScreenResult(request, {
             verifiablePresenation: vp,
         });
+        if (fromNavigator) {
+            navigate(fromNavigator, {
+                screen: fromScreen,
+                params: result,
+            });
+        } else {
+            navigate(fromScreen, { result });
+        }
+    }, [fromScreen, request, presentable, fromNavigator, createVP, navigate]);
 
-        console.log({ fromNavigator, fromScreen, result });
-
-        navigate(fromNavigator, {
-            screen: fromScreen,
-            params: result,
-        });
-    };
+    useEffect(() => {
+        if (presentable) {
+            setOptions({
+                headerRight: () => (
+                    <Button
+                        onPress={() => onPresent()}
+                        title="Vis"
+                        color="rgb(0,122, 255)"
+                    />
+                ),
+            });
+        } else {
+            setOptions({
+                headerRight: () => (
+                    <Button onPress={() => {}} title="Vis" disabled />
+                ),
+            });
+        }
+    }, [presentable, onPresent, setOptions]);
 
     if (!request) {
         return (
