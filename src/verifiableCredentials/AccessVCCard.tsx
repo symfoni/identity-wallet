@@ -22,7 +22,7 @@ export function AccessVCCard({
             <VCPropText>
                 {vc.credentialSubject?.access.delegatedTo.id}
             </VCPropText>
-            <VCPropLabel>Hva skal deles?</VCPropLabel>
+            <VCPropLabel>Hva vil du dele?</VCPropLabel>
             {(vc.credentialSubject?.access.scopes ?? []).map((scope) => {
                 return <VCPropText key={scope.id}>{scope.name}</VCPropText>;
             })}
