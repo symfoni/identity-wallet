@@ -18,14 +18,6 @@ export type CreateCapTableVPResponse = {
     };
 };
 
-export type CreateCapTableVPError = {
-    type: "CREATE_CAP_TABLE_VP_ERROR";
-    error: {
-        message: string;
-        details: any;
-    };
-};
-
 export type CapTableForm = {
     organizationNumber: string;
     shareholders: UnknowERC1400TokenTransfer[];

@@ -19,10 +19,16 @@ import {
     makeVerifiablePresentationScreenRequest,
 } from "../types/ScreenRequest";
 import { ScreenResult } from "../types/ScreenResults";
-import { CapTablePrivateTokenTransferVC } from "../verifiableCredentials/CapTablePrivateTokenTransferVC";
-import { CapTableVC } from "../verifiableCredentials/CapTableVC";
-import { NationalIdentityVC } from "../verifiableCredentials/NationalIdentityVC";
+import { makeAccessVC } from "../verifiableCredentials/AccessVC";
+import { makeCapTablePrivateTokenTransferVC } from "../verifiableCredentials/CapTablePrivateTokenTransferVC";
+import { makeCapTableVC } from "../verifiableCredentials/CapTableVC";
 import {
+    makeNationalIdentityVC,
+    NationalIdentityVC,
+} from "../verifiableCredentials/NationalIdentityVC";
+import {
+    makeTermsOfUseForvaltVC,
+    makeTermsOfUseSymfoniVC,
     TermsOfUseForvaltVC,
     TermsOfUseSymfoniVC,
 } from "../verifiableCredentials/TermsOfUseVC";
@@ -204,6 +210,50 @@ export function DemoScreen(props: {
                 }}
             />
             <Button
+                title="Demo: Dele dine data"
+                onPress={async () => {
+                    const nationalIdentityVC =
+                        ((await findVCByType(
+                            demoNationalIdentityVC.type
+                        )) as NationalIdentityVC) ?? demoNationalIdentityVC;
+
+                    const request = makeVerifiablePresentationScreenRequest(
+                        SCREEN_DEMO,
+                        NAVIGATOR_ROOT,
+                        "demo_accessVP",
+                        {
+                            verifier: {
+                                id: "https://www.example.com",
+                                name: "Brønnøysundregisteret",
+                                reason: "Dele dine data",
+                            },
+                            verifiableCredentials: [
+                                makeAccessVC({
+                                    delegatedTo: { id: "Forvalt.no" },
+                                    scopes: [
+                                        {
+                                            id: "example.com/age",
+                                            name: "Alder",
+                                        },
+                                        {
+                                            id: "example.com/roles",
+                                            name: "Rolle i selskapet",
+                                        },
+                                    ],
+                                }),
+                                nationalIdentityVC,
+                            ],
+                        }
+                    );
+
+                    const result = await navigateWithResult(
+                        SCREEN_VERIFIABLE_PRESENTATION,
+                        request
+                    );
+                    console.info({ result });
+                }}
+            />
+            <Button
                 title="Demo: BankID"
                 onPress={async () => {
                     const request = makeBankIDScreenRequest(
@@ -231,64 +281,18 @@ const demoVerifier = {
     reason: "Demonstrere generisk VPskjerm",
 };
 
-const demoNationalIdentityVC = {
-    "@context": [
-        "https://www.w3.org/2018/credentials/v1",
-        "https://www.symfoni.id/credentials/v1",
-    ],
-    type: ["VerifiableCredential", "NationalIdentityVC"],
-} as NationalIdentityVC;
+const demoNationalIdentityVC = makeNationalIdentityVC();
 
-const demoTermsOfUseForvaltVC = {
-    "@context": [
-        "https://www.w3.org/2018/credentials/v1",
-        "https://www.symfoni.id/credentials/v1",
-    ],
-    type: ["VerifiableCredential", "TermsOfUseVC", "TermsOfUseForvaltVC"],
-    credentialSubject: {
-        readAndAccepted: {
-            id: "https://forvalt.no/TOA",
-        },
-    },
-} as TermsOfUseForvaltVC;
+const demoTermsOfUseForvaltVC = makeTermsOfUseForvaltVC();
 
-const demoTermsOfUseSymfoniVC = {
-    "@context": [
-        "https://www.w3.org/2018/credentials/v1",
-        "https://www.symfoni.id/credentials/v1",
-    ],
-    type: ["VerifiableCredential", "TermsOfUseVC", "TermsOfUseSymfoniVC"],
-    credentialSubject: {
-        readAndAccepted: {
-            id: "https://symfoni.id/TOA",
-        },
-    },
-} as TermsOfUseSymfoniVC;
+const demoTermsOfUseSymfoniVC = makeTermsOfUseSymfoniVC();
 
-const demoCapTableVC = {
-    "@context": [
-        "https://www.w3.org/2018/credentials/v1",
-        "https://www.symfoni.id/credentials/v1",
-    ],
-    type: ["VerifiableCredential", "CapTableVC"],
-    credentialSubject: {
-        capTable: {
-            organizationNumber: "demo",
-            shareholders: [],
-        },
-    },
-} as CapTableVC;
+const demoCapTableVC = makeCapTableVC({
+    organizationNumber: "demo",
+    shareholders: [],
+});
 
-const demoCapTablePrivateTransferTokenVC = {
-    "@context": [
-        "https://www.w3.org/2018/credentials/v1",
-        "https://www.symfoni.id/credentials/v1",
-    ],
-    type: ["VerifiableCredential", "CapTablePrivateTokenTransferVC"],
-    credentialSubject: {
-        toShareholder: {
-            name: "Jon Ramvi",
-            amount: "22",
-        },
-    },
-} as CapTablePrivateTokenTransferVC;
+const demoCapTablePrivateTransferTokenVC = makeCapTablePrivateTokenTransferVC({
+    name: "demo",
+    amount: "1337",
+});

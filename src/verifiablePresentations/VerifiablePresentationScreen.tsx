@@ -100,8 +100,6 @@ export function VerifiablePresentationScreen(props: {
             verifiablePresenation: vp,
         });
 
-        console.log({ fromNavigator, fromScreen, result });
-
         navigate(fromNavigator, {
             screen: fromScreen,
             params: result,

@@ -1,3 +1,4 @@
+// Third party
 import { JsonRpcResult } from "@json-rpc-tools/types";
 import React, { useContext } from "react";
 import {
@@ -8,6 +9,8 @@ import {
     View,
 } from "react-native";
 import { useAsyncEffect } from "use-async-effect";
+
+// Local
 import { ColorContext, ColorSystem } from "../colorContext";
 import { Scanner } from "../components/scanner";
 import { useSymfoniContext } from "../context";
@@ -18,16 +21,23 @@ import {
 } from "../hooks/useLocalNavigation";
 import { useNavigationWithResult } from "../hooks/useNavigationWithResult";
 import {
+    AccessVPParams,
     CapTablePrivateTokenTransferParams,
     CreateCapTableVPParams,
-} from "../types/capTableTypes";
+} from "../types/paramTypes";
 import { VerifiablePresentationResult } from "../types/resultTypes";
 import { makeVerifiablePresentationScreenRequest } from "../types/ScreenRequest";
 import { ScreenResult } from "../types/ScreenResults";
+import { makeAccessVC } from "../verifiableCredentials/AccessVC";
 import { makeCapTablePrivateTokenTransferVC } from "../verifiableCredentials/CapTablePrivateTokenTransferVC";
 import { makeCapTableVC } from "../verifiableCredentials/CapTableVC";
-import { NationalIdentityVC } from "../verifiableCredentials/NationalIdentityVC";
 import {
+    makeNationalIdentityVC,
+    NationalIdentityVC,
+} from "../verifiableCredentials/NationalIdentityVC";
+import {
+    makeTermsOfUseForvaltVC,
+    makeTermsOfUseSymfoniVC,
     TermsOfUseForvaltVC,
     TermsOfUseSymfoniVC,
 } from "../verifiableCredentials/TermsOfUseVC";
@@ -65,8 +75,9 @@ export const Home = (props: {
         }
     }
 
+    useEffectAccessVP(props.route.params?.result);
     useEffectCreateCapTableVP(props.route.params?.result);
-    useEffectCreateCapTablePrivateTokenTransferVP(props.route.params?.result);
+    useEffectCapTablePrivateTokenTransferVP(props.route.params?.result);
 
     return (
         <>
@@ -99,7 +110,7 @@ const makeStyles = (colors: ColorSystem) => {
 };
 
 /**
- * Listen, navigate, get navigation result and send response
+ * useEffectCreateCapTableVP()
  */
 function useEffectCreateCapTableVP(
     result?: JsonRpcResult<VerifiablePresentationResult>
@@ -122,18 +133,18 @@ function useEffectCreateCapTableVP(
 
             const termsOfUseForvaltVC =
                 ((await findVCByType(
-                    TODO_TermsOfUseForvaltVC.type
-                )) as TermsOfUseForvaltVC) ?? TODO_TermsOfUseForvaltVC;
+                    makeTermsOfUseForvaltVC().type
+                )) as TermsOfUseForvaltVC) ?? makeTermsOfUseForvaltVC();
 
             const termsOfUseSymfoniVC =
                 ((await findVCByType(
-                    TODO_TermsOfUseSymfoniVC.type
-                )) as TermsOfUseSymfoniVC) ?? TODO_TermsOfUseSymfoniVC;
+                    makeTermsOfUseSymfoniVC().type
+                )) as TermsOfUseSymfoniVC) ?? makeTermsOfUseSymfoniVC();
 
             const nationalIdentityVC =
                 ((await findVCByType(
-                    TODO_NationalIdentityVC.type
-                )) as NationalIdentityVC) ?? TODO_NationalIdentityVC;
+                    makeNationalIdentityVC().type
+                )) as NationalIdentityVC) ?? makeNationalIdentityVC();
 
             const screenRequest = makeVerifiablePresentationScreenRequest(
                 SCREEN_HOME,
@@ -173,9 +184,9 @@ function useEffectCreateCapTableVP(
 }
 
 /**
- * Listen, navigate, get navigation result and send response
+ * useEffectCapTablePrivateTokenTransferVP()
  */
-function useEffectCreateCapTablePrivateTokenTransferVP(
+function useEffectCapTablePrivateTokenTransferVP(
     result?: JsonRpcResult<VerifiablePresentationResult>
 ) {
     const { consumeEvent, findVCByType, sendResponse, client } =
@@ -185,6 +196,7 @@ function useEffectCreateCapTablePrivateTokenTransferVP(
 
     useAsyncEffect(async () => {
         while (client) {
+            // 1. Listen for event
             const { topic, request } = await consumeEvent(
                 "symfoniID_capTablePrivateTokenTransferVP"
             );
@@ -192,26 +204,26 @@ function useEffectCreateCapTablePrivateTokenTransferVP(
                 request,
             });
 
-            // Get existing VCs if exist.
-            // TODO get correct terms of use
+            // 2. Get existing VCs if exist.
             const params = request
                 .params[0] as CapTablePrivateTokenTransferParams;
 
             const termsOfUseForvaltVC =
                 ((await findVCByType(
-                    TODO_TermsOfUseForvaltVC.type
-                )) as TermsOfUseForvaltVC) ?? TODO_TermsOfUseForvaltVC;
+                    makeTermsOfUseForvaltVC().type
+                )) as TermsOfUseForvaltVC) ?? makeTermsOfUseForvaltVC();
 
             const termsOfUseSymfoniVC =
                 ((await findVCByType(
-                    TODO_TermsOfUseSymfoniVC.type
-                )) as TermsOfUseSymfoniVC) ?? TODO_TermsOfUseSymfoniVC;
+                    makeTermsOfUseSymfoniVC().type
+                )) as TermsOfUseSymfoniVC) ?? makeTermsOfUseSymfoniVC();
 
             const nationalIdentityVC =
                 ((await findVCByType(
-                    TODO_NationalIdentityVC.type
-                )) as NationalIdentityVC) ?? TODO_NationalIdentityVC;
+                    makeNationalIdentityVC().type
+                )) as NationalIdentityVC) ?? makeNationalIdentityVC();
 
+            // 3. Make screen request
             const screenRequest = makeVerifiablePresentationScreenRequest(
                 SCREEN_HOME,
                 NAVIGATOR_TABS,
@@ -234,12 +246,14 @@ function useEffectCreateCapTablePrivateTokenTransferVP(
                 request.id
             );
 
+            // 4. Navigate and wait for result
             const navigationResult = await navigateWithResult(
                 SCREEN_VERIFIABLE_PRESENTATION,
                 screenRequest
             );
 
             console.log({ navigationResult });
+            // 5. Send response
             sendResponse(topic, {
                 ...navigationResult,
                 result: {
@@ -252,39 +266,69 @@ function useEffectCreateCapTablePrivateTokenTransferVP(
 }
 
 /**
- * @TODO Prefix with TODO_, because these objects should really be provided by the verifier. TODO is to move these objects to Forvalt.
- * Should be dynamically provided, and not hardcoded here.
+ * useEffectAccessVP()
  */
-const TODO_NationalIdentityVC = {
-    "@context": [
-        "https://www.w3.org/2018/credentials/v1",
-        "https://www.symfoni.id/credentials/v1",
-    ],
-    type: ["VerifiableCredential", "NationalIdentityVC"],
-} as NationalIdentityVC;
+function useEffectAccessVP(
+    result?: JsonRpcResult<VerifiablePresentationResult>
+) {
+    const { consumeEvent, findVCByType, sendResponse, client } =
+        useSymfoniContext();
 
-const TODO_TermsOfUseForvaltVC = {
-    "@context": [
-        "https://www.w3.org/2018/credentials/v1",
-        "https://www.symfoni.id/credentials/v1",
-    ],
-    type: ["VerifiableCredential", "TermsOfUseVC", "TermsOfUseForvaltVC"],
-    credentialSubject: {
-        readAndAccepted: {
-            id: "https://forvalt.no/TOA",
-        },
-    },
-} as TermsOfUseForvaltVC;
+    const { navigateWithResult } = useNavigationWithResult(result);
 
-const TODO_TermsOfUseSymfoniVC = {
-    "@context": [
-        "https://www.w3.org/2018/credentials/v1",
-        "https://www.symfoni.id/credentials/v1",
-    ],
-    type: ["VerifiableCredential", "TermsOfUseVC", "TermsOfUseSymfoniVC"],
-    credentialSubject: {
-        readAndAccepted: {
-            id: "https://symfoni.id/TOA",
-        },
-    },
-} as TermsOfUseSymfoniVC;
+    useAsyncEffect(async () => {
+        while (client) {
+            // 1. Listen for event
+            const { topic, request } = await consumeEvent("symfoniID_accessVP");
+            console.info("consumed symfoniID_accessVP:", {
+                request,
+            });
+
+            // 2. Get existing VCs if exist.
+            const params = request.params[0] as AccessVPParams;
+
+            const nationalIdentityVC =
+                ((await findVCByType(
+                    makeNationalIdentityVC().type
+                )) as NationalIdentityVC) ?? makeNationalIdentityVC();
+
+            // 3. Make screen request
+            const screenRequest = makeVerifiablePresentationScreenRequest(
+                SCREEN_HOME,
+                NAVIGATOR_TABS,
+                request.method,
+                {
+                    verifier: {
+                        id: params.verifier,
+                        name: params.verifier,
+                        reason: "Dele dine data",
+                    },
+                    verifiableCredentials: [
+                        makeAccessVC({
+                            delegatedTo: params.payload.access.delegatedTo,
+                            scopes: params.payload.access.scopes,
+                        }),
+                        nationalIdentityVC,
+                    ],
+                },
+                request.id
+            );
+
+            // 4. Navigate and wait for result
+            const navigationResult = await navigateWithResult(
+                SCREEN_VERIFIABLE_PRESENTATION,
+                screenRequest
+            );
+
+            console.log({ navigationResult });
+            // 5. Send response
+            sendResponse(topic, {
+                ...navigationResult,
+                result: {
+                    capTablePrivateTransferTokenVP:
+                        navigationResult.result.verifiablePresenation.proof.jwt,
+                },
+            });
+        }
+    }, [client]);
+}

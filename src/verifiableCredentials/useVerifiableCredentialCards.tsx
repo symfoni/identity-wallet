@@ -25,15 +25,17 @@ import { CapTableVCCard } from "./CapTableVCCard";
 import { CapTablePrivateTokenTransferVCCard } from "./CapTablePrivateTokenTransferVCCard";
 import { CapTableVC } from "./CapTableVC";
 import { CapTablePrivateTokenTransferVC } from "./CapTablePrivateTokenTransferVC";
+import { AccessVCCard } from "./AccessVCCard";
+import { AccessVC } from "./AccessVC";
 
 // Hook
 export function useVerifiableCredentialCards(
     verifiableCredentials: SupportedVerifiableCredential[],
     onSigned: (vc: SupportedVerifiableCredential) => void,
-    result?: JsonRpcResult<BankIDResult>
+    screenResult?: JsonRpcResult<BankIDResult>
 ) {
     const { createVC } = useSymfoniContext();
-    const { navigateWithResult } = useNavigationWithResult(result);
+    const { navigateWithResult } = useNavigationWithResult(screenResult);
     const { checkDeviceAuthentication } = useDeviceAuthentication();
 
     // CALLBACK
@@ -174,6 +176,20 @@ export function useVerifiableCredentialCards(
                                                             onPressSignCard(
                                                                 _vc,
                                                                 expiresIn24Hours()
+                                                            )
+                                                        }
+                                                    />
+                                                );
+                                            }
+                                            case "AccessVC": {
+                                                return (
+                                                    <AccessVCCard
+                                                        key={key}
+                                                        vc={vc as AccessVC}
+                                                        onPressSign={(_vc) =>
+                                                            onPressSignCard(
+                                                                _vc,
+                                                                expiresIn50Years()
                                                             )
                                                         }
                                                     />

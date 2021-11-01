@@ -1,3 +1,13 @@
+export function makeNationalIdentityVC(): NationalIdentityVC {
+    return {
+        "@context": [
+            "https://www.w3.org/2018/credentials/v1",
+            "https://www.symfoni.id/credentials/v1",
+        ],
+        type: ["VerifiableCredential", "NationalIdentityVC"],
+        credentialSubject: {},
+    };
+}
 // @see https://www.notion.so/symfoni/NationalIdentityVC-f0ad0a6b75a64cca9d887f0243dc41ae
 export type NationalIdentityVC = {
     "@context": [
@@ -6,8 +16,9 @@ export type NationalIdentityVC = {
     ];
     type: ["VerifiableCredential", "NationalIdentityVC"];
 
-    credentialSubject?: {
-        nationalIdentityNumber: string;
+    credentialSubject: {
+        nationalIdentityNumber?: string;
+        id?: string;
     };
     // Signature
     issuer?: {
