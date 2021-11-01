@@ -9,12 +9,11 @@ import React, {
     useMemo,
     useState,
 } from "react";
-import { ActivityIndicator, Linking, ScrollView } from "react-native";
+import { ActivityIndicator, Linking } from "react-native";
 import styled from "styled-components/native";
 import { Context } from "../context";
 import { useDeviceAuthentication } from "../hooks/useDeviceAuthentication";
 import {
-    SCREEN_BANKID,
     SCREEN_CREATE_CAP_TABLE_PRIVATE_TOKEN_TRANSFER_VP,
     useLocalNavigation,
 } from "../hooks/useLocalNavigation";
@@ -24,7 +23,8 @@ import {
     CapTablePrivateTokenTransferParams,
     CapTablePrivateTokenTransferResult,
 } from "../types/capTableTypes";
-import { BankIDResult, makeBankIDRequest } from "../types/paramTypes";
+import { makeBankIDScreenRequest, ScreenRequest } from "../types/ScreenRequest";
+import { BankIDScreenResult } from "../types/ScreenResults";
 import { CapTablePrivateTokenTransferVC } from "../verifiableCredentials/CapTablePrivateTokenTransferVC";
 import { NationalIdentityVC } from "../verifiableCredentials/NationalIdentityVC";
 import { TermsOfUseVC } from "../verifiableCredentials/TermsOfUseVC";
@@ -32,14 +32,14 @@ import { TermsOfUseVC } from "../verifiableCredentials/TermsOfUseVC";
 export function CapTablePrivateTokenTransferVPScreen(props: {
     route: {
         params?:
-            | JsonRpcRequest<CapTablePrivateTokenTransferParams>
-            | JsonRpcResult<BankIDResult>;
+            | ScreenRequest<CapTablePrivateTokenTransferParams>
+            | BankIDScreenResult;
     };
 }) {
     const { checkDeviceAuthentication } = useDeviceAuthentication();
     const { navigateHome } = useLocalNavigation();
-    const { navigateWithResult } = useNavigationWithResult(
-        props.route.params as JsonRpcResult<BankIDResult>
+    const { navigateBankIDWithResult } = useNavigateBankIDWithResult(
+        props.route.params?.result
     );
     const {
         createTermsOfUseVC,
@@ -72,13 +72,13 @@ export function CapTablePrivateTokenTransferVPScreen(props: {
             return;
         }
 
-        const bankIDRequest = makeBankIDRequest({
-            resultScreen: SCREEN_CREATE_CAP_TABLE_PRIVATE_TOKEN_TRANSFER_VP,
-        });
+        const screenRequest = makeBankIDScreenRequest(
+            SCREEN_CREATE_CAP_TABLE_PRIVATE_TOKEN_TRANSFER_VP
+        );
 
-        const result = await navigateWithResult(SCREEN_BANKID, bankIDRequest);
+        const result = await navigateBankIDWithResult(screenRequest);
 
-        const bankID = decodeJWT(result.result.bankIDToken)
+        const bankID = decodeJWT(result.bankIDToken)
             .payload as BankidJWTPayload;
         setLoadingNationalIdentityVC(true);
 
@@ -87,7 +87,7 @@ export function CapTablePrivateTokenTransferVPScreen(props: {
                 bankID.socialno,
                 {
                     type: "BankID",
-                    jwt: result.result.bankIDToken,
+                    jwt: result.bankIDToken,
                 }
             );
             setRequest({
@@ -100,7 +100,8 @@ export function CapTablePrivateTokenTransferVPScreen(props: {
         } finally {
             setLoadingNationalIdentityVC(false);
         }
-    }, [request, createNationalIdentityVC, navigateWithResult]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [request, createNationalIdentityVC]);
 
     const onSignTermsOfUse = async (
         VCtype: string,
@@ -217,7 +218,7 @@ export function CapTablePrivateTokenTransferVPScreen(props: {
         }
     }, [props.route.params]);
 
-    if (!props.route.params?.id) {
+    if (!request) {
         return null;
     }
 

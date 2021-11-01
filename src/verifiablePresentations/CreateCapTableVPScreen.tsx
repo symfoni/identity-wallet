@@ -10,38 +10,33 @@ import styled from "styled-components/native";
 import { ActivityIndicator, Linking } from "react-native";
 import {
     SCREEN_CREATE_CAP_TABLE_VP,
-    SCREEN_BANKID,
     useLocalNavigation,
 } from "../hooks/useLocalNavigation";
 import { Context } from "../context";
-import {
-    TermsOfUseForvaltVC,
-    TermsOfUseVC,
-} from "../verifiableCredentials/TermsOfUseVC";
+import { TermsOfUseVC } from "../verifiableCredentials/TermsOfUseVC";
 import { NationalIdentityVC } from "../verifiableCredentials/NationalIdentityVC";
 import {
     CreateCapTableVPParams,
     CreateCapTableVPResult,
 } from "../types/capTableTypes";
-import { JsonRpcRequest, JsonRpcResult } from "@json-rpc-tools/types";
+import { JsonRpcRequest } from "@json-rpc-tools/types";
 import { formatJsonRpcResult } from "@json-rpc-tools/utils";
 import { decodeJWT } from "did-jwt";
 import { BankidJWTPayload } from "../types/bankid.types";
-import { BankIDResult, makeBankIDRequest } from "../types/paramTypes";
-import { useNavigationWithResult } from "../hooks/useNavigationWithResult";
+import { useNavigateBankIDWithResult } from "../hooks/useNavigationWithResult";
 import { useDeviceAuthentication } from "../hooks/useDeviceAuthentication";
+import { BankIDScreenResult } from "../types/ScreenResults";
+import { makeBankIDScreenRequest, ScreenRequest } from "../types/ScreenRequest";
 
 export function CreateCapTableVPScreen(props: {
     route: {
-        params?:
-            | JsonRpcRequest<CreateCapTableVPParams>
-            | JsonRpcResult<BankIDResult>;
+        params?: ScreenRequest<CreateCapTableVPParams> | BankIDScreenResult;
     };
 }) {
     const { checkDeviceAuthentication } = useDeviceAuthentication();
     const { navigateHome } = useLocalNavigation();
-    const { navigateWithResult } = useNavigationWithResult(
-        props.route.params as JsonRpcResult<BankIDResult>
+    const { navigateBankIDWithResult } = useNavigateBankIDWithResult(
+        props.route.params?.result
     );
     const {
         createCapTableVC,
@@ -73,13 +68,13 @@ export function CreateCapTableVPScreen(props: {
             return;
         }
 
-        const bankIDRequest = makeBankIDRequest({
-            resultScreen: SCREEN_CREATE_CAP_TABLE_VP,
-        });
+        const screenRequest = makeBankIDScreenRequest(
+            SCREEN_CREATE_CAP_TABLE_VP
+        );
 
-        const result = await navigateWithResult(SCREEN_BANKID, bankIDRequest);
+        const result = await navigateBankIDWithResult(screenRequest);
 
-        const bankID = decodeJWT(result.result.bankIDToken)
+        const bankID = decodeJWT(result.bankIDToken)
             .payload as BankidJWTPayload;
         setLoadingNationalIdentityVC(true);
 
@@ -88,7 +83,7 @@ export function CreateCapTableVPScreen(props: {
                 bankID.socialno,
                 {
                     type: "BankID",
-                    jwt: result.result.bankIDToken,
+                    jwt: result.bankIDToken,
                 }
             );
             setRequest({
@@ -101,7 +96,8 @@ export function CreateCapTableVPScreen(props: {
         } finally {
             setLoadingNationalIdentityVC(false);
         }
-    }, [request, createNationalIdentityVC, navigateWithResult]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [request, createNationalIdentityVC]);
 
     const onSignTermsOfUse = async (
         VCtype: string,
@@ -194,7 +190,7 @@ export function CreateCapTableVPScreen(props: {
         }
     }, [props.route.params]);
 
-    if (!props.route.params?.id) {
+    if (!request?.id) {
         return null;
     }
 
