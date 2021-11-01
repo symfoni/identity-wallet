@@ -1,14 +1,15 @@
 import { JsonRpcRequest } from "@json-rpc-tools/types";
 import { formatJsonRpcRequest } from "@json-rpc-tools/utils";
 import {
+    BankIDParams,
     CapTablePrivateTokenTransferParams,
     CreateCapTableVPParams,
-} from "./capTableTypes";
-import { BankIDParams, VerifiablePresentationParams } from "./paramTypes";
+    VerifiablePresentationParams,
+} from "./paramTypes";
 
 export function makeBankIDScreenRequest(
     fromScreen: string,
-    fromNavigator: string,
+    fromNavigator: string | undefined,
     method: string,
     params: BankIDParams
 ) {
@@ -23,7 +24,7 @@ export function makeBankIDScreenRequest(
 
 export function makeVerifiablePresentationScreenRequest(
     fromScreen: string,
-    fromNavigator: string,
+    fromNavigator: string | undefined,
     method: string,
     params: VerifiablePresentationParams,
     id?: number

@@ -52,7 +52,7 @@ export function DemoScreen(props: {
                 onPress={async () => {
                     const request = makeVerifiablePresentationScreenRequest(
                         SCREEN_DEMO,
-                        NAVIGATOR_ROOT,
+                        undefined,
                         "demo_requestVerifiablePresentation",
                         {
                             verifier: demoVerifier,
@@ -77,7 +77,7 @@ export function DemoScreen(props: {
                 onPress={async () => {
                     const request = makeVerifiablePresentationScreenRequest(
                         SCREEN_DEMO,
-                        NAVIGATOR_ROOT,
+                        undefined,
                         "demo_createCapTableVP",
                         {
                             verifier: demoVerifier,
@@ -120,7 +120,7 @@ export function DemoScreen(props: {
 
                     const request = makeVerifiablePresentationScreenRequest(
                         SCREEN_DEMO,
-                        NAVIGATOR_ROOT,
+                        undefined,
                         "demo_createCapTableVP-reuseable",
                         {
                             verifier: demoVerifier,
@@ -148,7 +148,7 @@ export function DemoScreen(props: {
                 onPress={async () => {
                     const request = makeVerifiablePresentationScreenRequest(
                         SCREEN_DEMO,
-                        NAVIGATOR_ROOT,
+                        undefined,
                         "demo_capTablePrivateTokenTransferVP",
                         {
                             verifier: demoVerifier,
@@ -189,7 +189,7 @@ export function DemoScreen(props: {
 
                     const request = makeVerifiablePresentationScreenRequest(
                         SCREEN_DEMO,
-                        NAVIGATOR_ROOT,
+                        undefined,
                         "demo_capTablePrivateTokenTransferVP",
                         {
                             verifier: demoVerifier,
@@ -219,7 +219,7 @@ export function DemoScreen(props: {
 
                     const request = makeVerifiablePresentationScreenRequest(
                         SCREEN_DEMO,
-                        NAVIGATOR_ROOT,
+                        undefined,
                         "demo_accessVP",
                         {
                             verifier: {
