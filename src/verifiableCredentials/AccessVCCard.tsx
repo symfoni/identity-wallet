@@ -24,7 +24,7 @@ export function AccessVCCard({
             </VCPropText>
             <VCPropLabel>Hvilke data deles?</VCPropLabel>
             {(vc.credentialSubject?.access.scopes ?? []).map((scope) => {
-                return <VCPropText>{scope.name}</VCPropText>;
+                return <VCPropText key={scope.id}>{scope.name}</VCPropText>;
             })}
             <SignButton
                 signed={signed}
