@@ -325,7 +325,7 @@ function useEffectAccessVP(
             sendResponse(topic, {
                 ...navigationResult,
                 result: {
-                    capTablePrivateTransferTokenVP:
+                    accessVP:
                         navigationResult.result.verifiablePresenation.proof.jwt,
                 },
             });
