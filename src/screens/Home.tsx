@@ -22,6 +22,7 @@ import {
 import { useNavigationWithResult } from "../hooks/useNavigationWithResult";
 import {
     AccessVPParams,
+    CapTableClaimTokenParams,
     CapTablePrivateTokenTransferParams,
     CreateCapTableVPParams,
 } from "../types/paramTypes";
@@ -29,6 +30,7 @@ import { VerifiablePresentationResult } from "../types/resultTypes";
 import { makeVerifiablePresentationScreenRequest } from "../types/ScreenRequest";
 import { ScreenResult } from "../types/ScreenResults";
 import { makeAccessVC } from "../verifiableCredentials/AccessVC";
+import { makeCapTableClaimTokenVC } from "../verifiableCredentials/CapTableClaimTokenVC";
 import { makeCapTablePrivateTokenTransferVC } from "../verifiableCredentials/CapTablePrivateTokenTransferVC";
 import { makeCapTableVC } from "../verifiableCredentials/CapTableVC";
 import {
@@ -264,6 +266,82 @@ function useEffectCapTablePrivateTokenTransferVP(
         }
     }, [client]);
 }
+
+function useEffectCapTableClaimUnclaimed(
+    result?: JsonRpcResult<VerifiablePresentationResult>
+) {
+    const { consumeEvent, findVCByType, sendResponse, client } =
+        useSymfoniContext();
+
+    const { navigateWithResult } = useNavigationWithResult(result);
+
+    useAsyncEffect(async () => {
+        while (client) {
+            // 1. Listen for event
+            const { topic, request } = await consumeEvent(
+                "symfoniID_capTableClaimToken"
+            );
+            console.info("consumed symfoniID_capTableClaimToken", {
+                request,
+            });
+
+            const params = request.params[0] as CapTableClaimTokenParams
+
+            const termsOfUseForvaltVC =
+                ((await findVCByType(
+                    makeTermsOfUseForvaltVC().type
+                )) as TermsOfUseForvaltVC) ?? makeTermsOfUseForvaltVC();
+
+            const termsOfUseSymfoniVC =
+                ((await findVCByType(
+                    makeTermsOfUseSymfoniVC().type
+                )) as TermsOfUseSymfoniVC) ?? makeTermsOfUseSymfoniVC();
+
+            const nationalIdentityVC =
+                ((await findVCByType(
+                    makeNationalIdentityVC().type
+                )) as NationalIdentityVC) ?? makeNationalIdentityVC();
+
+            // 3. Make screen request
+            const screenRequest = makeVerifiablePresentationScreenRequest(
+                SCREEN_HOME,
+                NAVIGATOR_TABS,
+                request.method,
+                {
+                    verifier: {
+                        id: params.verifier,
+                        name: params.verifier,
+                        reason: "Gjør krav på aksjer",
+                    },
+                    verifiableCredentials: [
+                        makeCapTableClaimTokenVC(
+                            params.claimTokens
+                        ),
+                        termsOfUseForvaltVC,
+                        termsOfUseSymfoniVC,
+                        nationalIdentityVC,
+                    ],
+                },
+                request.id
+            );
+
+            // 4. Navigate and wait for result
+            const navigationResult = await navigateWithResult(
+                SCREEN_VERIFIABLE_PRESENTATION,
+                screenRequest
+            );
+
+            console.log({ navigationResult });
+            // 5. Send response
+            sendResponse(topic, {
+                ...navigationResult,
+                result: {
+                    capTableClaimTokenVP:
+                        navigationResult.result.verifiablePresenation.proof.jwt,
+                },
+            });
+        }
+    }, [client]);
 
 /**
  * useEffectAccessVP()
