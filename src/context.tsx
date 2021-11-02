@@ -31,8 +31,9 @@ import {
     DEFAULT_RPC_PROVIDER_TEST,
     DEFAULT_TEST_CHAINS,
 } from "./constants/default";
-import { CapTable, CreateCapTableVPParams } from "./types/capTableTypes";
+import { CapTable } from "./types/capTableTypes";
 import { JwtPayload } from "./types/JwtPayload";
+import { CreateCapTableVPParams } from "./types/paramTypes";
 import { VerifyOptions } from "./types/VerifyOptions";
 import { useVeramo } from "./utils/useVeramo";
 import { useWalletconnect } from "./utils/useWalletconnect";

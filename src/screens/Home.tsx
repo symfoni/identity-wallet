@@ -28,7 +28,7 @@ import {
 } from "../types/paramTypes";
 import { VerifiablePresentationResult } from "../types/resultTypes";
 import { makeVerifiablePresentationScreenRequest } from "../types/ScreenRequest";
-import { ScreenResult } from "../types/ScreenResults";
+import { ScreenError, ScreenResult } from "../types/ScreenResults";
 import { makeAccessVC } from "../verifiableCredentials/AccessVC";
 import { makeCapTableClaimTokenVC } from "../verifiableCredentials/CapTableClaimTokenVC";
 import { makeCapTablePrivateTokenTransferVC } from "../verifiableCredentials/CapTablePrivateTokenTransferVC";
@@ -46,7 +46,7 @@ import {
 
 export const Home = (props: {
     route: {
-        params?: ScreenResult<VerifiablePresentationResult>;
+        params?: ScreenResult<VerifiablePresentationResult> | ScreenError;
     };
 }) => {
     const { pair, loading } = useSymfoniContext();
@@ -77,9 +77,10 @@ export const Home = (props: {
         }
     }
 
-    useEffectAccessVP(props.route.params?.result);
-    useEffectCreateCapTableVP(props.route.params?.result);
-    useEffectCapTablePrivateTokenTransferVP(props.route.params?.result);
+    useEffectAccessVP(props.route.params);
+    useEffectCreateCapTableVP(props.route.params);
+    useEffectCapTablePrivateTokenTransferVP(props.route.params);
+    useEffectCapTableClaimUnclaimed(props.route.params);
 
     return (
         <>
@@ -115,12 +116,12 @@ const makeStyles = (colors: ColorSystem) => {
  * useEffectCreateCapTableVP()
  */
 function useEffectCreateCapTableVP(
-    result?: JsonRpcResult<VerifiablePresentationResult>
+    screenParams?: ScreenResult<VerifiablePresentationResult> | ScreenError
 ) {
     const { consumeEvent, findVCByType, sendResponse, client } =
         useSymfoniContext();
 
-    const { navigateWithResult } = useNavigationWithResult(result);
+    const { navigateWithResult } = useNavigationWithResult(screenParams);
 
     useAsyncEffect(async () => {
         while (client) {
@@ -173,14 +174,10 @@ function useEffectCreateCapTableVP(
                 screenRequest
             );
 
-            sendResponse(topic, {
-                ...navigationResult,
-                result: {
-                    ...navigationResult.result,
-                    createCapTableVP:
-                        navigationResult.result.verifiablePresenation.proof.jwt,
-                },
-            });
+            sendResponse(
+                topic,
+                navigationResult.result ?? navigationResult.error
+            );
         }
     }, [client]);
 }
@@ -189,12 +186,12 @@ function useEffectCreateCapTableVP(
  * useEffectCapTablePrivateTokenTransferVP()
  */
 function useEffectCapTablePrivateTokenTransferVP(
-    result?: JsonRpcResult<VerifiablePresentationResult>
+    screenParams?: ScreenResult<VerifiablePresentationResult> | ScreenError
 ) {
     const { consumeEvent, findVCByType, sendResponse, client } =
         useSymfoniContext();
 
-    const { navigateWithResult } = useNavigationWithResult(result);
+    const { navigateWithResult } = useNavigationWithResult(screenParams);
 
     useAsyncEffect(async () => {
         while (client) {
@@ -249,31 +246,24 @@ function useEffectCapTablePrivateTokenTransferVP(
             );
 
             // 4. Navigate and wait for result
-            const navigationResult = await navigateWithResult(
+            const screenResult = await navigateWithResult(
                 SCREEN_VERIFIABLE_PRESENTATION,
                 screenRequest
             );
 
-            console.log({ navigationResult });
             // 5. Send response
-            sendResponse(topic, {
-                ...navigationResult,
-                result: {
-                    capTablePrivateTransferTokenVP:
-                        navigationResult.result.verifiablePresenation.proof.jwt,
-                },
-            });
+            sendResponse(topic, screenResult.result ?? screenResult.error);
         }
     }, [client]);
 }
 
 function useEffectCapTableClaimUnclaimed(
-    result?: JsonRpcResult<VerifiablePresentationResult>
+    screenParams?: ScreenResult<VerifiablePresentationResult> | ScreenError
 ) {
     const { consumeEvent, findVCByType, sendResponse, client } =
         useSymfoniContext();
 
-    const { navigateWithResult } = useNavigationWithResult(result);
+    const { navigateWithResult } = useNavigationWithResult(screenParams);
 
     useAsyncEffect(async () => {
         while (client) {
@@ -285,7 +275,7 @@ function useEffectCapTableClaimUnclaimed(
                 request,
             });
 
-            const params = request.params[0] as CapTableClaimTokenParams
+            const params = request.params[0] as CapTableClaimTokenParams;
 
             const nationalIdentityVC =
                 ((await findVCByType(
@@ -304,9 +294,7 @@ function useEffectCapTableClaimUnclaimed(
                         reason: "Gjør krav på aksjer",
                     },
                     verifiableCredentials: [
-                        makeCapTableClaimTokenVC(
-                            params.claimTokens
-                        ),
+                        makeCapTableClaimTokenVC(params.claimTokens),
                         nationalIdentityVC,
                     ],
                 },
@@ -314,33 +302,27 @@ function useEffectCapTableClaimUnclaimed(
             );
 
             // 4. Navigate and wait for result
-            const navigationResult = await navigateWithResult(
+            const screenResult = await navigateWithResult(
                 SCREEN_VERIFIABLE_PRESENTATION,
                 screenRequest
             );
 
-            console.log({ navigationResult });
             // 5. Send response
-            sendResponse(topic, {
-                ...navigationResult,
-                result: {
-                    capTableClaimTokenVP:
-                        navigationResult.result.verifiablePresenation.proof.jwt,
-                },
-            });
+            sendResponse(topic, screenResult.result ?? screenResult.error);
         }
     }, [client]);
+}
 
 /**
  * useEffectAccessVP()
  */
 function useEffectAccessVP(
-    result?: JsonRpcResult<VerifiablePresentationResult>
+    screenParams?: ScreenResult<VerifiablePresentationResult> | ScreenError
 ) {
     const { consumeEvent, findVCByType, sendResponse, client } =
         useSymfoniContext();
 
-    const { navigateWithResult } = useNavigationWithResult(result);
+    const { navigateWithResult } = useNavigationWithResult(screenParams);
 
     useAsyncEffect(async () => {
         while (client) {
@@ -388,13 +370,7 @@ function useEffectAccessVP(
 
             console.log({ screenResult });
             // 5. Send response
-            sendResponse(topic, {
-                ...screenResult,
-                result: {
-                    accessVP:
-                        screenResult.result.verifiablePresenation.proof.jwt,
-                },
-            });
+            sendResponse(topic, screenResult.result ?? screenResult.error);
         }
     }, [client]);
 }

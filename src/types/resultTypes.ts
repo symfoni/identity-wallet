@@ -1,7 +1,8 @@
 import { VerifiablePresentation } from "@veramo/core";
 
 export type VerifiablePresentationResult = {
-    verifiablePresenation: VerifiablePresentation;
+    vp?: VerifiablePresentation; // Dont send both vp and jwt in production.
+    jwt: string;
 };
 
 export type BankIDResult = {

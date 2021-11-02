@@ -1,5 +1,9 @@
-import { JsonRpcRequest, JsonRpcResult } from "@json-rpc-tools/types";
-import { formatJsonRpcResult } from "@json-rpc-tools/utils";
+import {
+    JsonRpcError,
+    JsonRpcRequest,
+    JsonRpcResult,
+} from "@json-rpc-tools/types";
+import { formatJsonRpcError, formatJsonRpcResult } from "@json-rpc-tools/utils";
 import { BankIDParams, VerifiablePresentationParams } from "./paramTypes";
 import { BankIDResult, VerifiablePresentationResult } from "./resultTypes";
 
@@ -21,9 +25,27 @@ export function makeVerifiablePresentationScreenResult(
     } as ScreenResult<VerifiablePresentationResult>;
 }
 
+export function makeVerifiablePresentationScreenError(
+    request: JsonRpcRequest<VerifiablePresentationParams>,
+    error: { code: number; message: string }
+) {
+    return {
+        error: formatJsonRpcError(request.id, error),
+    } as ScreenError;
+}
+
 export type ScreenResult<Result> = {
     fromScreen: never;
     fromNavigator: never;
     request: never;
+    error: never;
     result: JsonRpcResult<Result>;
+};
+
+export type ScreenError = {
+    fromScreen: never;
+    fromNavigator: never;
+    request: never;
+    result: never;
+    error: JsonRpcError;
 };

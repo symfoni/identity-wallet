@@ -1,5 +1,5 @@
 // React
-import { JsonRpcResult } from "@json-rpc-tools/types";
+import { JsonRpcResponse, JsonRpcResult } from "@json-rpc-tools/types";
 import { decodeJWT } from "did-jwt";
 import React, { useMemo } from "react";
 import { Text } from "react-native";
@@ -48,7 +48,6 @@ export function useVerifiableCredentialCards(
             {}
         );
         const { result } = await navigateWithResult(SCREEN_BANKID, request);
-
         const bankID = decodeJWT(result.bankIDToken)
             .payload as BankidJWTPayload;
 

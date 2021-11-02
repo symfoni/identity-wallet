@@ -7,7 +7,6 @@ import { ActivityIndicator, Button, Text } from "react-native";
 import styled from "styled-components/native";
 
 // Local
-import { useFromScreen } from "../hooks/useFromScreen";
 import { useScreenRequest } from "../hooks/useScreenRequest";
 import { useVerifiableCredentialCards } from "../verifiableCredentials/useVerifiableCredentialCards";
 import { SupportedVerifiableCredential } from "../verifiableCredentials/SupportedVerifiableCredentials";
@@ -16,21 +15,26 @@ import { BankIDResult } from "../types/resultTypes";
 import { ScreenRequest } from "../types/ScreenRequest";
 import { VerifiablePresentationParams } from "../types/paramTypes";
 import {
+    makeVerifiablePresentationScreenError,
     makeVerifiablePresentationScreenResult,
+    ScreenError,
     ScreenResult,
 } from "../types/ScreenResults";
+import { APP_ENV } from "@env";
+import { useNavigateBack } from "../hooks/useNavigationWithResult";
 
 // Screen
 export function VerifiablePresentationScreen(props: {
     route: {
         params?:
             | ScreenRequest<VerifiablePresentationParams>
-            | ScreenResult<BankIDResult>;
+            | ScreenResult<BankIDResult>
+            | ScreenError;
     };
 }) {
     const { createVP } = useSymfoniContext();
-    const { navigate, setOptions, goBack } = useNavigation();
-    const { fromScreen, fromNavigator } = useFromScreen(props.route.params);
+    const { setOptions } = useNavigation();
+    const { navigateBack } = useNavigateBack(props.route.params);
     const [request, setRequest] = useScreenRequest(props.route.params);
 
     const verifiableCredentials = useMemo(
@@ -47,6 +51,9 @@ export function VerifiablePresentationScreen(props: {
         [verifiableCredentials, signedVerifiableCredentials]
     );
 
+    /**
+     * onSignedVC() - Update the list of VC, when a VC card has been signed.
+     */
     const onSignedVC = (signedVC: SupportedVerifiableCredential) => {
         setRequest((current) => {
             if (!current) {
@@ -75,11 +82,10 @@ export function VerifiablePresentationScreen(props: {
         props.route.params?.result
     );
 
+    /**
+     * onPresent() - Navigate back with JsonRpcResult
+     */
     const onPresent = useCallback(async () => {
-        if (!fromScreen) {
-            console.warn("onPresent(): !fromScreen");
-            return;
-        }
         if (!request) {
             console.warn("onPresent(): !request");
             return;
@@ -95,37 +101,51 @@ export function VerifiablePresentationScreen(props: {
         );
 
         const result = makeVerifiablePresentationScreenResult(request, {
-            verifiablePresenation: vp,
+            // Only provide vp for debugging - not in production, because the jwt contains the same imformation, just in encoded form.
+            vp: APP_ENV === "production" ? undefined : vp,
+            jwt: vp.proof.jwt,
         });
-        if (fromNavigator) {
-            navigate(fromNavigator, {
-                screen: fromScreen,
-                params: result,
-            });
-        } else {
-            navigate(fromScreen, { result });
-        }
-    }, [fromScreen, request, presentable, fromNavigator, createVP, navigate]);
 
-    useEffect(() => {
-        if (presentable) {
-            setOptions({
-                headerRight: () => (
-                    <Button
-                        onPress={() => onPresent()}
-                        title="Vis"
-                        color="rgb(0,122, 255)"
-                    />
-                ),
-            });
-        } else {
-            setOptions({
-                headerRight: () => (
-                    <Button onPress={() => {}} title="Vis" disabled />
-                ),
-            });
+        navigateBack(result);
+    }, [request, presentable, createVP, navigateBack]);
+
+    /**
+     * onReject() - Navigate back with JsonRpcError
+     */
+    const onReject = useCallback(() => {
+        if (!request) {
+            console.warn("onReject(): ERROR !request");
+            return;
         }
-    }, [presentable, onPresent, setOptions]);
+        const error = makeVerifiablePresentationScreenError(request, {
+            code: 1,
+            message: "The user rejected the vp-request.",
+        });
+
+        navigateBack(error);
+    }, [request, navigateBack]);
+
+    /**
+     * useEffect() - Configure headerLeft() and headerRight() buttons, and "beforeRemove"-event-listener.
+     */
+    useEffect(() => {
+        setOptions({
+            headerRight: () => (
+                <Button
+                    onPress={presentable ? onPresent : () => {}}
+                    title="Vis"
+                    disabled={!presentable}
+                />
+            ),
+            headerLeft: () => (
+                <Button
+                    onPress={onReject}
+                    title="Avbryt"
+                    color="rgb(0,122, 255)"
+                />
+            ),
+        });
+    }, [request, presentable, onPresent, setOptions, onReject]);
 
     if (!request) {
         return (
