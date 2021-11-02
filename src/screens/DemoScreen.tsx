@@ -17,7 +17,7 @@ import {
     makeBankIDScreenRequest,
     makeVerifiablePresentationScreenRequest,
 } from "../types/ScreenRequest";
-import { ScreenResult } from "../types/ScreenResults";
+import { ScreenError, ScreenResult } from "../types/ScreenResults";
 import { makeAccessVC } from "../verifiableCredentials/AccessVC";
 import { makeCapTableClaimTokenVC } from "../verifiableCredentials/CapTableClaimTokenVC";
 import { makeCapTablePrivateTokenTransferVC } from "../verifiableCredentials/CapTablePrivateTokenTransferVC";
@@ -38,13 +38,12 @@ export function DemoScreen(props: {
     route: {
         params?:
             | ScreenResult<BankIDResult>
-            | ScreenResult<VerifiablePresentationResult>;
+            | ScreenResult<VerifiablePresentationResult>
+            | ScreenError;
     };
 }) {
     const { findVCByType } = useSymfoniContext();
-    const { navigateWithResult } = useNavigationWithResult(
-        props.route.params?.result
-    );
+    const { navigateWithResult } = useNavigationWithResult(props.route.params);
 
     return (
         <>
@@ -65,12 +64,12 @@ export function DemoScreen(props: {
                         }
                     );
 
-                    const result = await navigateWithResult(
+                    const { result, error } = await navigateWithResult(
                         SCREEN_VERIFIABLE_PRESENTATION,
                         request
                     );
 
-                    console.info({ result });
+                    console.info({ result, error });
                 }}
             />
             <Button
@@ -94,11 +93,12 @@ export function DemoScreen(props: {
 
                     console.info({ request });
 
-                    const result = await navigateWithResult(
+                    const screenResult = await navigateWithResult(
                         SCREEN_VERIFIABLE_PRESENTATION,
                         request
                     );
-                    console.info({ result });
+
+                    console.info({ screenResult });
                 }}
             />
             <Button
@@ -137,11 +137,11 @@ export function DemoScreen(props: {
 
                     console.info({ request });
 
-                    const result = await navigateWithResult(
+                    const { result, error } = await navigateWithResult(
                         SCREEN_VERIFIABLE_PRESENTATION,
                         request
                     );
-                    console.info({ result });
+                    console.info({ result, error });
                 }}
             />
             <Button
@@ -163,11 +163,11 @@ export function DemoScreen(props: {
                         }
                     );
 
-                    const result = await navigateWithResult(
+                    const { result, error } = await navigateWithResult(
                         SCREEN_VERIFIABLE_PRESENTATION,
                         request
                     );
-                    console.info({ result });
+                    console.info({ result, error });
                 }}
             />
             <Button
@@ -203,11 +203,11 @@ export function DemoScreen(props: {
                         }
                     );
 
-                    const result = await navigateWithResult(
+                    const { result, error } = await navigateWithResult(
                         SCREEN_VERIFIABLE_PRESENTATION,
                         request
                     );
-                    console.info({ result });
+                    console.info({ result, error });
                 }}
             />
             <Button
@@ -303,11 +303,11 @@ export function DemoScreen(props: {
                         }
                     );
 
-                    const result = await navigateWithResult(
+                    const { result, error } = await navigateWithResult(
                         SCREEN_VERIFIABLE_PRESENTATION,
                         request
                     );
-                    console.info({ result });
+                    console.info({ result, error });
                 }}
             />
             <Button
@@ -315,7 +315,7 @@ export function DemoScreen(props: {
                 onPress={async () => {
                     const request = makeBankIDScreenRequest(
                         SCREEN_DEMO,
-                        NAVIGATOR_ROOT,
+                        undefined,
                         "Demo_bankIDRequest",
                         {}
                     );

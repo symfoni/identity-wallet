@@ -1,6 +1,5 @@
 // Third party
 import React, { useEffect, useState } from "react";
-import { useNavigation } from "@react-navigation/native";
 import Toast from "react-native-toast-message";
 import styled from "styled-components/native";
 
@@ -8,16 +7,15 @@ import styled from "styled-components/native";
 import { BankidWebview } from "../components/bankid/BankidWebview";
 import { makeBankIDScreenResult } from "../types/ScreenResults";
 import { useScreenRequest } from "../hooks/useScreenRequest";
-import { useFromScreen } from "../hooks/useFromScreen";
 import { ScreenRequest } from "../types/ScreenRequest";
 import { BankIDParams } from "../types/paramTypes";
+import { useNavigateBack } from "../hooks/useNavigationWithResult";
 
 export function BankIDScreen(props: {
-    route: { params: ScreenRequest<BankIDParams> };
+    route: { params?: ScreenRequest<BankIDParams> };
 }) {
-    const { fromScreen, fromNavigator } = useFromScreen(props.route.params);
+    const { navigateBack } = useNavigateBack(props.route.params);
     const [request] = useScreenRequest(props.route.params);
-    const { navigate } = useNavigation();
     const [errors, setErrors] = useState<string[]>([]);
     const [bankIDToken, setBankidToken] = useState<string | undefined>(
         undefined
@@ -27,21 +25,17 @@ export function BankIDScreen(props: {
         if (!request) {
             return;
         }
-        if (!fromScreen) {
-            return;
-        }
+
         if (!bankIDToken) {
             return;
         }
 
-        const result = makeBankIDScreenResult(request, {
+        const screenResult = makeBankIDScreenResult(request, {
             bankIDToken,
         });
 
-        console.log({ fromScreen, result });
-        navigate(fromScreen, result);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [request, fromScreen, bankIDToken]);
+        navigateBack(screenResult);
+    }, [request, bankIDToken, navigateBack]);
 
     useEffect(() => {
         if (errors.length > 0) {

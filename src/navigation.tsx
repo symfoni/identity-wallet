@@ -22,8 +22,6 @@ import { BankIDScreen } from "./screens/BankIDScreen";
 import { CreateCapTableVPScreen } from "./verifiablePresentations/CreateCapTableVPScreen";
 import { CapTablePrivateTokenTransferVPScreen } from "./verifiablePresentations/CapTablePrivateTokenTransferVPScreen";
 import { VerifiablePresentationScreen } from "./verifiablePresentations/VerifiablePresentationScreen";
-import { Text } from "react-native-svg";
-import { Button } from "react-native";
 import { useNavigation } from "@react-navigation/core";
 
 const Stack = createNativeStackNavigator();
@@ -139,13 +137,6 @@ export const Navigation = () => {
                     title: "Vis legitimasjon",
                     headerLargeTitle: true,
                     presentation: "modal",
-                    headerLeft: () => (
-                        <Button
-                            onPress={() => goBack()}
-                            title="Avbryt"
-                            color="rgb(0,122, 255)"
-                        />
-                    ),
                 }}
             />
             <Stack.Screen
