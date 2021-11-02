@@ -25,7 +25,7 @@ export function useNavigationWithResult(
         );
         navigation.navigate(toScreen, screenRequest);
 
-        return new Promise<ScreenRequest<any> | ScreenError>((resolve) => {
+        return new Promise<ScreenResult<any> | ScreenError>((resolve) => {
             navigationResults.current.set(
                 screenRequest.request.id,
                 resolve as ResolverType
