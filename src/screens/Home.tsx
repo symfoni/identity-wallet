@@ -25,6 +25,7 @@ import {
     CapTableClaimTokenParams,
     CapTablePrivateTokenTransferParams,
     CreateCapTableVPParams,
+    UpdateShareholderVPParams,
 } from "../types/paramTypes";
 import { VerifiablePresentationResult } from "../types/resultTypes";
 import { makeVerifiablePresentationScreenRequest } from "../types/ScreenRequest";
@@ -43,6 +44,7 @@ import {
     TermsOfUseForvaltVC,
     TermsOfUseSymfoniVC,
 } from "../verifiableCredentials/TermsOfUseVC";
+import { makeUpdateShareholderVC } from "../verifiableCredentials/CapTableUpdateShareholderVC";
 
 export const Home = (props: {
     route: {
@@ -80,6 +82,7 @@ export const Home = (props: {
     useEffectAccessVP(props.route.params?.result);
     useEffectCreateCapTableVP(props.route.params?.result);
     useEffectCapTablePrivateTokenTransferVP(props.route.params?.result);
+    useEffectUpdateShareholderVP(props.route.params?.result);
 
     return (
         <>
@@ -374,6 +377,80 @@ function useEffectAccessVP(
                             delegatedTo: params.access.delegatedTo,
                             scopes: params.access.scopes,
                         }),
+                        nationalIdentityVC,
+                    ],
+                },
+                request.id
+            );
+
+            // 4. Navigate and wait for result
+            const screenResult = await navigateWithResult(
+                SCREEN_VERIFIABLE_PRESENTATION,
+                screenRequest
+            );
+
+            console.log({ screenResult });
+            // 5. Send response
+            sendResponse(topic, {
+                ...screenResult,
+                result: {
+                    accessVP:
+                        screenResult.result.verifiablePresenation.proof.jwt,
+                },
+            });
+        }
+    }, [client]);
+}
+
+/**
+ * useEffectUpdateShareholder()
+ */
+function useEffectUpdateShareholderVP(
+    result?: JsonRpcResult<VerifiablePresentationResult>
+) {
+    const { consumeEvent, findVCByType, sendResponse, client } =
+        useSymfoniContext();
+
+    const { navigateWithResult } = useNavigationWithResult(result);
+
+    useAsyncEffect(async () => {
+        while (client) {
+            // 1. Listen for event
+            const { topic, request } = await consumeEvent(
+                "symfoniID_updateShareholderVP"
+            );
+            console.info("consumed symfoniID_updateShareholderVP:", {
+                request,
+            });
+
+            // 2. Get existing VCs if exist.
+            const params = request.params[0] as UpdateShareholderVPParams;
+
+            const nationalIdentityVC =
+                ((await findVCByType(
+                    makeNationalIdentityVC().type
+                )) as NationalIdentityVC) ?? makeNationalIdentityVC();
+
+            // 3. Make screen request
+            const screenRequest = makeVerifiablePresentationScreenRequest(
+                SCREEN_HOME,
+                NAVIGATOR_TABS,
+                request.method,
+                {
+                    verifier: {
+                        id: params.verifier,
+                        name: params.verifier,
+                        reason: "Dele dine data",
+                    },
+                    verifiableCredentials: [
+                        makeUpdateShareholderVC(
+                            params.updateShareholderVC.credentialSubject
+                                .shareholderId,
+                            params.updateShareholderVC.credentialSubject
+                                .capTableAddress,
+                            params.updateShareholderVC.credentialSubject
+                                .shareholderData
+                        ),
                         nationalIdentityVC,
                     ],
                 },
