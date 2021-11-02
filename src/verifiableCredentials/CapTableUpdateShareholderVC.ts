@@ -1,6 +1,6 @@
 import { UpdateShareholderData } from "../types/requestTypes";
 
-export function makeUpdateShareholderVC(
+export function makeCapTableUpdateShareholderVC(
     shareholderId: string,
     capTableAddress: string,
     shareholderData: UpdateShareholderData

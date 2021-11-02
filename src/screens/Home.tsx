@@ -44,7 +44,7 @@ import {
     TermsOfUseForvaltVC,
     TermsOfUseSymfoniVC,
 } from "../verifiableCredentials/TermsOfUseVC";
-import { makeUpdateShareholderVC } from "../verifiableCredentials/CapTableUpdateShareholderVC";
+import { makeCapTableUpdateShareholderVC } from "../verifiableCredentials/CapTableUpdateShareholderVC";
 
 export const Home = (props: {
     route: {
@@ -443,7 +443,7 @@ function useEffectUpdateShareholderVP(
                         reason: "Dele dine data",
                     },
                     verifiableCredentials: [
-                        makeUpdateShareholderVC(
+                        makeCapTableUpdateShareholderVC(
                             params.updateShareholderVC.credentialSubject
                                 .shareholderId,
                             params.updateShareholderVC.credentialSubject
