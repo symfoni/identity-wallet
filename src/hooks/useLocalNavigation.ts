@@ -1,4 +1,5 @@
 import { useNavigation } from "@react-navigation/native";
+import { CreateCapTableVPResponse } from "../types/requestTypes";
 
 export const NAVIGATOR_TABS = "Tabs";
 export const NAVIGATOR_ROOT = "Root";

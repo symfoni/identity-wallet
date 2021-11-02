@@ -20,6 +20,8 @@ import { CapTableClaimTokenVC } from "./CapTableClaimTokenVC";
 import { CapTableClaimTokenVCCard } from "./CapTableClaimTokenVCCard";
 import { CapTablePrivateTokenTransferVC } from "./CapTablePrivateTokenTransferVC";
 import { CapTablePrivateTokenTransferVCCard } from "./CapTablePrivateTokenTransferVCCard";
+import { CapTableUpdateShareholderVC } from "./CapTableUpdateShareholderVC";
+import { CapTableUpdateShareholderVCCard } from "./CapTableUpdateShareholderVCCard";
 import { CapTableVC } from "./CapTableVC";
 import { CapTableVCCard } from "./CapTableVCCard";
 // Local
@@ -187,6 +189,22 @@ export function useVerifiableCredentialCards(
                                                         key={key}
                                                         vc={
                                                             vc as CapTableClaimTokenVC
+                                                        }
+                                                        onPressSign={(_vc) =>
+                                                            onPressSignCard(
+                                                                _vc,
+                                                                expiresIn24Hours()
+                                                            )
+                                                        }
+                                                    />
+                                                );
+                                            }
+                                            case "CapTableUpdateShareholderVC": {
+                                                return (
+                                                    <CapTableUpdateShareholderVCCard
+                                                        key={key}
+                                                        vc={
+                                                            vc as CapTableUpdateShareholderVC
                                                         }
                                                         onPressSign={(_vc) =>
                                                             onPressSignCard(

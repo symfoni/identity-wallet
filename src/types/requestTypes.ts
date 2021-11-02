@@ -58,3 +58,10 @@ export interface DirectERC1400TokenTransfer extends ERC1400TokenTransfer {
     streetAddress?: never;
     isBoardDirector?: false;
 }
+export type UpdateShareholderData = {
+    name?: string | null;
+    email?: string | null;
+    birthdate?: string | null;
+    postcode?: string | null;
+    city?: string | null;
+};
