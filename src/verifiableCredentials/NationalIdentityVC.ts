@@ -17,10 +17,13 @@ export type NationalIdentityVC = {
     type: ["VerifiableCredential", "NationalIdentityVC"];
 
     credentialSubject: {
+        // Set by BankID
         nationalIdentityNumber?: string;
+
+        // Set by Veramo
         id?: string;
     };
-    // Signature
+    // Set by Veramo
     issuer?: {
         id: string;
     };

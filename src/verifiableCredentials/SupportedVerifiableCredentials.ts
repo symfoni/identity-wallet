@@ -1,4 +1,6 @@
+import { CapTableClaimToken } from "./../types/capTableTypes";
 import { AccessVC } from "./AccessVC";
+import { CapTableClaimTokenVC } from "./CapTableClaimTokenVC";
 import { CapTablePrivateTokenTransferVC } from "./CapTablePrivateTokenTransferVC";
 import { CapTableVC } from "./CapTableVC";
 import { NationalIdentityVC } from "./NationalIdentityVC";
@@ -14,5 +16,6 @@ export type SupportedVerifiableCredential =
     | TermsOfUseForvaltVC
     | TermsOfUseSymfoniVC
     | CapTablePrivateTokenTransferVC
+    | CapTableClaimTokenVC
     | CapTableVC
     | AccessVC;

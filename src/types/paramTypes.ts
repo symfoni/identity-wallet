@@ -1,3 +1,4 @@
+import { CapTableClaimTokenVC } from "./../verifiableCredentials/CapTableClaimTokenVC";
 import { CapTablePrivateTokenTransferVC } from "../verifiableCredentials/CapTablePrivateTokenTransferVC";
 import { CapTableVC } from "../verifiableCredentials/CapTableVC";
 import { NationalIdentityVC } from "../verifiableCredentials/NationalIdentityVC";
@@ -45,6 +46,14 @@ export type CreateCapTableVPParams = {
     verifier: string;
     capTable: CapTable;
     capTableVC?: CapTableVC;
+    nationalIdentityVC?: NationalIdentityVC;
+    termsOfUseSymfoniVC?: TermsOfUseSymfoniVC;
+    termsOfUseForvaltVC?: TermsOfUseForvaltVC;
+};
+
+export type CapTableClaimTokenParams = {
+    verifier: string;
+    claimTokens: string[] | string;
     nationalIdentityVC?: NationalIdentityVC;
     termsOfUseSymfoniVC?: TermsOfUseSymfoniVC;
     termsOfUseForvaltVC?: TermsOfUseForvaltVC;

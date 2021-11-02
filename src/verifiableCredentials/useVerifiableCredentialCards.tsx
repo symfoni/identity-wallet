@@ -1,32 +1,33 @@
 // React
+import { JsonRpcResult } from "@json-rpc-tools/types";
+import { decodeJWT } from "did-jwt";
 import React, { useMemo } from "react";
 import { Text } from "react-native";
-import { decodeJWT } from "did-jwt";
-
-// Local
-import { NationalIdentityVC } from "./NationalIdentityVC";
-import { NationalIdentityVCCard } from "./NationalIdentityVCCard";
-import { TermsOfUseVC } from "./TermsOfUseVC";
-import { SupportedVerifiableCredential } from "./SupportedVerifiableCredentials";
-import { TermsOfUseVCCard } from "./TermsOfUseVCCard";
-import { useNavigationWithResult } from "../hooks/useNavigationWithResult";
-import { makeBankIDScreenRequest } from "../types/ScreenRequest";
-import { BankIDResult } from "../types/resultTypes";
+import { useSymfoniContext } from "../context";
+import { useDeviceAuthentication } from "../hooks/useDeviceAuthentication";
 import {
     NAVIGATOR_ROOT,
     SCREEN_BANKID,
     SCREEN_VERIFIABLE_PRESENTATION,
 } from "../hooks/useLocalNavigation";
+import { useNavigationWithResult } from "../hooks/useNavigationWithResult";
 import { BankidJWTPayload } from "../types/bankid.types";
-import { useSymfoniContext } from "../context";
-import { JsonRpcResult } from "@json-rpc-tools/types";
-import { useDeviceAuthentication } from "../hooks/useDeviceAuthentication";
-import { CapTableVCCard } from "./CapTableVCCard";
+import { BankIDResult } from "../types/resultTypes";
+import { makeBankIDScreenRequest } from "../types/ScreenRequest";
+import { AccessVC } from "./AccessVC";
+import { AccessVCCard } from "./AccessVCCard";
+import { CapTableClaimTokenVC } from "./CapTableClaimTokenVC";
+import { CapTableClaimTokenVCCard } from "./CapTableClaimTokenVCCard";
+import { CapTablePrivateTokenTransferVC } from "./CapTablePrivateTokenTransferVC";
 import { CapTablePrivateTokenTransferVCCard } from "./CapTablePrivateTokenTransferVCCard";
 import { CapTableVC } from "./CapTableVC";
-import { CapTablePrivateTokenTransferVC } from "./CapTablePrivateTokenTransferVC";
-import { AccessVCCard } from "./AccessVCCard";
-import { AccessVC } from "./AccessVC";
+import { CapTableVCCard } from "./CapTableVCCard";
+// Local
+import { NationalIdentityVC } from "./NationalIdentityVC";
+import { NationalIdentityVCCard } from "./NationalIdentityVCCard";
+import { SupportedVerifiableCredential } from "./SupportedVerifiableCredentials";
+import { TermsOfUseVC } from "./TermsOfUseVC";
+import { TermsOfUseVCCard } from "./TermsOfUseVCCard";
 
 // Hook
 export function useVerifiableCredentialCards(
@@ -171,6 +172,22 @@ export function useVerifiableCredentialCards(
                                                         key={key}
                                                         vc={
                                                             vc as CapTablePrivateTokenTransferVC
+                                                        }
+                                                        onPressSign={(_vc) =>
+                                                            onPressSignCard(
+                                                                _vc,
+                                                                expiresIn24Hours()
+                                                            )
+                                                        }
+                                                    />
+                                                );
+                                            }
+                                            case "CapTableClaimTokenVC": {
+                                                return (
+                                                    <CapTableClaimTokenVCCard
+                                                        key={key}
+                                                        vc={
+                                                            vc as CapTableClaimTokenVC
                                                         }
                                                         onPressSign={(_vc) =>
                                                             onPressSignCard(
