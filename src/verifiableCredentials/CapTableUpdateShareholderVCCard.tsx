@@ -4,6 +4,7 @@ import styled from "styled-components/native";
 // Local
 import { SignButton } from "./components/SignButton";
 import { CapTableUpdateShareholderVC } from "./CapTableUpdateShareholderVC";
+import { View } from "react-native";
 
 export function CapTableUpdateShareholderVCCard({
     vc,
@@ -20,12 +21,12 @@ export function CapTableUpdateShareholderVCCard({
             <VCPropLabel>Bekreft endringer for bruker</VCPropLabel>
             <VCPropText>{vc.credentialSubject?.shareholderId}</VCPropText>
             {Object.entries(vc.credentialSubject.shareholderData).map(
-                ([key, value]) => {
+                ([key, value], index) => {
                     return (
-                        <>
+                        <View key={index}>
                             <VCPropLabel>{key}</VCPropLabel>
                             <VCPropText>{value}</VCPropText>
-                        </>
+                        </View>
                     );
                 }
             )}
