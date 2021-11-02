@@ -8,10 +8,7 @@ export function makeCapTableClaimTokenVC(
         ],
         type: ["VerifiableCredential", "CapTableClaimTokenVC"],
         credentialSubject: {
-            claimTokens:
-                typeof claimTokens === "string"
-                    ? claimTokens
-                    : [...claimTokens],
+            claimTokens: [...claimTokens],
         },
     };
 }
@@ -23,8 +20,10 @@ export type CapTableClaimTokenVC = {
     ];
     type: ["VerifiableCredential", "CapTableClaimTokenVC"];
     credentialSubject: {
-        claimTokens: string[] | string;
-        // Signature
+        claimTokens: string[];
+
+        // The rest is set by Veramo when signing the VC
+        id?: string;
     };
     // Signature
     issuer?: {

@@ -18,7 +18,7 @@ export function CapTableClaimTokenVCCard({
         <VCCard>
             <VCPropLabel>Gjør krav på</VCPropLabel>
             <VCPropText>
-                //TODO Hvordan vise disse addressene
+                {/*TODO Hvordan vise disse addressene*/}
                 {vc.credentialSubject?.claimTokens} aksjer
             </VCPropText>
             <SignButton

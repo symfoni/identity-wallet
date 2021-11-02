@@ -287,16 +287,6 @@ function useEffectCapTableClaimUnclaimed(
 
             const params = request.params[0] as CapTableClaimTokenParams
 
-            const termsOfUseForvaltVC =
-                ((await findVCByType(
-                    makeTermsOfUseForvaltVC().type
-                )) as TermsOfUseForvaltVC) ?? makeTermsOfUseForvaltVC();
-
-            const termsOfUseSymfoniVC =
-                ((await findVCByType(
-                    makeTermsOfUseSymfoniVC().type
-                )) as TermsOfUseSymfoniVC) ?? makeTermsOfUseSymfoniVC();
-
             const nationalIdentityVC =
                 ((await findVCByType(
                     makeNationalIdentityVC().type
@@ -317,8 +307,6 @@ function useEffectCapTableClaimUnclaimed(
                         makeCapTableClaimTokenVC(
                             params.claimTokens
                         ),
-                        termsOfUseForvaltVC,
-                        termsOfUseSymfoniVC,
                         nationalIdentityVC,
                     ],
                 },

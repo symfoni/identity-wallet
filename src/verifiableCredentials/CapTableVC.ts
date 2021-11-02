@@ -21,10 +21,11 @@ export type CapTableVC = {
     type: ["VerifiableCredential", "CapTableVC"];
     credentialSubject: {
         capTable: CapTable;
-        // Signature
+
+        // Set by Veramo
         id?: string;
     };
-    // Signature
+    // Set by Veramo
     issuer?: {
         id: string;
     };

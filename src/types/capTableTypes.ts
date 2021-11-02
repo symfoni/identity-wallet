@@ -1,6 +1,5 @@
 import { CapTablePrivateTokenTransferVP } from "./../verifiablePresentations/CapTablePrivateTokenTransferVP";
 import { CreateCapTableVP } from "../verifiablePresentations/CreateCapTableVP";
-import { CapTableClaimTokenVP } from "../verifiablePresentations/CapTableClaimTokenVP";
 
 export type CapTablePrivateTokenTransferResult = {
     capTablePrivateTokenTransferVP: CapTablePrivateTokenTransferVP;
@@ -10,17 +9,9 @@ export type CreateCapTableVPResult = {
     createCapTableVP: CreateCapTableVP;
 };
 
-export type CapTableClaimTokenVPResult = {
-    capTableClaimTokenVP: CapTableClaimTokenVP;
-};
-
 export type CapTable = {
     organizationNumber: string;
     shareholders: UnknowERC1400TokenTransfer[];
-};
-
-export type CapTableClaimToken = {
-    claimTokens: string[] | string;
 };
 
 type UnknowERC1400TokenTransfer =
