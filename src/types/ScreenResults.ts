@@ -38,8 +38,8 @@ export type ScreenResult<Result> = {
     fromScreen: never;
     fromNavigator: never;
     request: never;
-    error: never;
     result: JsonRpcResult<Result>;
+    error: never;
 };
 
 export type ScreenError = {
