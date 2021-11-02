@@ -82,6 +82,7 @@ export const Home = (props: {
     useEffectAccessVP(props.route.params?.result);
     useEffectCreateCapTableVP(props.route.params?.result);
     useEffectCapTablePrivateTokenTransferVP(props.route.params?.result);
+    useEffectCapTableClaimUnclaimed(props.route.params?.result);
     useEffectUpdateShareholderVP(props.route.params?.result);
 
     return (
@@ -288,7 +289,7 @@ function useEffectCapTableClaimUnclaimed(
                 request,
             });
 
-            const params = request.params[0] as CapTableClaimTokenParams
+            const params = request.params[0] as CapTableClaimTokenParams;
 
             const nationalIdentityVC =
                 ((await findVCByType(
@@ -307,9 +308,7 @@ function useEffectCapTableClaimUnclaimed(
                         reason: "Gjør krav på aksjer",
                     },
                     verifiableCredentials: [
-                        makeCapTableClaimTokenVC(
-                            params.claimTokens
-                        ),
+                        makeCapTableClaimTokenVC(params.claimTokens),
                         nationalIdentityVC,
                     ],
                 },
@@ -333,6 +332,7 @@ function useEffectCapTableClaimUnclaimed(
             });
         }
     }, [client]);
+}
 
 /**
  * useEffectAccessVP()
