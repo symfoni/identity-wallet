@@ -16,6 +16,34 @@ export function CapTableUpdateShareholderVCCard({
     const signed = !!vc.proof;
     const [loading, setLoading] = useState(false);
 
+    const getValueString = (value: string | undefined | null) => {
+        switch (value) {
+            case undefined:
+                return "INGEN ENDRING";
+            case null:
+                return "SLETT";
+            default:
+                return value;
+        }
+    };
+
+    const getKeyString = (value: string) => {
+        switch (value) {
+            case "name":
+                return "Navn";
+            case "email":
+                return "Epost";
+            case "birthdate":
+                return "Født";
+            case "postcode":
+                return "Postkode";
+            case "city":
+                return "By";
+            default:
+                return value;
+        }
+    };
+
     return (
         <VCCard>
             <VCPropLabel>Bekreft endringer for bruker</VCPropLabel>
@@ -24,8 +52,8 @@ export function CapTableUpdateShareholderVCCard({
                 ([key, value], index) => {
                     return (
                         <View key={index}>
-                            <VCPropLabel>{key}</VCPropLabel>
-                            <VCPropText>{value}</VCPropText>
+                            <VCPropLabel>{getKeyString(key)}</VCPropLabel>
+                            <VCPropText>{getValueString(value)}</VCPropText>
                         </View>
                     );
                 }
