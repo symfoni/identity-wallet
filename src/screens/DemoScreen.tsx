@@ -258,7 +258,7 @@ export function DemoScreen(props: {
                 onPress={async () => {
                     const request = makeBankIDScreenRequest(
                         SCREEN_DEMO,
-                        NAVIGATOR_ROOT,
+                        undefined,
                         "Demo_bankIDRequest",
                         {}
                     );
