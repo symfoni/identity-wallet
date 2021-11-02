@@ -1,5 +1,5 @@
 // React
-import { JsonRpcResponse, JsonRpcResult } from "@json-rpc-tools/types";
+import { JsonRpcResult } from "@json-rpc-tools/types";
 import { decodeJWT } from "did-jwt";
 import React, { useMemo } from "react";
 import { Text } from "react-native";
