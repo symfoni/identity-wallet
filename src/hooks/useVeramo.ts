@@ -21,7 +21,7 @@ import {
 import { normalizePresentation } from "did-jwt-vc";
 import { ethers } from "ethers";
 import { useEffect, useState } from "react";
-import { agent as _agent, deleteVeramoData } from "./../utils/VeramoUtils";
+import { agent as _agent, deleteVeramoData } from "../utils/VeramoUtils";
 import { SupportedVerifiableCredential } from "../verifiableCredentials/SupportedVerifiableCredentials";
 
 export type Agent = TAgent<

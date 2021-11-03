@@ -33,8 +33,8 @@ import {
 } from "./constants/default";
 import { JwtPayload } from "./types/JwtPayload";
 import { VerifyOptions } from "./types/VerifyOptions";
-import { useVeramo } from "./utils/useVeramo";
-import { useWalletconnect } from "./utils/useWalletconnect";
+import { useVeramo } from "./hooks/useVeramo";
+import { useWalletconnect } from "./hooks/useWalletconnect";
 import { SupportedVerifiableCredential } from "./verifiableCredentials/SupportedVerifiableCredentials";
 
 export type Agent = TAgent<
