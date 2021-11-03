@@ -71,18 +71,17 @@ export const Home = (props: {
     // Sessions
     useEffect(() => {
         setSessions(client?.session.values ?? []);
-        client?.on(CLIENT_EVENTS.pairing.created, () => {
+        const updateSessions = () => {
             setSessions(client?.session.values ?? []);
-        });
-        client?.on(CLIENT_EVENTS.pairing.deleted, () => {
-            setSessions(client?.session.values ?? []);
-        });
-        client?.on(CLIENT_EVENTS.session.created, () => {
-            setSessions(client?.session.values ?? []);
-        });
-        client?.on(CLIENT_EVENTS.session.deleted, () => {
-            setSessions(client?.session.values ?? []);
-        });
+        };
+        client?.on(CLIENT_EVENTS.beat, updateSessions);
+        client?.on(CLIENT_EVENTS.session.created, updateSessions);
+        client?.on(CLIENT_EVENTS.session.deleted, updateSessions);
+        return () => {
+            client?.off(CLIENT_EVENTS.beat, updateSessions);
+            client?.off(CLIENT_EVENTS.session.created, updateSessions);
+            client?.off(CLIENT_EVENTS.session.deleted, updateSessions);
+        };
     }, [client]);
 
     // Sessions
