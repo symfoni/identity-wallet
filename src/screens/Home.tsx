@@ -1,8 +1,9 @@
 // Third party
 import { JsonRpcResult } from "@json-rpc-tools/types";
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import {
     ActivityIndicator,
+    Button,
     SafeAreaView,
     StatusBar,
     StyleSheet,
@@ -40,9 +41,7 @@ import {
 } from "../verifiableCredentials/NationalIdentityVC";
 import {
     makeTermsOfUseForvaltVC,
-    makeTermsOfUseSymfoniVC,
     TermsOfUseForvaltVC,
-    TermsOfUseSymfoniVC,
 } from "../verifiableCredentials/TermsOfUseVC";
 import { makeCapTableUpdateShareholderVC } from "../verifiableCredentials/CapTableUpdateShareholderVC";
 
@@ -54,6 +53,9 @@ export const Home = (props: {
     const { pair, loading } = useSymfoniContext();
     const { colors } = useContext(ColorContext);
     const styles = makeStyles(colors);
+    const [scannerVisible, setScannerVisible] = useState(
+        __DEV__ ? false : true
+    );
 
     async function onScanQR(maybeURI: any) {
         console.log("onRead", maybeURI);
@@ -89,13 +91,19 @@ export const Home = (props: {
         <>
             <StatusBar />
             <SafeAreaView style={styles.container}>
+                {__DEV__ ? (
+                    <Button
+                        title="Toggle QR Scanner"
+                        onPress={() => setScannerVisible(!scannerVisible)}
+                    />
+                ) : null}
                 {loading ? (
                     <ActivityIndicator size="large" />
-                ) : (
+                ) : scannerVisible ? (
                     <View style={styles.actionContainer}>
                         <Scanner onInput={onScanQR} />
                     </View>
-                )}
+                ) : null}
             </SafeAreaView>
         </>
     );

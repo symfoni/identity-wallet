@@ -20,7 +20,6 @@ import {
     ScreenError,
     ScreenResult,
 } from "../types/ScreenResults";
-import { APP_ENV } from "@env";
 import { useNavigateBack } from "../hooks/useNavigationWithResult";
 
 // Screen
@@ -101,8 +100,8 @@ export function VerifiablePresentationScreen(props: {
         );
 
         const result = makeVerifiablePresentationScreenResult(request, {
-            // Only provide vp for debugging - not in production, because the jwt contains the same imformation, just in encoded form.
-            vp: APP_ENV === "production" ? undefined : vp,
+            // Only provide a plaintext vp for debugging - not in realease - because vp is redundant, since jwt contains the exact same information.
+            vp: __DEV__ ? vp : undefined,
             jwt: vp.proof.jwt,
         });
 
