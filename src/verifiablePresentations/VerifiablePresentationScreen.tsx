@@ -15,7 +15,7 @@ import { BankIDResult } from "../types/resultTypes";
 import { ScreenRequest } from "../types/ScreenRequest";
 import { VerifiablePresentationParams } from "../types/paramTypes";
 import {
-    makeVerifiablePresentationScreenError,
+    makeScreenError,
     makeVerifiablePresentationScreenResult,
     ScreenError,
     ScreenResult,
@@ -116,7 +116,7 @@ export function VerifiablePresentationScreen(props: {
             console.warn("onReject(): ERROR !request");
             return;
         }
-        const error = makeVerifiablePresentationScreenError(request, {
+        const error = makeScreenError(request, {
             code: 1,
             message: "The user rejected the vp-request.",
         });

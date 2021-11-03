@@ -25,8 +25,8 @@ export function makeVerifiablePresentationScreenResult(
     } as ScreenResult<VerifiablePresentationResult>;
 }
 
-export function makeVerifiablePresentationScreenError(
-    request: JsonRpcRequest<VerifiablePresentationParams>,
+export function makeScreenError(
+    request: JsonRpcRequest<any>,
     error: { code: number; message: string }
 ) {
     return {
