@@ -65,12 +65,15 @@ export const useWalletconnect = (
         };
     }, []);
 
-    const pair = async (uri: string) => {
-        console.log(`pair(): Uri: ${uri}`);
-        const pairResult = await client?.pair({ uri: uri });
-        console.log("pari", pairResult);
-        console.log("PairResult", pairResult);
-    };
+    const pair = useCallback(
+        async (uri: string) => {
+            console.log(`pair(): Uri: ${uri}`);
+            const pairResult = await client?.pair({ uri: uri });
+            console.log("pari", pairResult);
+            console.log("PairResult", pairResult);
+        },
+        [client]
+    );
 
     const sendResponse = (topic: string, response: JsonRpcResponse<any>) => {
         if (!client) {
@@ -139,18 +142,21 @@ export const useWalletconnect = (
         [supportedChains, client, veramo.accounts]
     );
 
-    const closeSession = async (topic: string) => {
-        if (!client) {
-            throw new Error("Client is not initialized");
-        }
-        client.disconnect({
-            topic: topic,
-            reason: {
-                message: "User closed session from app.",
-                code: 123,
-            },
-        });
-    };
+    const closeSession = useCallback(
+        () => async (topic: string) => {
+            if (!client) {
+                throw new Error("Client is not initialized");
+            }
+            client.disconnect({
+                topic: topic,
+                reason: {
+                    message: "User closed session from app.",
+                    code: 123,
+                },
+            });
+        },
+        [client]
+    );
 
     // Subscribe / Unsubscribe Walletconnect
     useEffect(() => {
