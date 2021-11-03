@@ -1,6 +1,11 @@
 // Third party
-import { JsonRpcResult } from "@json-rpc-tools/types";
-import React, { useContext, useState } from "react";
+import React, {
+    useCallback,
+    useContext,
+    useEffect,
+    useMemo,
+    useState,
+} from "react";
 import {
     ActivityIndicator,
     Button,
@@ -10,6 +15,7 @@ import {
     View,
 } from "react-native";
 import { useAsyncEffect } from "use-async-effect";
+import { SessionTypes } from "@walletconnect/types";
 
 // Local
 import { ColorContext, ColorSystem } from "../colorContext";
@@ -44,42 +50,72 @@ import {
     TermsOfUseForvaltVC,
 } from "../verifiableCredentials/TermsOfUseVC";
 import { makeCapTableUpdateShareholderVC } from "../verifiableCredentials/CapTableUpdateShareholderVC";
+import { CLIENT_EVENTS } from "@walletconnect/client";
 
 export const Home = (props: {
     route: {
         params?: ScreenResult<VerifiablePresentationResult> | ScreenError;
     };
 }) => {
-    const { pair, loading } = useSymfoniContext();
+    const { pair, loading, client, closeSession } = useSymfoniContext();
     const { colors } = useContext(ColorContext);
     const styles = makeStyles(colors);
     const [scannerVisible, setScannerVisible] = useState(
         __DEV__ ? false : true
     );
 
-    async function onScanQR(maybeURI: any) {
-        console.log("onRead", maybeURI);
+    // Sessions
+    const [sessions, setSessions] = useState<SessionTypes.Settled[]>([]);
 
-        // 1. Validate URI
-        if (typeof maybeURI !== "string") {
-            console.info("typeof maybeURI !== 'string': ", maybeURI);
-            return;
-        }
-        if (!maybeURI.startsWith("wc:")) {
-            console.info("!maybeURI.startsWith('wc:'): ", maybeURI);
-            return;
-        }
+    // Sessions
+    useEffect(() => {
+        setSessions(client?.session.values ?? []);
+        client?.on(CLIENT_EVENTS.pairing.created, () => {
+            setSessions(client?.session.values ?? []);
+        });
+        client?.on(CLIENT_EVENTS.pairing.deleted, () => {
+            setSessions(client?.session.values ?? []);
+        });
+        client?.on(CLIENT_EVENTS.session.created, () => {
+            setSessions(client?.session.values ?? []);
+        });
+        client?.on(CLIENT_EVENTS.session.deleted, () => {
+            setSessions(client?.session.values ?? []);
+        });
+    }, [client]);
 
-        const URI = maybeURI;
+    // Sessions
+    const onCloseSessions = useCallback(() => {
+        sessions.forEach((session) => closeSession(session.topic));
+    }, [closeSession, sessions]);
 
-        // 2. Pair
-        try {
-            await pair(URI);
-        } catch (err) {
-            console.warn("ERROR: await pair(URI): ", err);
-            return;
-        }
-    }
+    // QR
+    const onScanQR = useCallback(
+        async (maybeURI: any) => {
+            console.log("onRead", maybeURI);
+
+            // 1. Validate URI
+            if (typeof maybeURI !== "string") {
+                console.info("typeof maybeURI !== 'string': ", maybeURI);
+                return;
+            }
+            if (!maybeURI.startsWith("wc:")) {
+                console.info("!maybeURI.startsWith('wc:'): ", maybeURI);
+                return;
+            }
+
+            const URI = maybeURI;
+
+            // 2. Pair
+            try {
+                await pair(URI);
+            } catch (err) {
+                console.warn("ERROR: await pair(URI): ", err);
+                return;
+            }
+        },
+        [pair]
+    );
 
     useEffectAccessVP(props.route.params);
     useEffectCreateCapTableVP(props.route.params);
@@ -99,6 +135,11 @@ export const Home = (props: {
                 ) : null}
                 {loading ? (
                     <ActivityIndicator size="large" />
+                ) : sessions.length > 0 ? (
+                    <Button
+                        title={`Koble fra ${sessions.length}`}
+                        onPress={onCloseSessions}
+                    />
                 ) : scannerVisible ? (
                     <View style={styles.actionContainer}>
                         <Scanner onInput={onScanQR} />
