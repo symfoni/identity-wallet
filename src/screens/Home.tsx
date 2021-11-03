@@ -142,11 +142,6 @@ function useEffectCreateCapTableVP(
                     makeTermsOfUseForvaltVC().type
                 )) as TermsOfUseForvaltVC) ?? makeTermsOfUseForvaltVC();
 
-            const termsOfUseSymfoniVC =
-                ((await findVCByType(
-                    makeTermsOfUseSymfoniVC().type
-                )) as TermsOfUseSymfoniVC) ?? makeTermsOfUseSymfoniVC();
-
             const nationalIdentityVC =
                 ((await findVCByType(
                     makeNationalIdentityVC().type
@@ -165,7 +160,6 @@ function useEffectCreateCapTableVP(
                     verifiableCredentials: [
                         makeCapTableVC(params.capTable),
                         termsOfUseForvaltVC,
-                        termsOfUseSymfoniVC,
                         nationalIdentityVC,
                     ],
                 },
@@ -215,11 +209,6 @@ function useEffectCapTablePrivateTokenTransferVP(
                     makeTermsOfUseForvaltVC().type
                 )) as TermsOfUseForvaltVC) ?? makeTermsOfUseForvaltVC();
 
-            const termsOfUseSymfoniVC =
-                ((await findVCByType(
-                    makeTermsOfUseSymfoniVC().type
-                )) as TermsOfUseSymfoniVC) ?? makeTermsOfUseSymfoniVC();
-
             const nationalIdentityVC =
                 ((await findVCByType(
                     makeNationalIdentityVC().type
@@ -241,7 +230,6 @@ function useEffectCapTablePrivateTokenTransferVP(
                             params.toShareholder
                         ),
                         termsOfUseForvaltVC,
-                        termsOfUseSymfoniVC,
                         nationalIdentityVC,
                     ],
                 },
