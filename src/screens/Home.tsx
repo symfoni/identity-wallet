@@ -12,6 +12,7 @@ import {
     SafeAreaView,
     StatusBar,
     StyleSheet,
+    Text,
     View,
 } from "react-native";
 import { useAsyncEffect } from "use-async-effect";
@@ -136,10 +137,10 @@ export const Home = (props: {
                 {loading ? (
                     <ActivityIndicator size="large" />
                 ) : sessions.length > 0 ? (
-                    <Button
-                        title={`Koble fra ${sessions.length}`}
-                        onPress={onCloseSessions}
-                    />
+                    <View style={styles.actionContainer}>
+                        <Text>Du har {sessions.length} aktiv tilkobling</Text>
+                        <Button title={`Koble fra`} onPress={onCloseSessions} />
+                    </View>
                 ) : scannerVisible ? (
                     <View style={styles.actionContainer}>
                         <Scanner onInput={onScanQR} />
