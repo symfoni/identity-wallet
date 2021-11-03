@@ -1,13 +1,12 @@
 import React from "react";
 import { Button } from "react-native";
-
 // Local
 import { useSymfoniContext } from "../context";
 import {
-    SCREEN_DEMO,
-    SCREEN_BANKID,
-    SCREEN_VERIFIABLE_PRESENTATION,
     NAVIGATOR_ROOT,
+    SCREEN_BANKID,
+    SCREEN_DEMO,
+    SCREEN_VERIFIABLE_PRESENTATION,
 } from "../hooks/useLocalNavigation";
 import { useNavigationWithResult } from "../hooks/useNavigationWithResult";
 import {
@@ -18,9 +17,11 @@ import {
     makeBankIDScreenRequest,
     makeVerifiablePresentationScreenRequest,
 } from "../types/ScreenRequest";
-import { ScreenResult } from "../types/ScreenResults";
+import { ScreenError, ScreenResult } from "../types/ScreenResults";
 import { makeAccessVC } from "../verifiableCredentials/AccessVC";
+import { makeCapTableClaimTokenVC } from "../verifiableCredentials/CapTableClaimTokenVC";
 import { makeCapTablePrivateTokenTransferVC } from "../verifiableCredentials/CapTablePrivateTokenTransferVC";
+import { makeCapTableUpdateShareholderVC } from "../verifiableCredentials/CapTableUpdateShareholderVC";
 import { makeCapTableVC } from "../verifiableCredentials/CapTableVC";
 import {
     makeNationalIdentityVC,
@@ -37,13 +38,12 @@ export function DemoScreen(props: {
     route: {
         params?:
             | ScreenResult<BankIDResult>
-            | ScreenResult<VerifiablePresentationResult>;
+            | ScreenResult<VerifiablePresentationResult>
+            | ScreenError;
     };
 }) {
     const { findVCByType } = useSymfoniContext();
-    const { navigateWithResult } = useNavigationWithResult(
-        props.route.params?.result
-    );
+    const { navigateWithResult } = useNavigationWithResult(props.route.params);
 
     return (
         <>
@@ -64,12 +64,12 @@ export function DemoScreen(props: {
                         }
                     );
 
-                    const result = await navigateWithResult(
+                    const { result, error } = await navigateWithResult(
                         SCREEN_VERIFIABLE_PRESENTATION,
                         request
                     );
 
-                    console.info({ result });
+                    console.info({ result, error });
                 }}
             />
             <Button
@@ -93,11 +93,12 @@ export function DemoScreen(props: {
 
                     console.info({ request });
 
-                    const result = await navigateWithResult(
+                    const screenResult = await navigateWithResult(
                         SCREEN_VERIFIABLE_PRESENTATION,
                         request
                     );
-                    console.info({ result });
+
+                    console.info({ screenResult });
                 }}
             />
             <Button
@@ -136,11 +137,11 @@ export function DemoScreen(props: {
 
                     console.info({ request });
 
-                    const result = await navigateWithResult(
+                    const { result, error } = await navigateWithResult(
                         SCREEN_VERIFIABLE_PRESENTATION,
                         request
                     );
-                    console.info({ result });
+                    console.info({ result, error });
                 }}
             />
             <Button
@@ -162,11 +163,11 @@ export function DemoScreen(props: {
                         }
                     );
 
-                    const result = await navigateWithResult(
+                    const { result, error } = await navigateWithResult(
                         SCREEN_VERIFIABLE_PRESENTATION,
                         request
                     );
-                    console.info({ result });
+                    console.info({ result, error });
                 }}
             />
             <Button
@@ -198,6 +199,62 @@ export function DemoScreen(props: {
                                 nationalIdentityVC,
                                 termsOfUseForvaltVC,
                                 termsOfUseSymfoniVC,
+                            ],
+                        }
+                    );
+
+                    const { result, error } = await navigateWithResult(
+                        SCREEN_VERIFIABLE_PRESENTATION,
+                        request
+                    );
+                    console.info({ result, error });
+                }}
+            />
+            <Button
+                title="Demo: Gjør krav på aksjer"
+                onPress={async () => {
+                    const nationalIdentityVC =
+                        ((await findVCByType(
+                            demoNationalIdentityVC.type
+                        )) as NationalIdentityVC) ?? demoNationalIdentityVC;
+
+                    const request = makeVerifiablePresentationScreenRequest(
+                        SCREEN_DEMO,
+                        undefined,
+                        "demo_capTableClaimToken",
+                        {
+                            verifier: demoVerifier,
+                            verifiableCredentials: [
+                                demoCapTableClaimTokenVC,
+                                nationalIdentityVC,
+                            ],
+                        }
+                    );
+
+                    const result = await navigateWithResult(
+                        SCREEN_VERIFIABLE_PRESENTATION,
+                        request
+                    );
+                    console.info({ result });
+                }}
+            />
+            <Button
+                title="Demo: Endre shareholder brukerdata"
+                onPress={async () => {
+                    const nationalIdentityVC =
+                        ((await findVCByType(
+                            demoNationalIdentityVC.type
+                        )) as NationalIdentityVC) ?? demoNationalIdentityVC;
+
+                    const request = makeVerifiablePresentationScreenRequest(
+                        SCREEN_DEMO,
+                        undefined,
+                        "demo_capTableUpdateShareholder",
+                        {
+                            verifier: demoVerifier,
+                            verifiableCredentials: [
+                                demoCapTableUpdateShareholderVC,
+                                nationalIdentityVC,
                             ],
                         }
                     );
@@ -246,11 +303,11 @@ export function DemoScreen(props: {
                         }
                     );
 
-                    const result = await navigateWithResult(
+                    const { result, error } = await navigateWithResult(
                         SCREEN_VERIFIABLE_PRESENTATION,
                         request
                     );
-                    console.info({ result });
+                    console.info({ result, error });
                 }}
             />
             <Button
@@ -258,7 +315,7 @@ export function DemoScreen(props: {
                 onPress={async () => {
                     const request = makeBankIDScreenRequest(
                         SCREEN_DEMO,
-                        NAVIGATOR_ROOT,
+                        undefined,
                         "Demo_bankIDRequest",
                         {}
                     );
@@ -296,3 +353,17 @@ const demoCapTablePrivateTransferTokenVC = makeCapTablePrivateTokenTransferVC({
     name: "demo",
     amount: "1337",
 });
+
+const demoCapTableClaimTokenVC = makeCapTableClaimTokenVC(["0x1234556"]);
+
+const demoCapTableUpdateShareholderVC = makeCapTableUpdateShareholderVC(
+    "0x1234",
+    "0x565654Adddress",
+    {
+        name: "Fredrik Olsberg",
+        email: undefined,
+        birthdate: "1980-02-08 09Z 09:30",
+        postcode: "2609",
+        city: "Lillehammer",
+    }
+);

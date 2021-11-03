@@ -1,14 +1,22 @@
 // Third party
-import { JsonRpcResult } from "@json-rpc-tools/types";
-import React, { useContext } from "react";
+import React, {
+    useCallback,
+    useContext,
+    useEffect,
+    useMemo,
+    useState,
+} from "react";
 import {
     ActivityIndicator,
+    Button,
     SafeAreaView,
     StatusBar,
     StyleSheet,
+    Text,
     View,
 } from "react-native";
 import { useAsyncEffect } from "use-async-effect";
+import { SessionTypes } from "@walletconnect/types";
 
 // Local
 import { ColorContext, ColorSystem } from "../colorContext";
@@ -22,13 +30,16 @@ import {
 import { useNavigationWithResult } from "../hooks/useNavigationWithResult";
 import {
     AccessVPParams,
+    CapTableClaimTokenParams,
     CapTablePrivateTokenTransferParams,
     CreateCapTableVPParams,
+    UpdateShareholderVPParams,
 } from "../types/paramTypes";
 import { VerifiablePresentationResult } from "../types/resultTypes";
 import { makeVerifiablePresentationScreenRequest } from "../types/ScreenRequest";
-import { ScreenResult } from "../types/ScreenResults";
+import { ScreenError, ScreenResult } from "../types/ScreenResults";
 import { makeAccessVC } from "../verifiableCredentials/AccessVC";
+import { makeCapTableClaimTokenVC } from "../verifiableCredentials/CapTableClaimTokenVC";
 import { makeCapTablePrivateTokenTransferVC } from "../verifiableCredentials/CapTablePrivateTokenTransferVC";
 import { makeCapTableVC } from "../verifiableCredentials/CapTableVC";
 import {
@@ -37,59 +48,103 @@ import {
 } from "../verifiableCredentials/NationalIdentityVC";
 import {
     makeTermsOfUseForvaltVC,
-    makeTermsOfUseSymfoniVC,
     TermsOfUseForvaltVC,
-    TermsOfUseSymfoniVC,
 } from "../verifiableCredentials/TermsOfUseVC";
+import { makeCapTableUpdateShareholderVC } from "../verifiableCredentials/CapTableUpdateShareholderVC";
+import { CLIENT_EVENTS } from "@walletconnect/client";
 
 export const Home = (props: {
     route: {
-        params?: ScreenResult<VerifiablePresentationResult>;
+        params?: ScreenResult<VerifiablePresentationResult> | ScreenError;
     };
 }) => {
-    const { pair, loading } = useSymfoniContext();
+    const { pair, loading, client, closeSession } = useSymfoniContext();
     const { colors } = useContext(ColorContext);
     const styles = makeStyles(colors);
+    const [scannerVisible, setScannerVisible] = useState(
+        __DEV__ ? false : true
+    );
 
-    async function onScanQR(maybeURI: any) {
-        console.log("onRead", maybeURI);
+    // Sessions
+    const [sessions, setSessions] = useState<SessionTypes.Settled[]>([]);
 
-        // 1. Validate URI
-        if (typeof maybeURI !== "string") {
-            console.warn("typeof maybeURI !== 'string': ", maybeURI);
-            return;
-        }
-        if (!maybeURI.startsWith("wc:")) {
-            console.warn("!maybeURI.startsWith('wc:'): ", maybeURI);
-            return;
-        }
+    // Sessions
+    useEffect(() => {
+        setSessions(client?.session.values ?? []);
+        const updateSessions = () => {
+            setSessions(client?.session.values ?? []);
+        };
+        client?.on(CLIENT_EVENTS.beat, updateSessions);
+        client?.on(CLIENT_EVENTS.session.created, updateSessions);
+        client?.on(CLIENT_EVENTS.session.deleted, updateSessions);
+        return () => {
+            client?.off(CLIENT_EVENTS.beat, updateSessions);
+            client?.off(CLIENT_EVENTS.session.created, updateSessions);
+            client?.off(CLIENT_EVENTS.session.deleted, updateSessions);
+        };
+    }, [client]);
 
-        const URI = maybeURI;
+    // Sessions
+    const onCloseSessions = useCallback(() => {
+        sessions.forEach((session) => closeSession(session.topic));
+    }, [closeSession, sessions]);
 
-        // 2. Pair
-        try {
-            await pair(URI);
-        } catch (err) {
-            console.warn("ERROR: await pair(URI): ", err);
-            return;
-        }
-    }
+    // QR
+    const onScanQR = useCallback(
+        async (maybeURI: any) => {
+            console.log("onRead", maybeURI);
 
-    useEffectAccessVP(props.route.params?.result);
-    useEffectCreateCapTableVP(props.route.params?.result);
-    useEffectCapTablePrivateTokenTransferVP(props.route.params?.result);
+            // 1. Validate URI
+            if (typeof maybeURI !== "string") {
+                console.info("typeof maybeURI !== 'string': ", maybeURI);
+                return;
+            }
+            if (!maybeURI.startsWith("wc:")) {
+                console.info("!maybeURI.startsWith('wc:'): ", maybeURI);
+                return;
+            }
+
+            const URI = maybeURI;
+
+            // 2. Pair
+            try {
+                await pair(URI);
+            } catch (err) {
+                console.warn("ERROR: await pair(URI): ", err);
+                return;
+            }
+        },
+        [pair]
+    );
+
+    useEffectAccessVP(props.route.params);
+    useEffectCreateCapTableVP(props.route.params);
+    useEffectCapTablePrivateTokenTransferVP(props.route.params);
+    useEffectCapTableClaimUnclaimed(props.route.params);
+    useEffectUpdateShareholderVP(props.route.params);
 
     return (
         <>
             <StatusBar />
             <SafeAreaView style={styles.container}>
+                {sessions.length === 0 && __DEV__ ? (
+                    <Button
+                        title="Toggle QR Scanner"
+                        onPress={() => setScannerVisible(!scannerVisible)}
+                    />
+                ) : null}
                 {loading ? (
                     <ActivityIndicator size="large" />
-                ) : (
+                ) : sessions.length > 0 ? (
+                    <View style={styles.actionContainer}>
+                        <Text>Du har {sessions.length} aktiv tilkobling</Text>
+                        <Button title={`Koble fra`} onPress={onCloseSessions} />
+                    </View>
+                ) : scannerVisible ? (
                     <View style={styles.actionContainer}>
                         <Scanner onInput={onScanQR} />
                     </View>
-                )}
+                ) : null}
             </SafeAreaView>
         </>
     );
@@ -113,12 +168,12 @@ const makeStyles = (colors: ColorSystem) => {
  * useEffectCreateCapTableVP()
  */
 function useEffectCreateCapTableVP(
-    result?: JsonRpcResult<VerifiablePresentationResult>
+    screenParams?: ScreenResult<VerifiablePresentationResult> | ScreenError
 ) {
     const { consumeEvent, findVCByType, sendResponse, client } =
         useSymfoniContext();
 
-    const { navigateWithResult } = useNavigationWithResult(result);
+    const { navigateWithResult } = useNavigationWithResult(screenParams);
 
     useAsyncEffect(async () => {
         while (client) {
@@ -135,11 +190,6 @@ function useEffectCreateCapTableVP(
                 ((await findVCByType(
                     makeTermsOfUseForvaltVC().type
                 )) as TermsOfUseForvaltVC) ?? makeTermsOfUseForvaltVC();
-
-            const termsOfUseSymfoniVC =
-                ((await findVCByType(
-                    makeTermsOfUseSymfoniVC().type
-                )) as TermsOfUseSymfoniVC) ?? makeTermsOfUseSymfoniVC();
 
             const nationalIdentityVC =
                 ((await findVCByType(
@@ -159,7 +209,6 @@ function useEffectCreateCapTableVP(
                     verifiableCredentials: [
                         makeCapTableVC(params.capTable),
                         termsOfUseForvaltVC,
-                        termsOfUseSymfoniVC,
                         nationalIdentityVC,
                     ],
                 },
@@ -171,14 +220,10 @@ function useEffectCreateCapTableVP(
                 screenRequest
             );
 
-            sendResponse(topic, {
-                ...navigationResult,
-                result: {
-                    ...navigationResult.result,
-                    createCapTableVP:
-                        navigationResult.result.verifiablePresenation.proof.jwt,
-                },
-            });
+            sendResponse(
+                topic,
+                navigationResult.result ?? navigationResult.error
+            );
         }
     }, [client]);
 }
@@ -187,12 +232,12 @@ function useEffectCreateCapTableVP(
  * useEffectCapTablePrivateTokenTransferVP()
  */
 function useEffectCapTablePrivateTokenTransferVP(
-    result?: JsonRpcResult<VerifiablePresentationResult>
+    screenParams?: ScreenResult<VerifiablePresentationResult> | ScreenError
 ) {
     const { consumeEvent, findVCByType, sendResponse, client } =
         useSymfoniContext();
 
-    const { navigateWithResult } = useNavigationWithResult(result);
+    const { navigateWithResult } = useNavigationWithResult(screenParams);
 
     useAsyncEffect(async () => {
         while (client) {
@@ -212,11 +257,6 @@ function useEffectCapTablePrivateTokenTransferVP(
                 ((await findVCByType(
                     makeTermsOfUseForvaltVC().type
                 )) as TermsOfUseForvaltVC) ?? makeTermsOfUseForvaltVC();
-
-            const termsOfUseSymfoniVC =
-                ((await findVCByType(
-                    makeTermsOfUseSymfoniVC().type
-                )) as TermsOfUseSymfoniVC) ?? makeTermsOfUseSymfoniVC();
 
             const nationalIdentityVC =
                 ((await findVCByType(
@@ -239,7 +279,6 @@ function useEffectCapTablePrivateTokenTransferVP(
                             params.toShareholder
                         ),
                         termsOfUseForvaltVC,
-                        termsOfUseSymfoniVC,
                         nationalIdentityVC,
                     ],
                 },
@@ -247,20 +286,69 @@ function useEffectCapTablePrivateTokenTransferVP(
             );
 
             // 4. Navigate and wait for result
-            const navigationResult = await navigateWithResult(
+            const screenResult = await navigateWithResult(
                 SCREEN_VERIFIABLE_PRESENTATION,
                 screenRequest
             );
 
-            console.log({ navigationResult });
             // 5. Send response
-            sendResponse(topic, {
-                ...navigationResult,
-                result: {
-                    capTablePrivateTransferTokenVP:
-                        navigationResult.result.verifiablePresenation.proof.jwt,
-                },
+            sendResponse(topic, screenResult.result ?? screenResult.error);
+        }
+    }, [client]);
+}
+
+function useEffectCapTableClaimUnclaimed(
+    screenParams?: ScreenResult<VerifiablePresentationResult> | ScreenError
+) {
+    const { consumeEvent, findVCByType, sendResponse, client } =
+        useSymfoniContext();
+
+    const { navigateWithResult } = useNavigationWithResult(screenParams);
+
+    useAsyncEffect(async () => {
+        while (client) {
+            // 1. Listen for event
+            const { topic, request } = await consumeEvent(
+                "symfoniID_capTableClaimToken"
+            );
+            console.info("consumed symfoniID_capTableClaimToken", {
+                request,
             });
+
+            const params = request.params[0] as CapTableClaimTokenParams;
+
+            const nationalIdentityVC =
+                ((await findVCByType(
+                    makeNationalIdentityVC().type
+                )) as NationalIdentityVC) ?? makeNationalIdentityVC();
+
+            // 3. Make screen request
+            const screenRequest = makeVerifiablePresentationScreenRequest(
+                SCREEN_HOME,
+                NAVIGATOR_TABS,
+                request.method,
+                {
+                    verifier: {
+                        id: params.verifier,
+                        name: params.verifier,
+                        reason: "Gjør krav på aksjer",
+                    },
+                    verifiableCredentials: [
+                        makeCapTableClaimTokenVC(params.claimTokens),
+                        nationalIdentityVC,
+                    ],
+                },
+                request.id
+            );
+
+            // 4. Navigate and wait for result
+            const screenResult = await navigateWithResult(
+                SCREEN_VERIFIABLE_PRESENTATION,
+                screenRequest
+            );
+
+            // 5. Send response
+            sendResponse(topic, screenResult.result ?? screenResult.error);
         }
     }, [client]);
 }
@@ -269,12 +357,12 @@ function useEffectCapTablePrivateTokenTransferVP(
  * useEffectAccessVP()
  */
 function useEffectAccessVP(
-    result?: JsonRpcResult<VerifiablePresentationResult>
+    screenParams?: ScreenResult<VerifiablePresentationResult> | ScreenError
 ) {
     const { consumeEvent, findVCByType, sendResponse, client } =
         useSymfoniContext();
 
-    const { navigateWithResult } = useNavigationWithResult(result);
+    const { navigateWithResult } = useNavigationWithResult(screenParams);
 
     useAsyncEffect(async () => {
         while (client) {
@@ -322,13 +410,75 @@ function useEffectAccessVP(
 
             console.log({ screenResult });
             // 5. Send response
-            sendResponse(topic, {
-                ...screenResult,
-                result: {
-                    accessVP:
-                        screenResult.result.verifiablePresenation.proof.jwt,
-                },
+            sendResponse(topic, screenResult.result ?? screenResult.error);
+        }
+    }, [client]);
+}
+
+/**
+ * useEffectUpdateShareholder()
+ */
+function useEffectUpdateShareholderVP(
+    result?: ScreenResult<VerifiablePresentationResult> | ScreenError
+) {
+    const { consumeEvent, findVCByType, sendResponse, client } =
+        useSymfoniContext();
+
+    const { navigateWithResult } = useNavigationWithResult(result);
+
+    useAsyncEffect(async () => {
+        while (client) {
+            // 1. Listen for event
+            const { topic, request } = await consumeEvent(
+                "symfoniID_updateShareholderVP"
+            );
+            console.info("consumed symfoniID_updateShareholderVP:", {
+                request,
             });
+
+            // 2. Get existing VCs if exist.
+            const params = request.params[0] as UpdateShareholderVPParams;
+
+            const nationalIdentityVC =
+                ((await findVCByType(
+                    makeNationalIdentityVC().type
+                )) as NationalIdentityVC) ?? makeNationalIdentityVC();
+
+            // 3. Make screen request
+            const screenRequest = makeVerifiablePresentationScreenRequest(
+                SCREEN_HOME,
+                NAVIGATOR_TABS,
+                request.method,
+                {
+                    verifier: {
+                        id: params.verifier,
+                        name: params.verifier,
+                        reason: "Dele dine data",
+                    },
+                    verifiableCredentials: [
+                        makeCapTableUpdateShareholderVC(
+                            params.updateShareholderVC.credentialSubject
+                                .shareholderId,
+                            params.updateShareholderVC.credentialSubject
+                                .capTableAddress,
+                            params.updateShareholderVC.credentialSubject
+                                .shareholderData
+                        ),
+                        nationalIdentityVC,
+                    ],
+                },
+                request.id
+            );
+
+            // 4. Navigate and wait for result
+            const screenResult = await navigateWithResult(
+                SCREEN_VERIFIABLE_PRESENTATION,
+                screenRequest
+            );
+
+            console.log({ screenResult });
+            // 5. Send response
+            sendResponse(topic, screenResult.result ?? screenResult.error);
         }
     }, [client]);
 }

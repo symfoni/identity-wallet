@@ -1,38 +1,46 @@
-// React
+// Third party
+import { decodeJWT } from "did-jwt";
 import React, { useMemo } from "react";
 import { Text } from "react-native";
-import { decodeJWT } from "did-jwt";
 
 // Local
-import { NationalIdentityVC } from "./NationalIdentityVC";
-import { NationalIdentityVCCard } from "./NationalIdentityVCCard";
-import { TermsOfUseVC } from "./TermsOfUseVC";
-import { SupportedVerifiableCredential } from "./SupportedVerifiableCredentials";
-import { TermsOfUseVCCard } from "./TermsOfUseVCCard";
-import { useNavigationWithResult } from "../hooks/useNavigationWithResult";
-import { makeBankIDScreenRequest } from "../types/ScreenRequest";
-import { BankIDResult } from "../types/resultTypes";
+import { useSymfoniContext } from "../context";
+import { useDeviceAuthentication } from "../hooks/useDeviceAuthentication";
 import {
     NAVIGATOR_ROOT,
     SCREEN_BANKID,
     SCREEN_VERIFIABLE_PRESENTATION,
 } from "../hooks/useLocalNavigation";
+import { useNavigationWithResult } from "../hooks/useNavigationWithResult";
 import { BankidJWTPayload } from "../types/bankid.types";
-import { useSymfoniContext } from "../context";
-import { JsonRpcResult } from "@json-rpc-tools/types";
-import { useDeviceAuthentication } from "../hooks/useDeviceAuthentication";
-import { CapTableVCCard } from "./CapTableVCCard";
-import { CapTablePrivateTokenTransferVCCard } from "./CapTablePrivateTokenTransferVCCard";
-import { CapTableVC } from "./CapTableVC";
-import { CapTablePrivateTokenTransferVC } from "./CapTablePrivateTokenTransferVC";
-import { AccessVCCard } from "./AccessVCCard";
+import { VerifiablePresentationParams } from "../types/paramTypes";
+import { BankIDResult } from "../types/resultTypes";
+import { makeBankIDScreenRequest, ScreenRequest } from "../types/ScreenRequest";
+import { ScreenError, ScreenResult } from "../types/ScreenResults";
 import { AccessVC } from "./AccessVC";
+import { AccessVCCard } from "./AccessVCCard";
+import { CapTableClaimTokenVC } from "./CapTableClaimTokenVC";
+import { CapTableClaimTokenVCCard } from "./CapTableClaimTokenVCCard";
+import { CapTablePrivateTokenTransferVC } from "./CapTablePrivateTokenTransferVC";
+import { CapTablePrivateTokenTransferVCCard } from "./CapTablePrivateTokenTransferVCCard";
+import { CapTableUpdateShareholderVC } from "./CapTableUpdateShareholderVC";
+import { CapTableUpdateShareholderVCCard } from "./CapTableUpdateShareholderVCCard";
+import { CapTableVC } from "./CapTableVC";
+import { CapTableVCCard } from "./CapTableVCCard";
+import { NationalIdentityVC } from "./NationalIdentityVC";
+import { NationalIdentityVCCard } from "./NationalIdentityVCCard";
+import { SupportedVerifiableCredential } from "./SupportedVerifiableCredentials";
+import { TermsOfUseVC } from "./TermsOfUseVC";
+import { TermsOfUseVCCard } from "./TermsOfUseVCCard";
 
 // Hook
 export function useVerifiableCredentialCards(
     verifiableCredentials: SupportedVerifiableCredential[],
     onSigned: (vc: SupportedVerifiableCredential) => void,
-    screenResult?: JsonRpcResult<BankIDResult>
+    screenResult?:
+        | ScreenRequest<VerifiablePresentationParams>
+        | ScreenResult<BankIDResult>
+        | ScreenError
 ) {
     const { createVC } = useSymfoniContext();
     const { navigateWithResult } = useNavigationWithResult(screenResult);
@@ -42,19 +50,29 @@ export function useVerifiableCredentialCards(
     const onPressSignNationalIdentityCard = async (vc: NationalIdentityVC) => {
         const request = makeBankIDScreenRequest(
             SCREEN_VERIFIABLE_PRESENTATION,
-            NAVIGATOR_ROOT,
+            undefined,
             "navigate-to-bankid-screen-from-national-identity-card-and-wait-for-result",
             {}
         );
-        const { result } = await navigateWithResult(SCREEN_BANKID, request);
+        const { result, error } = (await navigateWithResult(
+            SCREEN_BANKID,
+            request
+        )) as ScreenResult<BankIDResult> | ScreenError;
+        if (error) {
+            console.warn(
+                "useVerifiableCredentialCards.tsx: Got an error from BankID screen: error: ",
+                error
+            );
+            return;
+        }
 
-        const bankID = decodeJWT(result.bankIDToken)
+        const bankID = decodeJWT(result.result.bankIDToken)
             .payload as BankidJWTPayload;
 
         const evidence = [
             {
                 type: "BankID",
-                jwt: result.bankIDToken,
+                jwt: result.result.bankIDToken,
             },
         ];
 
@@ -171,6 +189,38 @@ export function useVerifiableCredentialCards(
                                                         key={key}
                                                         vc={
                                                             vc as CapTablePrivateTokenTransferVC
+                                                        }
+                                                        onPressSign={(_vc) =>
+                                                            onPressSignCard(
+                                                                _vc,
+                                                                expiresIn24Hours()
+                                                            )
+                                                        }
+                                                    />
+                                                );
+                                            }
+                                            case "CapTableClaimTokenVC": {
+                                                return (
+                                                    <CapTableClaimTokenVCCard
+                                                        key={key}
+                                                        vc={
+                                                            vc as CapTableClaimTokenVC
+                                                        }
+                                                        onPressSign={(_vc) =>
+                                                            onPressSignCard(
+                                                                _vc,
+                                                                expiresIn24Hours()
+                                                            )
+                                                        }
+                                                    />
+                                                );
+                                            }
+                                            case "CapTableUpdateShareholderVC": {
+                                                return (
+                                                    <CapTableUpdateShareholderVCCard
+                                                        key={key}
+                                                        vc={
+                                                            vc as CapTableUpdateShareholderVC
                                                         }
                                                         onPressSign={(_vc) =>
                                                             onPressSignCard(

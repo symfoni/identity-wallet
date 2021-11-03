@@ -10,8 +10,6 @@ import {
     SCREEN_DEMO,
     NAVIGATOR_TABS,
     SCREEN_HOME,
-    SCREEN_CREATE_CAP_TABLE_VP,
-    SCREEN_CREATE_CAP_TABLE_PRIVATE_TOKEN_TRANSFER_VP,
     SCREEN_VERIFIABLE_PRESENTATION,
 } from "./hooks/useLocalNavigation";
 import { DemoScreen } from "./screens/DemoScreen";
@@ -19,12 +17,7 @@ import { Home } from "./screens/Home";
 import { Identity } from "./screens/Identity";
 import { ProfileNavigation } from "./screens/Profile/ProfileNavigation";
 import { BankIDScreen } from "./screens/BankIDScreen";
-import { CreateCapTableVPScreen } from "./verifiablePresentations/CreateCapTableVPScreen";
-import { CapTablePrivateTokenTransferVPScreen } from "./verifiablePresentations/CapTablePrivateTokenTransferVPScreen";
 import { VerifiablePresentationScreen } from "./verifiablePresentations/VerifiablePresentationScreen";
-import { Text } from "react-native-svg";
-import { Button } from "react-native";
-import { useNavigation } from "@react-navigation/core";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -94,7 +87,6 @@ function TabNavigator() {
 
 export const Navigation = () => {
     const { colors } = useContext(ColorContext);
-    const { goBack } = useNavigation();
 
     // const { colors } = useTheme();
     return (
@@ -115,37 +107,12 @@ export const Navigation = () => {
                 }}
             />
             <Stack.Screen
-                name={SCREEN_CREATE_CAP_TABLE_VP}
-                component={CreateCapTableVPScreen}
-                options={{
-                    title: "Vis legitimasjon",
-                    headerLargeTitle: true,
-                    presentation: "modal",
-                }}
-            />
-            <Stack.Screen
-                name={SCREEN_CREATE_CAP_TABLE_PRIVATE_TOKEN_TRANSFER_VP}
-                component={CapTablePrivateTokenTransferVPScreen}
-                options={{
-                    title: "Vis legitimasjon",
-                    headerLargeTitle: true,
-                    presentation: "modal",
-                }}
-            />
-            <Stack.Screen
                 name={SCREEN_VERIFIABLE_PRESENTATION}
                 component={VerifiablePresentationScreen}
                 options={{
                     title: "Vis legitimasjon",
                     headerLargeTitle: true,
                     presentation: "modal",
-                    headerLeft: () => (
-                        <Button
-                            onPress={() => goBack()}
-                            title="Avbryt"
-                            color="rgb(0,122, 255)"
-                        />
-                    ),
                 }}
             />
             <Stack.Screen

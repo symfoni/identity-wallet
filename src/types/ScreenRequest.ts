@@ -68,5 +68,6 @@ export type ScreenRequest<Params> = {
     request: JsonRpcRequest<Params>;
     fromScreen: string;
     fromNavigator: string;
-    result: never;
+    result: never; // @see ScreenResult<T>
+    error: never; // @see ScreenError
 };

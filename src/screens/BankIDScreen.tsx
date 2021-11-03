@@ -1,23 +1,28 @@
 // Third party
-import React, { useEffect, useState } from "react";
-import { useNavigation } from "@react-navigation/native";
+import React, { useCallback, useEffect, useState } from "react";
 import Toast from "react-native-toast-message";
 import styled from "styled-components/native";
 
 // Local
 import { BankidWebview } from "../components/bankid/BankidWebview";
-import { makeBankIDScreenResult } from "../types/ScreenResults";
+import {
+    makeBankIDScreenResult,
+    makeScreenError,
+    makeVerifiablePresentationScreenError,
+} from "../types/ScreenResults";
 import { useScreenRequest } from "../hooks/useScreenRequest";
-import { useFromScreen } from "../hooks/useFromScreen";
 import { ScreenRequest } from "../types/ScreenRequest";
 import { BankIDParams } from "../types/paramTypes";
+import { useNavigateBack } from "../hooks/useNavigationWithResult";
+import { useNavigation } from "@react-navigation/core";
+import { Button } from "react-native";
 
 export function BankIDScreen(props: {
-    route: { params: ScreenRequest<BankIDParams> };
+    route: { params?: ScreenRequest<BankIDParams> };
 }) {
-    const { fromScreen, fromNavigator } = useFromScreen(props.route.params);
+    const { setOptions } = useNavigation();
+    const { navigateBack } = useNavigateBack(props.route.params);
     const [request] = useScreenRequest(props.route.params);
-    const { navigate } = useNavigation();
     const [errors, setErrors] = useState<string[]>([]);
     const [bankIDToken, setBankidToken] = useState<string | undefined>(
         undefined
@@ -25,23 +30,52 @@ export function BankIDScreen(props: {
 
     useEffect(() => {
         if (!request) {
-            return;
-        }
-        if (!fromScreen) {
-            return;
-        }
-        if (!bankIDToken) {
+            console.info("BankIDScreen.tsx: !request");
             return;
         }
 
-        const result = makeBankIDScreenResult(request, {
+        if (!bankIDToken) {
+            console.info("BankIDScreen.tsx: !bankIDToken");
+            return;
+        }
+
+        const screenResult = makeBankIDScreenResult(request, {
             bankIDToken,
         });
 
-        console.log({ fromScreen, result });
-        navigate(fromScreen, result);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [request, fromScreen, bankIDToken]);
+        navigateBack(screenResult);
+    }, [request, bankIDToken, navigateBack]);
+
+    /**
+     * onReject() - Navigate back with JsonRpcError
+     */
+    const onReject = useCallback(() => {
+        if (!request) {
+            console.warn("onReject(): ERROR !request");
+            return;
+        }
+        const error = makeScreenError(request, {
+            code: 2,
+            message: "The user rejected the bankID request.",
+        });
+
+        navigateBack(error);
+    }, [request, navigateBack]);
+
+    /**
+     * useEffect() - Configure headerLeft()
+     */
+    useEffect(() => {
+        setOptions({
+            headerLeft: () => (
+                <Button
+                    onPress={onReject}
+                    title="Avbryt"
+                    color="rgb(0,122, 255)"
+                />
+            ),
+        });
+    }, [request, setOptions, onReject]);
 
     useEffect(() => {
         if (errors.length > 0) {

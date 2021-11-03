@@ -1,31 +1,31 @@
-import { CapTable } from "../types/capTableTypes";
-
-export function makeCapTableVC(capTable: CapTable): CapTableVC {
+export function makeCapTableClaimTokenVC(
+    claimTokens: string[] | string
+): CapTableClaimTokenVC {
     return {
         "@context": [
             "https://www.w3.org/2018/credentials/v1",
             "https://www.symfoni.id/credentials/v1",
         ],
-        type: ["VerifiableCredential", "CapTableVC"],
+        type: ["VerifiableCredential", "CapTableClaimTokenVC"],
         credentialSubject: {
-            capTable,
+            claimTokens: [...claimTokens],
         },
     };
 }
 // @see https://www.notion.so/symfoni/CapTableVC-e7cd19ae4eb845979db304d57f77ba19
-export type CapTableVC = {
+export type CapTableClaimTokenVC = {
     "@context": [
         "https://www.w3.org/2018/credentials/v1",
         "https://www.symfoni.id/credentials/v1"
     ];
-    type: ["VerifiableCredential", "CapTableVC"];
+    type: ["VerifiableCredential", "CapTableClaimTokenVC"];
     credentialSubject: {
-        capTable: CapTable;
+        claimTokens: string[];
 
-        // Set by Veramo
+        // The rest is set by Veramo when signing the VC
         id?: string;
     };
-    // Set by Veramo
+    // Signature
     issuer?: {
         id: string;
     };
