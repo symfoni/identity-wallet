@@ -127,7 +127,7 @@ export const Home = (props: {
         <>
             <StatusBar />
             <SafeAreaView style={styles.container}>
-                {__DEV__ ? (
+                {sessions.length === 0 && __DEV__ ? (
                     <Button
                         title="Toggle QR Scanner"
                         onPress={() => setScannerVisible(!scannerVisible)}
