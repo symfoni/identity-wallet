@@ -60,11 +60,11 @@ export const Home = (props: {
 
         // 1. Validate URI
         if (typeof maybeURI !== "string") {
-            console.warn("typeof maybeURI !== 'string': ", maybeURI);
+            console.info("typeof maybeURI !== 'string': ", maybeURI);
             return;
         }
         if (!maybeURI.startsWith("wc:")) {
-            console.warn("!maybeURI.startsWith('wc:'): ", maybeURI);
+            console.info("!maybeURI.startsWith('wc:'): ", maybeURI);
             return;
         }
 
