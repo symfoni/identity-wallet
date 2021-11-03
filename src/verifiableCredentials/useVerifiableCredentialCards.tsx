@@ -12,8 +12,10 @@ import {
 } from "../hooks/useLocalNavigation";
 import { useNavigationWithResult } from "../hooks/useNavigationWithResult";
 import { BankidJWTPayload } from "../types/bankid.types";
+import { VerifiablePresentationParams } from "../types/paramTypes";
 import { BankIDResult } from "../types/resultTypes";
-import { makeBankIDScreenRequest } from "../types/ScreenRequest";
+import { makeBankIDScreenRequest, ScreenRequest } from "../types/ScreenRequest";
+import { ScreenError, ScreenResult } from "../types/ScreenResults";
 import { AccessVC } from "./AccessVC";
 import { AccessVCCard } from "./AccessVCCard";
 import { CapTableClaimTokenVC } from "./CapTableClaimTokenVC";
@@ -35,7 +37,10 @@ import { TermsOfUseVCCard } from "./TermsOfUseVCCard";
 export function useVerifiableCredentialCards(
     verifiableCredentials: SupportedVerifiableCredential[],
     onSigned: (vc: SupportedVerifiableCredential) => void,
-    screenResult?: JsonRpcResult<BankIDResult>
+    screenResult?:
+        | ScreenRequest<VerifiablePresentationParams>
+        | ScreenResult<BankIDResult>
+        | ScreenError
 ) {
     const { createVC } = useSymfoniContext();
     const { navigateWithResult } = useNavigationWithResult(screenResult);
@@ -49,14 +54,25 @@ export function useVerifiableCredentialCards(
             "navigate-to-bankid-screen-from-national-identity-card-and-wait-for-result",
             {}
         );
-        const { result } = await navigateWithResult(SCREEN_BANKID, request);
-        const bankID = decodeJWT(result.bankIDToken)
+        const { result, error } = (await navigateWithResult(
+            SCREEN_BANKID,
+            request
+        )) as ScreenResult<BankIDResult> | ScreenError;
+        if (error) {
+            console.warn(
+                "useVerifiableCredentialCards.tsx: Got an error from BankID screen: error: ",
+                error
+            );
+            return;
+        }
+
+        const bankID = decodeJWT(result.result.bankIDToken)
             .payload as BankidJWTPayload;
 
         const evidence = [
             {
                 type: "BankID",
-                jwt: result.bankIDToken,
+                jwt: result.result.bankIDToken,
             },
         ];
 

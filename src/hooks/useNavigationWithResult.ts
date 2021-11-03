@@ -10,7 +10,7 @@ const ref = new Map<number, ResolverType>();
  * useNavigationWithResult() - Use this hook to navigate to a screen, which will eventually navigate back to you using useNavigateBack()
  */
 export function useNavigationWithResult(
-    screenResult?: ScreenResult<any> | ScreenError
+    screenResult?: ScreenRequest<any> | ScreenResult<any> | ScreenError
 ) {
     const navigation = useNavigation();
     const navigationResults = useRef(ref);
@@ -53,7 +53,7 @@ export function useNavigationWithResult(
             return;
         }
         navigationResults.current.delete(id);
-        resolve(screenResult);
+        resolve(screenResult as ScreenResult<any> | ScreenError);
     }, [screenResult]);
 
     return {

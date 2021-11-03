@@ -79,7 +79,7 @@ export function VerifiablePresentationScreen(props: {
     const cards = useVerifiableCredentialCards(
         verifiableCredentials,
         onSignedVC,
-        props.route.params?.result
+        props.route.params
     );
 
     /**

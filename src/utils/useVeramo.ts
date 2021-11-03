@@ -1,4 +1,3 @@
-import { CapTablePrivateTokenTransferVP } from "./../verifiablePresentations/CapTablePrivateTokenTransferVP";
 /* eslint-disable no-undef */
 import {
     IDataStore,
@@ -22,8 +21,6 @@ import {
 import { normalizePresentation } from "did-jwt-vc";
 import { ethers } from "ethers";
 import { useEffect, useState } from "react";
-import { JwtPayload } from "../types/JwtPayload";
-import { VerifyOptions } from "../types/VerifyOptions";
 import { agent as _agent, deleteVeramoData } from "./../utils/VeramoUtils";
 import { SupportedVerifiableCredential } from "../verifiableCredentials/SupportedVerifiableCredentials";
 
@@ -125,156 +122,6 @@ export const useVeramo = (chainId: string) => {
         return vc;
     };
 
-    const decodeJWT = async (
-        jwt: string,
-        verifyOptions?: Partial<VerifyOptions>
-    ) => {
-        try {
-            const valid = await verifyJWT(jwt);
-            if (!valid) {
-                console.warn("TODO : Not valid JWT");
-            }
-            const payload = JSON.parse(
-                Buffer.from(jwt.split(".")[1], "base64").toString()
-            ) as JwtPayload;
-            const errors = [];
-            if (verifyOptions) {
-                try {
-                    const isVP =
-                        "vp" in payload &&
-                        payload.vp.type.includes("VerifiablePresentation");
-
-                    if (verifyOptions.requireVerifiablePresentation && !isVP) {
-                        throw Error(
-                            "JWT is not a VerifiablePresentation, expected a JWT with vp property and VerifiablePresentation in vp.types "
-                        );
-                    }
-                    if (verifyOptions.decodeCredentials) {
-                        if (!Array.isArray(payload.vp.verifiableCredential)) {
-                            errors.push(
-                                `JWT vp.verifiableCredential was ${typeof payload
-                                    .vp.verifiableCredential}, expected Array`
-                            );
-                        }
-                        const decodedVerifiableCredentials = await Promise.all(
-                            payload.vp.verifiableCredential.map(
-                                async (subJWT: any) => {
-                                    try {
-                                        // Decode sub credential with overridden options,
-                                        // REVIEW Is it correct to make sure VP issuer is subject of VC?
-                                        const decoded = await decodeJWT(
-                                            subJWT,
-                                            {
-                                                ...verifyOptions,
-                                                decodeCredentials: false,
-                                                audience: undefined,
-                                                subject: payload.vp.iss,
-                                                requireVerifiablePresentation:
-                                                    false,
-                                            }
-                                        );
-                                        return decoded;
-                                    } catch (error) {
-                                        errors.push(
-                                            `Error decoding subcredential: ${
-                                                error.message
-                                            }. \nSubcredential was: \n${Buffer.from(
-                                                subJWT.split(".")[1],
-                                                "base64"
-                                            ).toString()}`
-                                        );
-                                    }
-                                }
-                            )
-                        );
-                        payload.vp.JWTs =
-                            decodedVerifiableCredentials as JwtPayload[];
-                    }
-                } catch (error) {
-                    errors.push(
-                        `JWT traited as Verifiable Presentation, error while decoding subcredential: ${error.message}`
-                    );
-                }
-
-                if (verifyOptions.audience) {
-                    if (typeof payload.aud === "string") {
-                        if (payload.aud !== verifyOptions.audience) {
-                            errors.push(
-                                `JWT audience was ${payload.aud}, expected ${verifyOptions.audience}`
-                            );
-                        }
-                    } else if (Array.isArray(payload.aud)) {
-                        if (!payload.aud.includes(verifyOptions.audience)) {
-                            errors.push(
-                                `JWT audience was ${payload.aud.join(
-                                    " | "
-                                )}, expected one of ${verifyOptions.audience}`
-                            );
-                        }
-                    } else {
-                        throw Error(
-                            `JWT .aud expected string or Array, got ${typeof payload.aud}`
-                        );
-                    }
-                }
-                if (verifyOptions.issuer) {
-                    if (typeof payload.iss !== "string") {
-                        throw Error(
-                            `JWT issuer expected string, got ${typeof payload.iss}`
-                        );
-                    }
-                    if (typeof verifyOptions.issuer === "string") {
-                        if (payload.iss !== verifyOptions.issuer) {
-                            errors.push(
-                                `JWT issuer was ${payload.iss}, expected ${verifyOptions.issuer}`
-                            );
-                        }
-                    } else if (Array.isArray(verifyOptions.issuer)) {
-                        if (!verifyOptions.issuer.includes(payload.iss)) {
-                            errors.push(
-                                `JWT issuer was ${
-                                    payload.iss
-                                }, expected one of ${verifyOptions.issuer.join(
-                                    " | "
-                                )}`
-                            );
-                        }
-                    } else {
-                        errors.push(
-                            `verifyOptions.issuer was ${typeof verifyOptions.issuer}, expected Array or string`
-                        );
-                    }
-                }
-                if (verifyOptions.subject) {
-                    if (payload.sub !== verifyOptions.subject) {
-                        errors.push(
-                            `JWT subject was ${payload.sub}, expected ${verifyOptions.subject}`
-                        );
-                    }
-                }
-            }
-            if (errors.length > 0) {
-                throw Error(errors.join(".\n"));
-            }
-            return payload;
-        } catch (error) {
-            console.log("Cant decode JWT => ", error.message);
-            throw error;
-        }
-    };
-
-    const verifyJWT = async (jwt: string) => {
-        try {
-            await agent.handleMessage({
-                raw: jwt,
-            });
-            return true;
-        } catch (error) {
-            console.log("JWT not valid => ", error);
-            return false;
-        }
-    };
-
     /* Useage
       const result = await findVC({
             where: [{ column: "issuer", value: [someDID] }],
@@ -337,8 +184,6 @@ export const useVeramo = (chainId: string) => {
         saveVP,
         createVC,
         createVP,
-        decodeJWT,
-        verifyJWT,
         signEthTreansaction,
         deleteVeramoData,
     };
