@@ -1,8 +1,9 @@
-// React
-import { JsonRpcResult } from "@json-rpc-tools/types";
+// Third party
 import { decodeJWT } from "did-jwt";
 import React, { useMemo } from "react";
 import { Text } from "react-native";
+
+// Local
 import { useSymfoniContext } from "../context";
 import { useDeviceAuthentication } from "../hooks/useDeviceAuthentication";
 import {
@@ -26,7 +27,6 @@ import { CapTableUpdateShareholderVC } from "./CapTableUpdateShareholderVC";
 import { CapTableUpdateShareholderVCCard } from "./CapTableUpdateShareholderVCCard";
 import { CapTableVC } from "./CapTableVC";
 import { CapTableVCCard } from "./CapTableVCCard";
-// Local
 import { NationalIdentityVC } from "./NationalIdentityVC";
 import { NationalIdentityVCCard } from "./NationalIdentityVCCard";
 import { SupportedVerifiableCredential } from "./SupportedVerifiableCredentials";
@@ -50,7 +50,7 @@ export function useVerifiableCredentialCards(
     const onPressSignNationalIdentityCard = async (vc: NationalIdentityVC) => {
         const request = makeBankIDScreenRequest(
             SCREEN_VERIFIABLE_PRESENTATION,
-            NAVIGATOR_ROOT,
+            undefined,
             "navigate-to-bankid-screen-from-national-identity-card-and-wait-for-result",
             {}
         );

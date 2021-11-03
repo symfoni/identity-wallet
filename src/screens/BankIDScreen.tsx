@@ -23,10 +23,12 @@ export function BankIDScreen(props: {
 
     useEffect(() => {
         if (!request) {
+            console.info("BankIDScreen.tsx: !request");
             return;
         }
 
         if (!bankIDToken) {
+            console.info("BankIDScreen.tsx: !bankIDToken");
             return;
         }
 
