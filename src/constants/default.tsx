@@ -25,6 +25,8 @@ export const DEFAULT_EIP155_METHODS = [
     "symfoniID_createCapTableVP",
     "symfoniID_capTablePrivateTokenTransferVP",
     "symfoniID_accessVP",
+    "symfoniID_capTableClaimToken",
+    "symfoniID_updateShareholderVP",
 ];
 
 export const DEFAULT_LOGGER = "debug";
