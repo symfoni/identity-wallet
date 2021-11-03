@@ -79,11 +79,11 @@ export const Home = (props: {
         }
     }
 
-    useEffectAccessVP(props.route.params?.result);
-    useEffectCreateCapTableVP(props.route.params?.result);
-    useEffectCapTablePrivateTokenTransferVP(props.route.params?.result);
-    useEffectCapTableClaimUnclaimed(props.route.params?.result);
-    useEffectUpdateShareholderVP(props.route.params?.result);
+    useEffectAccessVP(props.route.params);
+    useEffectCreateCapTableVP(props.route.params);
+    useEffectCapTablePrivateTokenTransferVP(props.route.params);
+    useEffectCapTableClaimUnclaimed(props.route.params);
+    useEffectUpdateShareholderVP(props.route.params);
 
     return (
         <>
@@ -382,7 +382,7 @@ function useEffectAccessVP(
  * useEffectUpdateShareholder()
  */
 function useEffectUpdateShareholderVP(
-    result?: JsonRpcResult<VerifiablePresentationResult>
+    result?: ScreenResult<VerifiablePresentationResult> | ScreenError
 ) {
     const { consumeEvent, findVCByType, sendResponse, client } =
         useSymfoniContext();
