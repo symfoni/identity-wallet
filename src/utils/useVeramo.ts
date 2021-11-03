@@ -19,23 +19,12 @@ import {
     IDataStoreORM,
     TCredentialColumns,
 } from "@veramo/data-store";
-import { decodeJWT as decodeBankIDJWT } from "did-jwt";
 import { normalizePresentation } from "did-jwt-vc";
 import { ethers } from "ethers";
 import { useEffect, useState } from "react";
-import { BankidJWTPayload } from "../types/bankid.types";
-import { CapTable, CreateCapTableVPParams } from "../types/capTableTypes";
 import { JwtPayload } from "../types/JwtPayload";
 import { VerifyOptions } from "../types/VerifyOptions";
-import { CapTableVC } from "../verifiableCredentials/CapTableVC";
-import { NationalIdentityVC } from "../verifiableCredentials/NationalIdentityVC";
-import {
-    TermsOfUseForvaltVC,
-    TermsOfUseSymfoniVC,
-    TermsOfUseVC,
-} from "../verifiableCredentials/TermsOfUseVC";
 import { agent as _agent, deleteVeramoData } from "./../utils/VeramoUtils";
-import { CapTablePrivateTokenTransferVC } from "../verifiableCredentials/CapTablePrivateTokenTransferVC";
 import { SupportedVerifiableCredential } from "../verifiableCredentials/SupportedVerifiableCredentials";
 
 export type Agent = TAgent<
@@ -89,199 +78,9 @@ export const useVeramo = (chainId: string) => {
         initWallet();
     }, [agent, chainId]);
 
-    const createCapTableVC = async (
-        capTable: CapTable
-    ): Promise<CapTableVC> => {
-        if (!identity) {
-            throw Error("Cant create VC, identity not initilized");
-        }
-        const vc = await agent.createVerifiableCredential({
-            proofFormat: "jwt",
-            save: true,
-            credential: {
-                "@context": [
-                    "https://www.w3.org/2018/credentials/v1",
-                    "https://www.symfoni.dev/credentials/v1",
-                ],
-                type: ["VerifiableCredential", "CapTableVC"],
-                issuer: {
-                    id: identity.did,
-                },
-                credentialSubject: {
-                    id: identity.did,
-                    capTable,
-                },
-                expirationDate: new Date(
-                    new Date().setFullYear(new Date().getFullYear() + 50)
-                ).toISOString(),
-            },
-        });
-        console.info(`useVeramo.ts: createCapTableVC() -> vc`);
-
-        return vc as CapTableVC;
-    };
-
-    const createTermsOfUseVC = async (
-        type: string,
-        readAndAcceptedID: string
-    ) => {
-        if (!identity) {
-            throw Error("Cant create VC, identity not initilized");
-        }
-        const vc = await agent.createVerifiableCredential({
-            proofFormat: "jwt",
-            save: true,
-            credential: {
-                "@context": [
-                    "https://www.w3.org/2018/credentials/v1",
-                    "https://www.symfoni.dev/credentials/v1",
-                ],
-                type: ["VerifiableCredential", type],
-                issuer: {
-                    id: identity.did,
-                },
-                credentialSubject: {
-                    id: identity.did,
-                    readAndAccepted: {
-                        id: readAndAcceptedID,
-                    },
-                },
-                expirationDate: new Date(
-                    new Date().setFullYear(new Date().getFullYear() + 50)
-                ).toISOString(),
-            },
-        });
-        console.info(`useVeramo.ts: createTermsOfUseVC() -> vc`);
-
-        return vc;
-    };
-
-    const createNationalIdentityVC = async (
-        nationalIdentityNumber: string,
-        evidence: { type: "BankID"; jwt: string }
-    ) => {
-        if (!identity) {
-            throw Error("Cant create VC, identity not initilized");
-        }
-        const bankID = decodeBankIDJWT(evidence.jwt)
-            .payload as BankidJWTPayload;
-
-        const vc = await agent.createVerifiableCredential({
-            proofFormat: "jwt",
-            save: true,
-            credential: {
-                "@context": [
-                    "https://www.w3.org/2018/credentials/v1",
-                    "https://www.symfoni.dev/credentials/v1",
-                ],
-                type: ["VerifiableCredential", "NationalIdentityVC"],
-                issuer: {
-                    id: identity.did,
-                },
-                credentialSubject: {
-                    id: identity.did,
-                    nationalIdentityNumber,
-                },
-                evidence: [evidence],
-                expirationDate: new Date(bankID.exp * 1000).toISOString(),
-            },
-        });
-
-        console.info(`useVeramo.ts: createNationalIdentityVC() -> vc`);
-
-        return vc;
-    };
-
-    const createCapTablePrivateTransferVC = async (toShareholder: {
-        amount: string;
-        name: string;
-    }) => {
-        if (!identity) {
-            throw Error("Cant create VC, identity not initilized");
-        }
-
-        const vc = await agent.createVerifiableCredential({
-            proofFormat: "jwt",
-            save: true,
-            credential: {
-                "@context": [
-                    "https://www.w3.org/2018/credentials/v1",
-                    "https://www.symfoni.dev/credentials/v1",
-                ],
-                type: [
-                    "VerifiableCredential",
-                    "CapTablePrivateTokenTransferVC",
-                ],
-                issuer: {
-                    id: identity.did,
-                },
-                credentialSubject: {
-                    id: identity.did,
-                    toShareholder,
-                },
-                // 24 hours expiration
-                expirationDate: new Date(
-                    new Date().setDate(new Date().getDate() + 1)
-                ).toISOString(),
-            },
-        });
-
-        console.info(`useVeramo.ts: createCapTablePrivateTransferVC() -> vc`);
-
-        return vc;
-    };
-
-    const createCreateCapTableVP = async (
-        request: CreateCapTableVPParams & {
-            capTableVC: CapTableVC;
-            nationalIdentityVC: NationalIdentityVC;
-            termsOfUseSymfoniVC: TermsOfUseSymfoniVC;
-            termsOfUseForvaltVC: TermsOfUseForvaltVC;
-        }
-    ) => {
-        if (!identity) {
-            throw Error("Cant create VP, identity not initilized");
-        }
-        const vp = await agent.createVerifiablePresentation({
-            presentation: {
-                holder: identity.did,
-                verifier: [request.verifier],
-                verifiableCredential: [
-                    request.capTableVC,
-                    request.termsOfUseForvaltVC,
-                    request.termsOfUseSymfoniVC,
-                    request.nationalIdentityVC as VerifiableCredential,
-                ],
-            },
-            proofFormat: "jwt",
-        });
-
-        return vp;
-    };
-
-    const createCapTablePrivateTransferVP = async (
-        verifier: string,
-        capTablePrivateTokenTransferVC: CapTablePrivateTokenTransferVC,
-        nationalIdentityVC: NationalIdentityVC
-    ) => {
-        if (!identity) {
-            throw Error("Cant create VP, identity not initilized");
-        }
-        const vp = await agent.createVerifiablePresentation({
-            presentation: {
-                holder: identity.did,
-                verifier,
-                verifiableCredential: [
-                    capTablePrivateTokenTransferVC,
-                    nationalIdentityVC as VerifiableCredential,
-                ],
-            },
-            proofFormat: "jwt",
-        });
-
-        return vp;
-    };
-
+    /**
+     * createVC() - Creates and signs a verifiable credential
+     */
     const createVC = async (
         partialVC: Partial<ICreateVerifiableCredentialArgs>
     ) => {
@@ -304,6 +103,9 @@ export const useVeramo = (chainId: string) => {
         return vc;
     };
 
+    /**
+     * createVP() - Creates and signs a verifiable presentation
+     */
     const createVP = async (
         verifier: string,
         verifiableCredentials: SupportedVerifiableCredential[]
@@ -539,11 +341,5 @@ export const useVeramo = (chainId: string) => {
         verifyJWT,
         signEthTreansaction,
         deleteVeramoData,
-        createCapTableVC,
-        createCapTablePrivateTransferVC,
-        createCapTablePrivateTransferVP,
-        createTermsOfUseVC,
-        createNationalIdentityVC,
-        createCreateCapTableVP,
     };
 };

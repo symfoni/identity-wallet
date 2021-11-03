@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 import { APP_ENV, IS_TEST } from "@env";
-import { JsonRpcRequest, JsonRpcResponse } from "@json-rpc-tools/types";
+import { JsonRpcResponse } from "@json-rpc-tools/types";
 import {
     IDataStore,
     IDIDManager,
@@ -31,19 +31,11 @@ import {
     DEFAULT_RPC_PROVIDER_TEST,
     DEFAULT_TEST_CHAINS,
 } from "./constants/default";
-import { CapTable } from "./types/capTableTypes";
 import { JwtPayload } from "./types/JwtPayload";
-import { CreateCapTableVPParams } from "./types/paramTypes";
 import { VerifyOptions } from "./types/VerifyOptions";
 import { useVeramo } from "./utils/useVeramo";
 import { useWalletconnect } from "./utils/useWalletconnect";
-import { CapTablePrivateTokenTransferVC } from "./verifiableCredentials/CapTablePrivateTokenTransferVC";
-import { CapTableVC } from "./verifiableCredentials/CapTableVC";
-import { NationalIdentityVC } from "./verifiableCredentials/NationalIdentityVC";
 import { SupportedVerifiableCredential } from "./verifiableCredentials/SupportedVerifiableCredentials";
-import { TermsOfUseVC } from "./verifiableCredentials/TermsOfUseVC";
-import { CapTablePrivateTokenTransferVP } from "./verifiablePresentations/CapTablePrivateTokenTransferVP";
-import { CreateCapTableVP } from "./verifiablePresentations/CreateCapTableVP";
 
 export type Agent = TAgent<
     IDIDManager &
@@ -85,27 +77,6 @@ export interface IContext {
     findVCByType: (type: string[]) => Promise<VerifiableCredential | undefined>;
     saveVP: (vp: VerifiablePresentation | string) => Promise<string>;
     pair: (uri: string) => Promise<void>;
-    createCapTableVC: (capTable: CapTable) => Promise<CapTableVC>;
-    createTermsOfUseVC: (
-        type: string,
-        readAndAcceptedId: string
-    ) => Promise<TermsOfUseVC>;
-    createNationalIdentityVC: (
-        nationalIdentityNumber: string,
-        evidence: { type: "BankID"; jwt: string }
-    ) => Promise<NationalIdentityVC>;
-    createCreateCapTableVP: (
-        request: CreateCapTableVPParams
-    ) => Promise<CreateCapTableVP>;
-    createCapTablePrivateTransferVP: (
-        verifier: string,
-        capTablePrivateTokenTransferVC: CapTablePrivateTokenTransferVC,
-        nationalIdentityVC: NationalIdentityVC
-    ) => Promise<CapTablePrivateTokenTransferVP>;
-    createCapTablePrivateTransferVC: (toShareholder: {
-        amount: string;
-        name: string;
-    }) => Promise<CapTablePrivateTokenTransferVC>;
     consumeEvent: (method: string) => Promise<SessionTypes.RequestEvent>;
     sendResponse: (topic: string, response: JsonRpcResponse<any>) => void;
 }
@@ -143,49 +114,6 @@ export const ContextProvider = (props: any) => {
             setLoading(false);
         }
     }, [veramo.accounts]);
-
-    // // Check if user got indetifier
-    // useEffect(() => {
-    //     let subscribed = true;
-    //     const doAsync = async () => {
-    //         if (veramo.accounts.length > 0) {
-    //             const address = veramo.accounts[0].split(":").pop();
-    //             if (address) {
-    //                 const vc = await veramo
-    //                     .findVC({
-    //                         where: [
-    //                             {
-    //                                 column: "issuer",
-    //                                 value: [BROK_HELPERS_VERIFIER],
-    //                             },
-    //                             // {
-    //                             //     column: "subject",
-    //                             //     value: [veramo.identity?.did],
-    //                             // },
-    //                         ],
-    //                     })
-    //                     .catch((err) => {
-    //                         console.warn(err.message);
-    //                         throw err;
-    //                     });
-    //                 const hasRegistered = vc.find((vc) => {
-    //                     return (
-    //                         "brregRegistered" in
-    //                         vc.verifiableCredential.credentialSubject
-    //                     );
-    //                 });
-    //                 console.info("hasTrustedIdentity", !!hasRegistered);
-    //                 if (subscribed) {
-    //                     setHasTrustedIdentity(!!hasRegistered);
-    //                 }
-    //             }
-    //         }
-    //     };
-    //     doAsync();
-    //     return () => {
-    //         subscribed = false;
-    //     };
-    // }, [veramo, veramo.accounts]);
 
     // Make the context object:
     const context: IContext = {
