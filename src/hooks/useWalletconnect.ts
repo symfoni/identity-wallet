@@ -17,6 +17,7 @@ export const useWalletconnect = (
     veramo: useVeramoInterface
 ) => {
     const [client, setClient] = useState<Client | undefined>(undefined);
+    const [sessions, setSessions] = useState<SessionTypes.Settled[]>([]);
 
     // Handle requests
     const requestResolvers = useRef(
@@ -142,20 +143,52 @@ export const useWalletconnect = (
         [supportedChains, client, veramo.accounts]
     );
 
+    // Sessions
+    useEffect(() => {
+        setSessions(client?.session.values ?? []);
+        const updateSessions = () => {
+            setSessions(client?.session.values ?? []);
+        };
+        client?.on(CLIENT_EVENTS.beat, updateSessions);
+        client?.on(CLIENT_EVENTS.session.sync, updateSessions);
+        client?.on(CLIENT_EVENTS.session.created, updateSessions);
+        client?.on(CLIENT_EVENTS.session.deleted, updateSessions);
+        client?.on(CLIENT_EVENTS.session.updated, updateSessions);
+        client?.on(CLIENT_EVENTS.pairing.created, updateSessions);
+        client?.on(CLIENT_EVENTS.pairing.deleted, updateSessions);
+
+        return () => {
+            client?.off(CLIENT_EVENTS.beat, updateSessions);
+            client?.off(CLIENT_EVENTS.session.sync, updateSessions);
+            client?.off(CLIENT_EVENTS.session.created, updateSessions);
+            client?.off(CLIENT_EVENTS.session.updated, updateSessions);
+            client?.off(CLIENT_EVENTS.session.deleted, updateSessions);
+            client?.off(CLIENT_EVENTS.pairing.created, updateSessions);
+            client?.off(CLIENT_EVENTS.pairing.deleted, updateSessions);
+        };
+    }, [client]);
+
     const closeSession = useCallback(
-        () => async (topic: string) => {
-            if (!client) {
-                throw new Error("Client is not initialized");
-            }
-            client.disconnect({
+        async (topic: string) => {
+            const disconnectParams = {
                 topic: topic,
                 reason: {
                     message: "User closed session from app.",
                     code: 123,
                 },
-            });
+            };
+            if (!client) {
+                throw new Error("Client is not initialized");
+            }
+
+            client.disconnect(disconnectParams);
         },
         [client]
+    );
+
+    const closeSessions = useCallback(
+        () => sessions.map((session) => closeSession(session.topic)),
+        [sessions, closeSession]
     );
 
     // Subscribe / Unsubscribe Walletconnect
@@ -192,8 +225,10 @@ export const useWalletconnect = (
     }, [client, handlePruposal, handleRequest]);
 
     return {
+        sessions,
         client,
         closeSession,
+        closeSessions,
         pair,
         consumeEvent,
         sendResponse,
