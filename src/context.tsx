@@ -55,6 +55,8 @@ export interface IContext {
     client: Client | undefined;
     requests: SessionTypes.RequestEvent[];
     setRequests: Dispatch<SessionTypes.RequestEvent[]>;
+    sessions: SessionTypes.Settled[];
+    closeSessions: () => Promise<void>[];
     closeSession: (topic: string) => Promise<void>;
     selectedChain: string;
     provider: ethers.providers.Provider;

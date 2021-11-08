@@ -52,13 +52,15 @@ import {
 } from "../verifiableCredentials/TermsOfUseVC";
 import { makeCapTableUpdateShareholderVC } from "../verifiableCredentials/CapTableUpdateShareholderVC";
 import { CLIENT_EVENTS } from "@walletconnect/client";
+import { SymfoniButton } from "../components/ui/button";
 
 export const Home = (props: {
     route: {
         params?: ScreenResult<VerifiablePresentationResult> | ScreenError;
     };
 }) => {
-    const { pair, loading, client, closeSession } = useSymfoniContext();
+    const { pair, loading, closeSessions, closeSession, sessions } =
+        useSymfoniContext();
     const { colors } = useContext(ColorContext);
     const styles = makeStyles(colors);
     const [scannerVisible, setScannerVisible] = useState(
@@ -66,28 +68,10 @@ export const Home = (props: {
     );
 
     // Sessions
-    const [sessions, setSessions] = useState<SessionTypes.Settled[]>([]);
-
-    // Sessions
-    useEffect(() => {
-        setSessions(client?.session.values ?? []);
-        const updateSessions = () => {
-            setSessions(client?.session.values ?? []);
-        };
-        client?.on(CLIENT_EVENTS.beat, updateSessions);
-        client?.on(CLIENT_EVENTS.session.created, updateSessions);
-        client?.on(CLIENT_EVENTS.session.deleted, updateSessions);
-        return () => {
-            client?.off(CLIENT_EVENTS.beat, updateSessions);
-            client?.off(CLIENT_EVENTS.session.created, updateSessions);
-            client?.off(CLIENT_EVENTS.session.deleted, updateSessions);
-        };
-    }, [client]);
-
-    // Sessions
-    const onCloseSessions = useCallback(() => {
-        sessions.forEach((session) => closeSession(session.topic));
-    }, [closeSession, sessions]);
+    const onCloseSessions = useCallback(async () => {
+        await Promise.all(closeSessions());
+        setScannerVisible(true);
+    }, [closeSessions]);
 
     // QR
     const onScanQR = useCallback(
@@ -113,6 +97,7 @@ export const Home = (props: {
                 console.warn("ERROR: await pair(URI): ", err);
                 return;
             }
+            setScannerVisible(false);
         },
         [pair]
     );
@@ -123,28 +108,31 @@ export const Home = (props: {
     useEffectCapTableClaimUnclaimed(props.route.params);
     useEffectUpdateShareholderVP(props.route.params);
 
+    if (loading) {
+        return <ActivityIndicator size="large" />;
+    }
+
     return (
         <>
             <StatusBar />
             <SafeAreaView style={styles.container}>
-                {sessions.length === 0 && __DEV__ ? (
-                    <Button
-                        title="Toggle QR Scanner"
+                <View style={styles.actionContainer}>
+                    {scannerVisible && <Scanner onInput={onScanQR} />}
+
+                    <SymfoniButton
+                        icon={"qr"}
+                        type="primary"
+                        text="Scan QR"
                         onPress={() => setScannerVisible(!scannerVisible)}
                     />
-                ) : null}
-                {loading ? (
-                    <ActivityIndicator size="large" />
-                ) : sessions.length > 0 ? (
+                </View>
+
+                {!scannerVisible && sessions.length > 0 && (
                     <View style={styles.actionContainer}>
                         <Text>Du har {sessions.length} aktiv tilkobling</Text>
                         <Button title={`Koble fra`} onPress={onCloseSessions} />
                     </View>
-                ) : scannerVisible ? (
-                    <View style={styles.actionContainer}>
-                        <Scanner onInput={onScanQR} />
-                    </View>
-                ) : null}
+                )}
             </SafeAreaView>
         </>
     );
@@ -160,6 +148,7 @@ const makeStyles = (colors: ColorSystem) => {
         },
         actionContainer: {
             alignSelf: "center",
+            margin: 10,
         },
     });
 };
