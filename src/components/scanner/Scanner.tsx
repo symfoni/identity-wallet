@@ -1,7 +1,7 @@
-import React, { useContext } from "react";
-import { StyleSheet, Text, TextInput } from "react-native";
+import React from "react";
+import { Linking } from "react-native";
+import { Button, StyleSheet, Text, TextInput } from "react-native";
 import QRCodeScanner from "react-native-qrcode-scanner";
-import { Context } from "./../../context";
 
 export const Scanner = ({
     onInput,
@@ -14,47 +14,44 @@ export const Scanner = ({
                 onRead={(e: any) => onInput(e.data)}
                 fadeIn={false}
                 showMarker={true}
-                topContent={
-                    <Text style={styles.centerText}>
-                        Scan WalletConnect QRcode
-                    </Text>
-                }
             />
             {__DEV__ && (
                 <TextInput
-                    style={styles.inputText}
+                    style={styles.wcText}
                     placeholder="Eller skriv WC kode her"
                     onChangeText={(text: string) => onInput(text)}
                     defaultValue={""}
                     showSoftInputOnFocus={false}
                 />
             )}
+            <Text style={styles.centerText}>
+                Scan QR-kode for å koble til en
+                <Text
+                    style={styles.hyperlink}
+                    onPress={() => Linking.openURL("https://symfoni.dev")}>
+                    {" "}
+                    nettside som støtter SymfoniID
+                </Text>
+            </Text>
+
+            <Button title={""} onPress={() => {}} />
         </>
     );
 };
 
 export const styles = StyleSheet.create({
-    inputText: {
+    wcText: {
         borderColor: "#ccc",
         backgroundColor: "#ccc",
-        height: 40,
-        margin: 10,
+        height: 30,
     },
     centerText: {
-        flex: 0.5,
         fontSize: 18,
-        paddingTop: 20,
-        color: "#000",
+        marginHorizontal: 30,
+        marginTop: 20,
     },
-    textBold: {
-        fontWeight: "500",
-        color: "#fff",
-    },
-    buttonText: {
-        fontSize: 21,
-        color: "rgb(0,122,255)",
-    },
-    button: {
-        padding: 16,
+    hyperlink: {
+        color: "blue",
+        textDecorationLine: "underline",
     },
 });

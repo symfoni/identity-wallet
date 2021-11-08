@@ -114,9 +114,8 @@ export const Home = (props: {
         <>
             <StatusBar />
             <SafeAreaView style={styles.container}>
+                {scannerVisible && <Scanner onInput={onScanQR} />}
                 <View style={styles.actionContainer}>
-                    {scannerVisible && <Scanner onInput={onScanQR} />}
-
                     <SymfoniButton
                         icon={"qr"}
                         type="primary"
@@ -146,7 +145,7 @@ const makeStyles = (colors: ColorSystem) => {
         },
         actionContainer: {
             alignSelf: "center",
-            margin: 10,
+            marginBottom: 20,
         },
     });
 };
