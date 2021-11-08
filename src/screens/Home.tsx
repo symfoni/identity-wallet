@@ -122,7 +122,7 @@ export const Home = (props: {
                     <SymfoniButton
                         icon={"qr"}
                         type="primary"
-                        text="Scan QR"
+                        text={scannerVisible ? "Lukk QR" : "Scan QR"}
                         onPress={() => setScannerVisible(!scannerVisible)}
                     />
                 </View>
