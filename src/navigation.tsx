@@ -40,7 +40,6 @@ const PROFILE_ROUTE: Route = {
 };
 
 function TabNavigator() {
-    const { isTest } = useContext(Context);
     const { colors } = useContext(ColorContext);
 
     return (
@@ -74,7 +73,7 @@ function TabNavigator() {
                 component={ProfileNavigation}
                 options={{ title: PROFILE_ROUTE.title, headerShown: false }}
             />
-            {isTest && (
+            {__DEV__ && (
                 <Tab.Screen
                     name={SCREEN_DEMO}
                     component={DemoScreen}
