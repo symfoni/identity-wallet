@@ -1,60 +1,59 @@
-import React, { useContext } from "react";
-import { StyleSheet, Text, TextInput } from "react-native";
+import React from "react";
+import { Linking } from "react-native";
+import { Button } from "react-native";
 import QRCodeScanner from "react-native-qrcode-scanner";
-import { Context } from "./../../context";
+import styled from "styled-components/native";
+
+// Local
+import { useColorContext } from "../../colorContext";
 
 export const Scanner = ({
     onInput,
 }: {
     onInput: (maybeURI: String) => void;
 }) => {
+    const { colors } = useColorContext();
+
     return (
         <>
             <QRCodeScanner
                 onRead={(e: any) => onInput(e.data)}
                 fadeIn={false}
                 showMarker={true}
-                topContent={
-                    <Text style={styles.centerText}>
-                        Scan WalletConnect QRcode
-                    </Text>
-                }
             />
-            {__DEV__ && (
-                <TextInput
-                    style={styles.inputText}
+            {false && (
+                <WCText
                     placeholder="Eller skriv WC kode her"
                     onChangeText={(text: string) => onInput(text)}
                     defaultValue={""}
                     showSoftInputOnFocus={false}
                 />
             )}
+            <CenterText>
+                Scan QR-kode for å koble til en
+                <Hyperlink
+                    color={colors.primary.light}
+                    onPress={() => Linking.openURL("https://symfoni.dev")}>
+                    {" "}
+                    nettside som støtter SymfoniID
+                </Hyperlink>
+            </CenterText>
         </>
     );
 };
 
-export const styles = StyleSheet.create({
-    inputText: {
-        borderColor: "#ccc",
-        backgroundColor: "#ccc",
-        height: 40,
-        margin: 10,
-    },
-    centerText: {
-        flex: 0.5,
-        fontSize: 18,
-        paddingTop: 20,
-        color: "#000",
-    },
-    textBold: {
-        fontWeight: "500",
-        color: "#fff",
-    },
-    buttonText: {
-        fontSize: 21,
-        color: "rgb(0,122,255)",
-    },
-    button: {
-        padding: 16,
-    },
-});
+const WCText = styled.Text`
+    border-color: #ccc;
+    background-color: #ccc;
+    height: 30px;
+`;
+
+const CenterText = styled.Text`
+    font-size: 18px;
+    margin-horizontal: 30px;
+    margin-vertical: 30px;
+`;
+const Hyperlink = styled.Text`
+    color: ${(props: { color: string }) => props.color};
+    text-decoration-line: underline;
+`;

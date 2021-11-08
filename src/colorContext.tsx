@@ -1,6 +1,11 @@
 import { Colors } from "react-native/Libraries/NewAppScreen";
 import { lineHeight } from "./styles/typography";
-import React, { createContext, SetStateAction, useState } from "react";
+import React, {
+    createContext,
+    SetStateAction,
+    useContext,
+    useState,
+} from "react";
 import { createConnection } from "typeorm";
 
 export interface ColorSystem {
@@ -68,6 +73,9 @@ const DEFAULT_LIGHT_COLORS: ColorSystem = {
 };
 
 export const ColorContext = createContext<IColorContext>(undefined!);
+export function useColorContext() {
+    return useContext(ColorContext);
+}
 
 export const ColorContextProvider = (props: any) => {
     const deriveCurrentColorScheme = (isDarkMode: boolean) => {
