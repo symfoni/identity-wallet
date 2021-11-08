@@ -15,7 +15,7 @@ export const Scanner = ({
                 fadeIn={false}
                 showMarker={true}
             />
-            {__DEV__ && (
+            {false && (
                 <TextInput
                     style={styles.wcText}
                     placeholder="Eller skriv WC kode her"
@@ -48,7 +48,8 @@ export const styles = StyleSheet.create({
     centerText: {
         fontSize: 18,
         marginHorizontal: 30,
-        marginTop: 20,
+        marginTop: 30,
+        marginBottom: 0,
     },
     hyperlink: {
         color: "blue",

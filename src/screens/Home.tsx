@@ -145,7 +145,7 @@ const makeStyles = (colors: ColorSystem) => {
         },
         actionContainer: {
             alignSelf: "center",
-            marginBottom: 20,
+            marginBottom: 30,
         },
     });
 };
