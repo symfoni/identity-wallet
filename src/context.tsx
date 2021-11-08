@@ -117,7 +117,6 @@ export const ContextProvider = (props: any) => {
 
     // Make the context object:
     const context: IContext = {
-        isTest,
         loading,
         chains,
         provider,

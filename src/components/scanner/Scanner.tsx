@@ -8,8 +8,6 @@ export const Scanner = ({
 }: {
     onInput: (maybeURI: String) => void;
 }) => {
-    const { isTest } = useContext(Context);
-
     return (
         <>
             <QRCodeScanner
@@ -22,7 +20,7 @@ export const Scanner = ({
                     </Text>
                 }
             />
-            {isTest && (
+            {__DEV__ && (
                 <TextInput
                     style={styles.inputText}
                     placeholder="Eller skriv WC kode her"
