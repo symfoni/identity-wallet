@@ -59,8 +59,7 @@ export const Home = (props: {
         params?: ScreenResult<VerifiablePresentationResult> | ScreenError;
     };
 }) => {
-    const { pair, loading, closeSessions, closeSession, sessions } =
-        useSymfoniContext();
+    const { pair, loading, closeSessions, sessions } = useSymfoniContext();
     const { colors } = useContext(ColorContext);
     const styles = makeStyles(colors);
     const [scannerVisible, setScannerVisible] = useState(
@@ -70,7 +69,6 @@ export const Home = (props: {
     // Sessions
     const onCloseSessions = useCallback(async () => {
         await Promise.all(closeSessions());
-        setScannerVisible(true);
     }, [closeSessions]);
 
     // QR
