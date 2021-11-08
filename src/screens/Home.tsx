@@ -1,11 +1,5 @@
 // Third party
-import React, {
-    useCallback,
-    useContext,
-    useEffect,
-    useMemo,
-    useState,
-} from "react";
+import React, { useCallback, useState } from "react";
 import {
     ActivityIndicator,
     Button,
@@ -16,10 +10,9 @@ import {
     View,
 } from "react-native";
 import { useAsyncEffect } from "use-async-effect";
-import { SessionTypes } from "@walletconnect/types";
 
 // Local
-import { ColorContext, ColorSystem } from "../colorContext";
+import { ColorSystem, useColorContext } from "../colorContext";
 import { Scanner } from "../components/scanner";
 import { useSymfoniContext } from "../context";
 import {
@@ -51,7 +44,6 @@ import {
     TermsOfUseForvaltVC,
 } from "../verifiableCredentials/TermsOfUseVC";
 import { makeCapTableUpdateShareholderVC } from "../verifiableCredentials/CapTableUpdateShareholderVC";
-import { CLIENT_EVENTS } from "@walletconnect/client";
 import { SymfoniButton } from "../components/ui/button";
 
 export const Home = (props: {
@@ -60,7 +52,7 @@ export const Home = (props: {
     };
 }) => {
     const { pair, loading, closeSessions, sessions } = useSymfoniContext();
-    const { colors } = useContext(ColorContext);
+    const { colors } = useColorContext();
     const styles = makeStyles(colors);
     const [scannerVisible, setScannerVisible] = useState(
         __DEV__ ? false : true

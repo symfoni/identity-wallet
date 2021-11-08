@@ -1,13 +1,19 @@
 import React from "react";
 import { Linking } from "react-native";
-import { Button, StyleSheet, Text, TextInput } from "react-native";
+import { Button } from "react-native";
 import QRCodeScanner from "react-native-qrcode-scanner";
+import styled from "styled-components/native";
+
+// Local
+import { useColorContext } from "../../colorContext";
 
 export const Scanner = ({
     onInput,
 }: {
     onInput: (maybeURI: String) => void;
 }) => {
+    const { colors } = useColorContext();
+
     return (
         <>
             <QRCodeScanner
@@ -16,43 +22,38 @@ export const Scanner = ({
                 showMarker={true}
             />
             {false && (
-                <TextInput
-                    style={styles.wcText}
+                <WCText
                     placeholder="Eller skriv WC kode her"
                     onChangeText={(text: string) => onInput(text)}
                     defaultValue={""}
                     showSoftInputOnFocus={false}
                 />
             )}
-            <Text style={styles.centerText}>
+            <CenterText>
                 Scan QR-kode for å koble til en
-                <Text
-                    style={styles.hyperlink}
+                <Hyperlink
+                    color={colors.primary.light}
                     onPress={() => Linking.openURL("https://symfoni.dev")}>
                     {" "}
                     nettside som støtter SymfoniID
-                </Text>
-            </Text>
-
-            <Button title={""} onPress={() => {}} />
+                </Hyperlink>
+            </CenterText>
         </>
     );
 };
 
-export const styles = StyleSheet.create({
-    wcText: {
-        borderColor: "#ccc",
-        backgroundColor: "#ccc",
-        height: 30,
-    },
-    centerText: {
-        fontSize: 18,
-        marginHorizontal: 30,
-        marginTop: 30,
-        marginBottom: 0,
-    },
-    hyperlink: {
-        color: "blue",
-        textDecorationLine: "underline",
-    },
-});
+const WCText = styled.Text`
+    border-color: #ccc;
+    background-color: #ccc;
+    height: 30px;
+`;
+
+const CenterText = styled.Text`
+    font-size: 18px;
+    margin-horizontal: 30px;
+    margin-vertical: 30px;
+`;
+const Hyperlink = styled.Text`
+    color: ${(props: { color: string }) => props.color};
+    text-decoration-line: underline;
+`;
