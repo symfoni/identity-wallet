@@ -8,7 +8,6 @@ import { BankidWebview } from "../components/bankid/BankidWebview";
 import {
     makeBankIDScreenResult,
     makeScreenError,
-    makeVerifiablePresentationScreenError,
 } from "../types/ScreenResults";
 import { useScreenRequest } from "../hooks/useScreenRequest";
 import { ScreenRequest } from "../types/ScreenRequest";
@@ -67,7 +66,7 @@ export function BankIDScreen(props: {
      */
     useEffect(() => {
         setOptions({
-            headerLeft: () => (
+            headerRight: () => (
                 <Button
                     onPress={onReject}
                     title="Avbryt"

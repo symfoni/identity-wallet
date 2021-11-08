@@ -131,13 +131,6 @@ export function VerifiablePresentationScreen(props: {
         setOptions({
             headerRight: () => (
                 <Button
-                    onPress={presentable ? onPresent : () => {}}
-                    title="Vis"
-                    disabled={!presentable}
-                />
-            ),
-            headerLeft: () => (
-                <Button
                     onPress={onReject}
                     title="Avbryt"
                     color="rgb(0,122, 255)"
