@@ -19,6 +19,7 @@ import {
     NAVIGATOR_TABS,
     SCREEN_HOME,
     SCREEN_VERIFIABLE_PRESENTATION,
+    useLocalNavigation,
 } from "../hooks/useLocalNavigation";
 import { useNavigationWithResult } from "../hooks/useNavigationWithResult";
 import {
@@ -41,7 +42,9 @@ import {
 } from "../verifiableCredentials/NationalIdentityVC";
 import {
     makeTermsOfUseForvaltVC,
+    makeTermsOfUseSymfoniVC,
     TermsOfUseForvaltVC,
+    TermsOfUseSymfoniVC,
 } from "../verifiableCredentials/TermsOfUseVC";
 import { makeCapTableUpdateShareholderVC } from "../verifiableCredentials/CapTableUpdateShareholderVC";
 import { SymfoniButton } from "../components/ui/button";
@@ -57,6 +60,7 @@ export const Home = (props: {
     const [scannerVisible, setScannerVisible] = useState(
         __DEV__ ? false : true
     );
+    const { navigateToOnboardingA } = useLocalNavigation();
 
     // Sessions
     const onCloseSessions = useCallback(async () => {
@@ -92,6 +96,7 @@ export const Home = (props: {
         [pair]
     );
 
+    useEffectOnboarding();
     useEffectAccessVP(props.route.params);
     useEffectCreateCapTableVP(props.route.params);
     useEffectCapTablePrivateTokenTransferVP(props.route.params);
@@ -122,6 +127,13 @@ export const Home = (props: {
                         <Button title={`Koble fra`} onPress={onCloseSessions} />
                     </View>
                 )}
+
+                {!scannerVisible && (
+                    <Button
+                        title="Hvordan fungerer SymfoniID?"
+                        onPress={() => navigateToOnboardingA()}
+                    />
+                )}
             </SafeAreaView>
         </>
     );
@@ -141,6 +153,29 @@ const makeStyles = (colors: ColorSystem) => {
         },
     });
 };
+
+/**
+ * useEffectOnboarding()
+ */
+function useEffectOnboarding() {
+    const { findVCByType } = useSymfoniContext();
+    const { resetToOnboardingA, navigateToOnboardingA } = useLocalNavigation();
+
+    useAsyncEffect(async () => {
+        const termsOfUseSymfoniVC = (await findVCByType(
+            makeTermsOfUseSymfoniVC().type
+        )) as TermsOfUseSymfoniVC;
+
+        // If no terms of use SymfoniID exist, navigate to OnboardingScreen
+        if (!termsOfUseSymfoniVC) {
+            if (__DEV__) {
+                navigateToOnboardingA();
+            } else {
+                resetToOnboardingA();
+            }
+        }
+    }, []);
+}
 
 /**
  * useEffectCreateCapTableVP()

@@ -86,7 +86,7 @@ export const useVeramo = (chainId: string) => {
         }
         const vc = await agent.createVerifiableCredential({
             credential: {
-                type: ["VerifiableCredential", "PersonCredential"],
+                type: ["VerifiableCredential"],
                 credentialSubject: {
                     ...(partialVC?.credential?.credentialSubject ?? {}),
                     id: identity?.did,
