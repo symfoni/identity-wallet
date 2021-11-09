@@ -10,10 +10,10 @@ import {
     View,
 } from "react-native";
 import { useAsyncEffect } from "use-async-effect";
-
 // Local
 import { ColorSystem, useColorContext } from "../colorContext";
 import { Scanner } from "../components/scanner";
+import { SymfoniButton } from "../components/ui/button";
 import { useSymfoniContext } from "../context";
 import {
     NAVIGATOR_TABS,
@@ -34,6 +34,7 @@ import { ScreenError, ScreenResult } from "../types/ScreenResults";
 import { makeAccessVC } from "../verifiableCredentials/AccessVC";
 import { makeCapTableClaimTokenVC } from "../verifiableCredentials/CapTableClaimTokenVC";
 import { makeCapTablePrivateTokenTransferVC } from "../verifiableCredentials/CapTablePrivateTokenTransferVC";
+import { makeCapTableUpdateShareholderVC } from "../verifiableCredentials/CapTableUpdateShareholderVC";
 import { makeCapTableVC } from "../verifiableCredentials/CapTableVC";
 import {
     makeNationalIdentityVC,
@@ -43,8 +44,6 @@ import {
     makeTermsOfUseForvaltVC,
     TermsOfUseForvaltVC,
 } from "../verifiableCredentials/TermsOfUseVC";
-import { makeCapTableUpdateShareholderVC } from "../verifiableCredentials/CapTableUpdateShareholderVC";
-import { SymfoniButton } from "../components/ui/button";
 
 export const Home = (props: {
     route: {
@@ -497,14 +496,12 @@ function useEffectUpdateShareholderVP(
                             name: params.verifier,
                             reason: "Dele dine data",
                         },
+
                         verifiableCredentials: [
                             makeCapTableUpdateShareholderVC(
-                                params.updateShareholderVC.credentialSubject
-                                    .shareholderId,
-                                params.updateShareholderVC.credentialSubject
-                                    .capTableAddress,
-                                params.updateShareholderVC.credentialSubject
-                                    .shareholderData
+                                params.shareholderId,
+                                params.capTableAddress,
+                                params.shareholderData
                             ),
                             nationalIdentityVC,
                         ],
@@ -520,7 +517,6 @@ function useEffectUpdateShareholderVP(
                 if (!isMounted()) {
                     return;
                 }
-
                 console.log({ screenResult });
                 // 5. Send response
                 sendResponse(topic, screenResult.result ?? screenResult.error);
