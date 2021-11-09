@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { StyleProp, StyleSheet, Text, View, ViewStyle } from "react-native";
-import { TouchableOpacity } from "react-native-gesture-handler";
+import { TouchableOpacity } from "react-native";
 import { Icon, IconType } from "../../../assets/icons/Icon";
 import { ColorContext, ColorSystem } from "../../../colorContext";
 import { Buttons, Colors } from "../../../styles";
