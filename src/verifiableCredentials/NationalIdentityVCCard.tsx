@@ -20,7 +20,8 @@ export function NationalIdentityVCCard({
     return (
         <VCCard>
             <VCPropLabel>Fødselsnummer</VCPropLabel>
-            <VCPropText placeholder={!signed}>
+            <VCPropText
+                placeholder={!vc?.credentialSubject?.nationalIdentityNumber}>
                 {vc?.credentialSubject?.nationalIdentityNumber ??
                     "123456 54321"}
             </VCPropText>

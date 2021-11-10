@@ -27,8 +27,8 @@ export function OnboardingBScreen() {
                     />
                 </Figure>
                 <Description>
-                    Bruk QR-kodeleseren i Symfoni ID for å koble til tjenester
-                    som støtter dette.
+                    Bruk QR-leseren i Symfoni ID for å koble til tjenester som
+                    støtter dette.
                 </Description>
             </>
         </OnboardingContent>

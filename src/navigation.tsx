@@ -155,7 +155,7 @@ export const Navigation = () => {
                 name={SCREEN_ONBOARDING_C}
                 component={OnboardingCScreen}
                 options={{
-                    title: "Hvordan vise legitimasjon?",
+                    title: "Signer og vis legitimasjon",
                     headerBackVisible: false,
                 }}
             />
