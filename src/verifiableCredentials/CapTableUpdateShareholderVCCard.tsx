@@ -1,10 +1,10 @@
 // Third party
 import React, { useState } from "react";
+import { View } from "react-native";
 import styled from "styled-components/native";
+import { CapTableUpdateShareholderVC } from "./CapTableUpdateShareholderVC";
 // Local
 import { SignButton } from "./components/SignButton";
-import { CapTableUpdateShareholderVC } from "./CapTableUpdateShareholderVC";
-import { View } from "react-native";
 
 export function CapTableUpdateShareholderVCCard({
     vc,
@@ -58,6 +58,7 @@ export function CapTableUpdateShareholderVCCard({
                     );
                 }
             )}
+
             <SignButton
                 signed={signed}
                 loading={loading}
