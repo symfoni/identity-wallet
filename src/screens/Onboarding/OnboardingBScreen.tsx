@@ -1,5 +1,5 @@
-import React from "react";
-import { Text } from "react-native";
+import React, { useState } from "react";
+import QRCodeScanner from "react-native-qrcode-scanner";
 import styled from "styled-components/native";
 import { Icon } from "../../assets/icons/Icon";
 import { SymfoniButton } from "../../components/ui/button";
@@ -11,19 +11,29 @@ export function OnboardingBScreen() {
     const { navigateToOnboardingA, navigateToOnboardingC } =
         useLocalNavigation();
 
+    const [visible, setVisible] = useState(false);
+
     return (
         <OnboardingContent
             prev={navigateToOnboardingA}
             next={navigateToOnboardingC}>
             <>
                 <Figure>
-                    <QrIcon type="qr" size={layout.x100} color="black" />
-                    <FingerText>{"👆"}</FingerText>
+                    {!visible ? (
+                        <QrIcon type="qr" size={layout.x100} color="black" />
+                    ) : (
+                        <QRCodeScanner
+                            onRead={() => setVisible(false)}
+                            fadeIn={false}
+                            showMarker={true}
+                        />
+                    )}
+                    {!visible && <FingerText>{"👆"}</FingerText>}
                     <QrButton
                         icon="qr"
                         type="primary"
-                        text="Scan QR"
-                        onPress={() => {}}
+                        text={visible ? "Avbryt" : "Scan QR"}
+                        onPress={() => setVisible(!visible)}
                     />
                 </Figure>
                 <Description>

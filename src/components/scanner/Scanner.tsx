@@ -21,7 +21,7 @@ export const Scanner = ({
                 fadeIn={false}
                 showMarker={true}
             />
-            {false && (
+            {__DEV__ && (
                 <WCText
                     placeholder="Eller skriv WC kode her"
                     onChangeText={(text: string) => onInput(text)}
