@@ -1,17 +1,19 @@
-import React from "react";
+import React, { ReactNode } from "react";
+import { Text } from "react-native";
 import styled from "styled-components/native";
 
 export function OnboardingContent({
+    children,
     next,
     prev,
 }: {
+    children: ReactNode;
     next?: () => void;
     prev?: () => void;
 }) {
     return (
-        <Content>
-            <Image />
-            <Description />
+        <ContentAndButtons>
+            <Content>{children}</Content>
             <Buttons>
                 <NextButton
                     disabled={!prev}
@@ -20,11 +22,11 @@ export function OnboardingContent({
                 />
                 <NextButton disabled={!next} title={"Neste >"} onPress={next} />
             </Buttons>
-        </Content>
+        </ContentAndButtons>
     );
 }
 
-const Content = styled.View`
+const ContentAndButtons = styled.View`
     background-color: white;
     display: flex;
     flex: 1;
@@ -32,12 +34,12 @@ const Content = styled.View`
     padding-horizontal: 30px;
 `;
 
-const Image = styled.View`
-    flex: 2;
-`;
-const Description = styled.View`
+const Content = styled.View`
     flex: 1;
+    align-items: center;
+    display: flex;
 `;
+
 const Buttons = styled.View`
     display: flex;
     flex-direction: row;

@@ -7,5 +7,10 @@ import { OnboardingContent } from "./components/OnboardingContent";
 export function OnboardingDScreen() {
     const { navigateToOnboardingC } = useLocalNavigation();
 
-    return <OnboardingContent prev={navigateToOnboardingC} />;
+    return (
+        <OnboardingContent
+            description={`Signer brukervilkårene og for å bruke Symfoni ID!`}
+            prev={navigateToOnboardingC}
+        />
+    );
 }

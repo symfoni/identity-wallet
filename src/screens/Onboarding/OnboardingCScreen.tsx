@@ -9,6 +9,7 @@ export function OnboardingCScreen() {
 
     return (
         <OnboardingContent
+            description={`Tilkoblede tjenester ber om legitimasjon ved behov. Du velger selv om du vil avslå eller bekrefte forespørselen.`}
             prev={navigateToOnboardingB}
             next={navigateToOnboardingD}
         />

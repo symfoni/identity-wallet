@@ -147,7 +147,7 @@ export const Navigation = () => {
                 name={SCREEN_ONBOARDING_B}
                 component={OnboardingBScreen}
                 options={{
-                    title: "Hvordan koble til?",
+                    title: "Koble til",
                     headerBackVisible: false,
                 }}
             />

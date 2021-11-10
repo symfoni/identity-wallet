@@ -159,7 +159,7 @@ const makeStyles = (colors: ColorSystem) => {
  */
 function useEffectOnboarding() {
     const { findVCByType } = useSymfoniContext();
-    const { resetToOnboardingA, navigateToOnboardingA } = useLocalNavigation();
+    const { resetToOnboardingA } = useLocalNavigation();
 
     useAsyncEffect(async () => {
         const termsOfUseSymfoniVC = (await findVCByType(
@@ -168,11 +168,7 @@ function useEffectOnboarding() {
 
         // If no terms of use SymfoniID exist, navigate to OnboardingScreen
         if (!termsOfUseSymfoniVC) {
-            if (__DEV__) {
-                navigateToOnboardingA();
-            } else {
-                resetToOnboardingA();
-            }
+            resetToOnboardingA();
         }
     }, []);
 }
