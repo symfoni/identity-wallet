@@ -188,57 +188,71 @@ function useEffectCreateCapTableVP(
 
     const { navigateWithResult } = useNavigationWithResult(screenParams);
 
-    useAsyncEffect(async () => {
-        while (client) {
-            const { topic, request } = await consumeEvent(
-                "symfoniID_createCapTableVP"
-            );
+    useAsyncEffect(
+        async (isMounted) => {
+            while (client) {
+                const { topic, request } = await consumeEvent(
+                    "symfoniID_createCapTableVP"
+                );
+                if (!isMounted()) {
+                    return;
+                }
 
-            // Get existing VCs if exist.
-            const params = request.params[0] as CreateCapTableVPParams;
+                // Get existing VCs if exist.
+                const params = request.params[0] as CreateCapTableVPParams;
 
-            console.log("consumed symfoniID_createCapTableVP:", { request });
+                console.log("consumed symfoniID_createCapTableVP:", {
+                    request,
+                });
 
-            const termsOfUseForvaltVC =
-                ((await findVCByType(
-                    makeTermsOfUseForvaltVC().type
-                )) as TermsOfUseForvaltVC) ?? makeTermsOfUseForvaltVC();
+                const termsOfUseForvaltVC =
+                    ((await findVCByType(
+                        makeTermsOfUseForvaltVC().type
+                    )) as TermsOfUseForvaltVC) ?? makeTermsOfUseForvaltVC();
 
-            const nationalIdentityVC =
-                ((await findVCByType(
-                    makeNationalIdentityVC().type
-                )) as NationalIdentityVC) ?? makeNationalIdentityVC();
+                const nationalIdentityVC =
+                    ((await findVCByType(
+                        makeNationalIdentityVC().type
+                    )) as NationalIdentityVC) ?? makeNationalIdentityVC();
+                if (!isMounted()) {
+                    return;
+                }
 
-            const screenRequest = makeVerifiablePresentationScreenRequest(
-                SCREEN_HOME,
-                NAVIGATOR_TABS,
-                request.method,
-                {
-                    verifier: {
-                        id: params.verifier,
-                        name: params.verifier,
-                        reason: "Opprette aksjeeierbok",
+                const screenRequest = makeVerifiablePresentationScreenRequest(
+                    SCREEN_HOME,
+                    NAVIGATOR_TABS,
+                    request.method,
+                    {
+                        verifier: {
+                            id: params.verifier,
+                            name: params.verifier,
+                            reason: "Opprette aksjeeierbok",
+                        },
+                        verifiableCredentials: [
+                            makeCapTableVC(params.capTable),
+                            termsOfUseForvaltVC,
+                            nationalIdentityVC,
+                        ],
                     },
-                    verifiableCredentials: [
-                        makeCapTableVC(params.capTable),
-                        termsOfUseForvaltVC,
-                        nationalIdentityVC,
-                    ],
-                },
-                request.id
-            );
+                    request.id
+                );
 
-            const navigationResult = await navigateWithResult(
-                SCREEN_VERIFIABLE_PRESENTATION,
-                screenRequest
-            );
+                const navigationResult = await navigateWithResult(
+                    SCREEN_VERIFIABLE_PRESENTATION,
+                    screenRequest
+                );
+                if (!isMounted()) {
+                    return;
+                }
 
-            sendResponse(
-                topic,
-                navigationResult.result ?? navigationResult.error
-            );
-        }
-    }, [client]);
+                sendResponse(
+                    topic,
+                    navigationResult.result ?? navigationResult.error
+                );
+            }
+        },
+        [client]
+    );
 }
 
 /**
@@ -252,62 +266,77 @@ function useEffectCapTablePrivateTokenTransferVP(
 
     const { navigateWithResult } = useNavigationWithResult(screenParams);
 
-    useAsyncEffect(async () => {
-        while (client) {
-            // 1. Listen for event
-            const { topic, request } = await consumeEvent(
-                "symfoniID_capTablePrivateTokenTransferVP"
-            );
-            console.info("consumed symfoniID_capTablePrivateTokenTransferVP:", {
-                request,
-            });
+    useAsyncEffect(
+        async (isMounted) => {
+            while (client) {
+                // 1. Listen for event
+                const { topic, request } = await consumeEvent(
+                    "symfoniID_capTablePrivateTokenTransferVP"
+                );
+                if (!isMounted()) {
+                    return;
+                }
+                console.info(
+                    "consumed symfoniID_capTablePrivateTokenTransferVP:",
+                    {
+                        request,
+                    }
+                );
 
-            // 2. Get existing VCs if exist.
-            const params = request
-                .params[0] as CapTablePrivateTokenTransferParams;
+                // 2. Get existing VCs if exist.
+                const params = request
+                    .params[0] as CapTablePrivateTokenTransferParams;
 
-            const termsOfUseForvaltVC =
-                ((await findVCByType(
-                    makeTermsOfUseForvaltVC().type
-                )) as TermsOfUseForvaltVC) ?? makeTermsOfUseForvaltVC();
+                const termsOfUseForvaltVC =
+                    ((await findVCByType(
+                        makeTermsOfUseForvaltVC().type
+                    )) as TermsOfUseForvaltVC) ?? makeTermsOfUseForvaltVC();
 
-            const nationalIdentityVC =
-                ((await findVCByType(
-                    makeNationalIdentityVC().type
-                )) as NationalIdentityVC) ?? makeNationalIdentityVC();
+                const nationalIdentityVC =
+                    ((await findVCByType(
+                        makeNationalIdentityVC().type
+                    )) as NationalIdentityVC) ?? makeNationalIdentityVC();
+                if (!isMounted()) {
+                    return;
+                }
 
-            // 3. Make screen request
-            const screenRequest = makeVerifiablePresentationScreenRequest(
-                SCREEN_HOME,
-                NAVIGATOR_TABS,
-                request.method,
-                {
-                    verifier: {
-                        id: params.verifier,
-                        name: params.verifier,
-                        reason: "Overføre aksjer",
+                // 3. Make screen request
+                const screenRequest = makeVerifiablePresentationScreenRequest(
+                    SCREEN_HOME,
+                    NAVIGATOR_TABS,
+                    request.method,
+                    {
+                        verifier: {
+                            id: params.verifier,
+                            name: params.verifier,
+                            reason: "Overføre aksjer",
+                        },
+                        verifiableCredentials: [
+                            makeCapTablePrivateTokenTransferVC(
+                                params.toShareholder
+                            ),
+                            termsOfUseForvaltVC,
+                            nationalIdentityVC,
+                        ],
                     },
-                    verifiableCredentials: [
-                        makeCapTablePrivateTokenTransferVC(
-                            params.toShareholder
-                        ),
-                        termsOfUseForvaltVC,
-                        nationalIdentityVC,
-                    ],
-                },
-                request.id
-            );
+                    request.id
+                );
 
-            // 4. Navigate and wait for result
-            const screenResult = await navigateWithResult(
-                SCREEN_VERIFIABLE_PRESENTATION,
-                screenRequest
-            );
+                // 4. Navigate and wait for result
+                const screenResult = await navigateWithResult(
+                    SCREEN_VERIFIABLE_PRESENTATION,
+                    screenRequest
+                );
+                if (!isMounted()) {
+                    return;
+                }
 
-            // 5. Send response
-            sendResponse(topic, screenResult.result ?? screenResult.error);
-        }
-    }, [client]);
+                // 5. Send response
+                sendResponse(topic, screenResult.result ?? screenResult.error);
+            }
+        },
+        [client]
+    );
 }
 
 function useEffectCapTableClaimUnclaimed(
@@ -318,52 +347,64 @@ function useEffectCapTableClaimUnclaimed(
 
     const { navigateWithResult } = useNavigationWithResult(screenParams);
 
-    useAsyncEffect(async () => {
-        while (client) {
-            // 1. Listen for event
-            const { topic, request } = await consumeEvent(
-                "symfoniID_capTableClaimToken"
-            );
-            console.info("consumed symfoniID_capTableClaimToken", {
-                request,
-            });
+    useAsyncEffect(
+        async (isMounted) => {
+            while (client) {
+                // 1. Listen for event
+                const { topic, request } = await consumeEvent(
+                    "symfoniID_capTableClaimToken"
+                );
+                if (!isMounted()) {
+                    return;
+                }
+                console.info("consumed symfoniID_capTableClaimToken", {
+                    request,
+                });
 
-            const params = request.params[0] as CapTableClaimTokenParams;
+                const params = request.params[0] as CapTableClaimTokenParams;
 
-            const nationalIdentityVC =
-                ((await findVCByType(
-                    makeNationalIdentityVC().type
-                )) as NationalIdentityVC) ?? makeNationalIdentityVC();
+                const nationalIdentityVC =
+                    ((await findVCByType(
+                        makeNationalIdentityVC().type
+                    )) as NationalIdentityVC) ?? makeNationalIdentityVC();
+                if (!isMounted()) {
+                    return;
+                }
 
-            // 3. Make screen request
-            const screenRequest = makeVerifiablePresentationScreenRequest(
-                SCREEN_HOME,
-                NAVIGATOR_TABS,
-                request.method,
-                {
-                    verifier: {
-                        id: params.verifier,
-                        name: params.verifier,
-                        reason: "Gjør krav på aksjer",
+                // 3. Make screen request
+                const screenRequest = makeVerifiablePresentationScreenRequest(
+                    SCREEN_HOME,
+                    NAVIGATOR_TABS,
+                    request.method,
+                    {
+                        verifier: {
+                            id: params.verifier,
+                            name: params.verifier,
+                            reason: "Gjør krav på aksjer",
+                        },
+                        verifiableCredentials: [
+                            makeCapTableClaimTokenVC(params.claimTokens),
+                            nationalIdentityVC,
+                        ],
                     },
-                    verifiableCredentials: [
-                        makeCapTableClaimTokenVC(params.claimTokens),
-                        nationalIdentityVC,
-                    ],
-                },
-                request.id
-            );
+                    request.id
+                );
 
-            // 4. Navigate and wait for result
-            const screenResult = await navigateWithResult(
-                SCREEN_VERIFIABLE_PRESENTATION,
-                screenRequest
-            );
+                // 4. Navigate and wait for result
+                const screenResult = await navigateWithResult(
+                    SCREEN_VERIFIABLE_PRESENTATION,
+                    screenRequest
+                );
+                if (!isMounted()) {
+                    return;
+                }
 
-            // 5. Send response
-            sendResponse(topic, screenResult.result ?? screenResult.error);
-        }
-    }, [client]);
+                // 5. Send response
+                sendResponse(topic, screenResult.result ?? screenResult.error);
+            }
+        },
+        [client]
+    );
 }
 
 /**
@@ -377,55 +418,70 @@ function useEffectAccessVP(
 
     const { navigateWithResult } = useNavigationWithResult(screenParams);
 
-    useAsyncEffect(async () => {
-        while (client) {
-            // 1. Listen for event
-            const { topic, request } = await consumeEvent("symfoniID_accessVP");
-            console.info("consumed symfoniID_accessVP:", {
-                request,
-            });
+    useAsyncEffect(
+        async (isMounted) => {
+            while (client) {
+                // 1. Listen for event
+                const { topic, request } = await consumeEvent(
+                    "symfoniID_accessVP"
+                );
+                if (!isMounted()) {
+                    return;
+                }
 
-            // 2. Get existing VCs if exist.
-            const params = request.params[0] as AccessVPParams;
+                console.info("consumed symfoniID_accessVP:", {
+                    request,
+                });
 
-            const nationalIdentityVC =
-                ((await findVCByType(
-                    makeNationalIdentityVC().type
-                )) as NationalIdentityVC) ?? makeNationalIdentityVC();
+                // 2. Get existing VCs if exist.
+                const params = request.params[0] as AccessVPParams;
 
-            // 3. Make screen request
-            const screenRequest = makeVerifiablePresentationScreenRequest(
-                SCREEN_HOME,
-                NAVIGATOR_TABS,
-                request.method,
-                {
-                    verifier: {
-                        id: params.verifier,
-                        name: params.verifier,
-                        reason: "Dele dine data",
+                const nationalIdentityVC =
+                    ((await findVCByType(
+                        makeNationalIdentityVC().type
+                    )) as NationalIdentityVC) ?? makeNationalIdentityVC();
+                if (!isMounted()) {
+                    return;
+                }
+
+                // 3. Make screen request
+                const screenRequest = makeVerifiablePresentationScreenRequest(
+                    SCREEN_HOME,
+                    NAVIGATOR_TABS,
+                    request.method,
+                    {
+                        verifier: {
+                            id: params.verifier,
+                            name: params.verifier,
+                            reason: "Dele dine data",
+                        },
+                        verifiableCredentials: [
+                            makeAccessVC({
+                                delegatedTo: params.access.delegatedTo,
+                                scopes: params.access.scopes,
+                            }),
+                            nationalIdentityVC,
+                        ],
                     },
-                    verifiableCredentials: [
-                        makeAccessVC({
-                            delegatedTo: params.access.delegatedTo,
-                            scopes: params.access.scopes,
-                        }),
-                        nationalIdentityVC,
-                    ],
-                },
-                request.id
-            );
+                    request.id
+                );
 
-            // 4. Navigate and wait for result
-            const screenResult = await navigateWithResult(
-                SCREEN_VERIFIABLE_PRESENTATION,
-                screenRequest
-            );
+                // 4. Navigate and wait for result
+                const screenResult = await navigateWithResult(
+                    SCREEN_VERIFIABLE_PRESENTATION,
+                    screenRequest
+                );
+                if (!isMounted()) {
+                    return;
+                }
 
-            console.log({ screenResult });
-            // 5. Send response
-            sendResponse(topic, screenResult.result ?? screenResult.error);
-        }
-    }, [client]);
+                console.log({ screenResult });
+                // 5. Send response
+                sendResponse(topic, screenResult.result ?? screenResult.error);
+            }
+        },
+        [client]
+    );
 }
 
 /**
@@ -439,59 +495,72 @@ function useEffectUpdateShareholderVP(
 
     const { navigateWithResult } = useNavigationWithResult(result);
 
-    useAsyncEffect(async () => {
-        while (client) {
-            // 1. Listen for event
-            const { topic, request } = await consumeEvent(
-                "symfoniID_updateShareholderVP"
-            );
-            console.info("consumed symfoniID_updateShareholderVP:", {
-                request,
-            });
+    useAsyncEffect(
+        async (isMounted) => {
+            while (client) {
+                // 1. Listen for event
+                const { topic, request } = await consumeEvent(
+                    "symfoniID_updateShareholderVP"
+                );
+                if (!isMounted()) {
+                    return;
+                }
 
-            // 2. Get existing VCs if exist.
-            const params = request.params[0] as UpdateShareholderVPParams;
+                console.info("consumed symfoniID_updateShareholderVP:", {
+                    request,
+                });
 
-            const nationalIdentityVC =
-                ((await findVCByType(
-                    makeNationalIdentityVC().type
-                )) as NationalIdentityVC) ?? makeNationalIdentityVC();
+                // 2. Get existing VCs if exist.
+                const params = request.params[0] as UpdateShareholderVPParams;
 
-            // 3. Make screen request
-            const screenRequest = makeVerifiablePresentationScreenRequest(
-                SCREEN_HOME,
-                NAVIGATOR_TABS,
-                request.method,
-                {
-                    verifier: {
-                        id: params.verifier,
-                        name: params.verifier,
-                        reason: "Dele dine data",
+                const nationalIdentityVC =
+                    ((await findVCByType(
+                        makeNationalIdentityVC().type
+                    )) as NationalIdentityVC) ?? makeNationalIdentityVC();
+                if (!isMounted()) {
+                    return;
+                }
+
+                // 3. Make screen request
+                const screenRequest = makeVerifiablePresentationScreenRequest(
+                    SCREEN_HOME,
+                    NAVIGATOR_TABS,
+                    request.method,
+                    {
+                        verifier: {
+                            id: params.verifier,
+                            name: params.verifier,
+                            reason: "Dele dine data",
+                        },
+                        verifiableCredentials: [
+                            makeCapTableUpdateShareholderVC(
+                                params.updateShareholderVC.credentialSubject
+                                    .shareholderId,
+                                params.updateShareholderVC.credentialSubject
+                                    .capTableAddress,
+                                params.updateShareholderVC.credentialSubject
+                                    .shareholderData
+                            ),
+                            nationalIdentityVC,
+                        ],
                     },
-                    verifiableCredentials: [
-                        makeCapTableUpdateShareholderVC(
-                            params.updateShareholderVC.credentialSubject
-                                .shareholderId,
-                            params.updateShareholderVC.credentialSubject
-                                .capTableAddress,
-                            params.updateShareholderVC.credentialSubject
-                                .shareholderData
-                        ),
-                        nationalIdentityVC,
-                    ],
-                },
-                request.id
-            );
+                    request.id
+                );
 
-            // 4. Navigate and wait for result
-            const screenResult = await navigateWithResult(
-                SCREEN_VERIFIABLE_PRESENTATION,
-                screenRequest
-            );
+                // 4. Navigate and wait for result
+                const screenResult = await navigateWithResult(
+                    SCREEN_VERIFIABLE_PRESENTATION,
+                    screenRequest
+                );
+                if (!isMounted()) {
+                    return;
+                }
 
-            console.log({ screenResult });
-            // 5. Send response
-            sendResponse(topic, screenResult.result ?? screenResult.error);
-        }
-    }, [client]);
+                console.log({ screenResult });
+                // 5. Send response
+                sendResponse(topic, screenResult.result ?? screenResult.error);
+            }
+        },
+        [client]
+    );
 }
