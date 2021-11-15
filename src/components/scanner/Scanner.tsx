@@ -21,7 +21,7 @@ export const Scanner = ({
                 fadeIn={false}
                 showMarker={true}
             />
-            {false && (
+            {__DEV__ && (
                 <WCText
                     placeholder="Eller skriv WC kode her"
                     onChangeText={(text: string) => onInput(text)}
@@ -42,7 +42,7 @@ export const Scanner = ({
     );
 };
 
-const WCText = styled.Text`
+const WCText = styled.TextInput`
     border-color: #ccc;
     background-color: #ccc;
     height: 30px;
