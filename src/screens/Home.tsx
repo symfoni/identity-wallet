@@ -416,8 +416,8 @@ function useEffectAccessVP(
                     {
                         verifier: {
                             id: params.verifier,
-                            name: params.verifier,
-                            reason: "Dele dine data",
+                            name: "Brønnøysundregistrene Aksjeeierbok",
+                            reason: "Hente dine aksjer",
                         },
                         verifiableCredentials: [
                             makeAccessVC({

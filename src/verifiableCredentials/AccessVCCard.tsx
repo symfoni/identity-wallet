@@ -18,13 +18,13 @@ export function AccessVCCard({
 
     return (
         <VCCard>
-            <VCPropLabel>Hvem vil du dele med?</VCPropLabel>
-            <VCPropText>
-                {vc.credentialSubject?.access.delegatedTo.id}
-            </VCPropText>
-            <VCPropLabel>Hva vil du dele?</VCPropLabel>
+            <VCPropLabel>Tillat å</VCPropLabel>
             {(vc.credentialSubject?.access.scopes ?? []).map((scope) => {
-                return <VCPropText key={scope.id}>{scope.name}</VCPropText>;
+                return (
+                    <VCPropText key={scope.id}>
+                        - Hente {scope.name.toLocaleLowerCase()}
+                    </VCPropText>
+                );
             })}
             <SignButton
                 signed={signed}

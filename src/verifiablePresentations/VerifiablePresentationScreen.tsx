@@ -132,7 +132,7 @@ export function VerifiablePresentationScreen(props: {
             headerRight: () => (
                 <Button
                     onPress={onReject}
-                    title="Avbryt"
+                    title="Avvis"
                     color="rgb(0,122, 255)"
                 />
             ),
@@ -157,11 +157,12 @@ export function VerifiablePresentationScreen(props: {
                 <SmallText>For å kunne</SmallText>
                 <BigText>{request.params.verifier.reason}</BigText>
 
+                <SmallText>Legitimasjon (Verifiable Credentials)</SmallText>
                 {cards}
             </Content>
-            {presentable && (
-                <PresentButton onPress={onPresent}>Vis</PresentButton>
-            )}
+            <PresentButton presentable={presentable} onPress={onPresent}>
+                Tillat
+            </PresentButton>
         </Screen>
     );
 }
@@ -188,19 +189,24 @@ const BigText = styled.Text`
 function PresentButton({
     children,
     onPress,
+    presentable,
 }: {
     children: ReactNode;
     onPress: () => void;
+    presentable: boolean;
 }) {
     return (
-        <PresentButtonView onPress={onPress}>
+        <PresentButtonView
+            presentable={presentable}
+            onPress={() => (presentable ? onPress : null)}>
             <PresentButtonText>{children}</PresentButtonText>
         </PresentButtonView>
     );
 }
 
 const PresentButtonView = styled.TouchableOpacity`
-    background-color: rgb(52, 199, 89);
+    background-color: ${({ presentable }: { presentable: boolean }) =>
+        presentable ? "rgb(52, 199, 89)" : "rgb(218,218,223)"};
     display: flex;
     flex-direction: row;
     justify-content: center;
