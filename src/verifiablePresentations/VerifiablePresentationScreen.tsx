@@ -151,10 +151,7 @@ export function VerifiablePresentationScreen(props: {
     return (
         <Screen>
             <Content>
-                <SmallText>Til</SmallText>
-                <BigText>{request.params.verifier.name}</BigText>
-
-                <SmallText>For å kunne</SmallText>
+                <SmallText>Til å kunne</SmallText>
                 <BigText>{request.params.verifier.reason}</BigText>
 
                 <SmallText>Legitimasjon (Verifiable Credentials)</SmallText>
