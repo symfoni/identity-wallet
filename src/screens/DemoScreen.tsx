@@ -50,19 +50,19 @@ export function DemoScreen(props: {
             <Button
                 title="Demo: Generic VP Screen"
                 onPress={async () => {
-                    const request = makeVerifiablePresentationScreenRequest(
-                        SCREEN_DEMO,
-                        undefined,
-                        "demo_requestVerifiablePresentation",
-                        {
+                    const request = makeVerifiablePresentationScreenRequest({
+                        fromScreen: SCREEN_DEMO,
+                        method: "demo_requestVerifiablePresentation",
+                        params: {
+                            title: "Del",
                             verifier: demoVerifier,
                             verifiableCredentials: [
                                 demoNationalIdentityVC,
                                 demoTermsOfUseForvaltVC,
                                 demoTermsOfUseSymfoniVC,
                             ],
-                        }
-                    );
+                        },
+                    });
 
                     const { result, error } = await navigateWithResult(
                         SCREEN_VERIFIABLE_PRESENTATION,
@@ -75,21 +75,20 @@ export function DemoScreen(props: {
             <Button
                 title="Demo: Opprett aksjeeierbok"
                 onPress={async () => {
-                    const request = makeVerifiablePresentationScreenRequest(
-                        SCREEN_DEMO,
-                        undefined,
-                        "demo_createCapTableVP",
-                        {
+                    const request = makeVerifiablePresentationScreenRequest({
+                        fromScreen: SCREEN_DEMO,
+                        method: "demo_createCapTableVP",
+                        params: {
+                            title: "Godkjenn",
                             verifier: demoVerifier,
-
                             verifiableCredentials: [
                                 demoCapTableVC,
                                 demoNationalIdentityVC,
                                 demoTermsOfUseForvaltVC,
                                 demoTermsOfUseSymfoniVC,
                             ],
-                        }
-                    );
+                        },
+                    });
 
                     console.info({ request });
 
@@ -119,21 +118,20 @@ export function DemoScreen(props: {
                             demoNationalIdentityVC.type
                         )) as NationalIdentityVC) ?? demoNationalIdentityVC;
 
-                    const request = makeVerifiablePresentationScreenRequest(
-                        SCREEN_DEMO,
-                        undefined,
-                        "demo_createCapTableVP-reuseable",
-                        {
+                    const request = makeVerifiablePresentationScreenRequest({
+                        fromScreen: SCREEN_DEMO,
+                        method: "demo_createCapTableVP-reuseable",
+                        params: {
+                            title: "Godkjenn",
                             verifier: demoVerifier,
-
                             verifiableCredentials: [
                                 demoCapTableVC,
                                 nationalIdentityVC,
                                 termsOfUseForvaltVC,
                                 termsOfUseSymfoniVC,
                             ],
-                        }
-                    );
+                        },
+                    });
 
                     console.info({ request });
 
@@ -147,21 +145,20 @@ export function DemoScreen(props: {
             <Button
                 title="Demo: Overføre Aksjer"
                 onPress={async () => {
-                    const request = makeVerifiablePresentationScreenRequest(
-                        SCREEN_DEMO,
-                        undefined,
-                        "demo_capTablePrivateTokenTransferVP",
-                        {
+                    const request = makeVerifiablePresentationScreenRequest({
+                        fromScreen: SCREEN_DEMO,
+                        method: "demo_capTablePrivateTokenTransferVP",
+                        params: {
+                            title: "Tillat",
                             verifier: demoVerifier,
-
                             verifiableCredentials: [
                                 demoCapTablePrivateTransferTokenVC,
                                 demoNationalIdentityVC,
                                 demoTermsOfUseForvaltVC,
                                 demoTermsOfUseSymfoniVC,
                             ],
-                        }
-                    );
+                        },
+                    });
 
                     const { result, error } = await navigateWithResult(
                         SCREEN_VERIFIABLE_PRESENTATION,
@@ -188,11 +185,11 @@ export function DemoScreen(props: {
                             demoNationalIdentityVC.type
                         )) as NationalIdentityVC) ?? demoNationalIdentityVC;
 
-                    const request = makeVerifiablePresentationScreenRequest(
-                        SCREEN_DEMO,
-                        undefined,
-                        "demo_capTablePrivateTokenTransferVP",
-                        {
+                    const request = makeVerifiablePresentationScreenRequest({
+                        fromScreen: SCREEN_DEMO,
+                        method: "demo_capTablePrivateTokenTransferVP",
+                        params: {
+                            title: "Tillat",
                             verifier: demoVerifier,
                             verifiableCredentials: [
                                 demoCapTablePrivateTransferTokenVC,
@@ -200,8 +197,8 @@ export function DemoScreen(props: {
                                 termsOfUseForvaltVC,
                                 termsOfUseSymfoniVC,
                             ],
-                        }
-                    );
+                        },
+                    });
 
                     const { result, error } = await navigateWithResult(
                         SCREEN_VERIFIABLE_PRESENTATION,
@@ -218,18 +215,18 @@ export function DemoScreen(props: {
                             demoNationalIdentityVC.type
                         )) as NationalIdentityVC) ?? demoNationalIdentityVC;
 
-                    const request = makeVerifiablePresentationScreenRequest(
-                        SCREEN_DEMO,
-                        undefined,
-                        "demo_capTableClaimToken",
-                        {
+                    const request = makeVerifiablePresentationScreenRequest({
+                        fromScreen: SCREEN_DEMO,
+                        method: "demo_capTableClaimToken",
+                        params: {
+                            title: "Godkjenn",
                             verifier: demoVerifier,
                             verifiableCredentials: [
                                 demoCapTableClaimTokenVC,
                                 nationalIdentityVC,
                             ],
-                        }
-                    );
+                        },
+                    });
 
                     const result = await navigateWithResult(
                         SCREEN_VERIFIABLE_PRESENTATION,
@@ -246,18 +243,18 @@ export function DemoScreen(props: {
                             demoNationalIdentityVC.type
                         )) as NationalIdentityVC) ?? demoNationalIdentityVC;
 
-                    const request = makeVerifiablePresentationScreenRequest(
-                        SCREEN_DEMO,
-                        undefined,
-                        "demo_capTableUpdateShareholder",
-                        {
+                    const request = makeVerifiablePresentationScreenRequest({
+                        fromScreen: SCREEN_DEMO,
+                        method: "demo_capTableUpdateShareholder",
+                        params: {
+                            title: "Godkjenn",
                             verifier: demoVerifier,
                             verifiableCredentials: [
                                 demoCapTableUpdateShareholderVC,
                                 nationalIdentityVC,
                             ],
-                        }
-                    );
+                        },
+                    });
 
                     const result = await navigateWithResult(
                         SCREEN_VERIFIABLE_PRESENTATION,
@@ -274,11 +271,11 @@ export function DemoScreen(props: {
                             demoNationalIdentityVC.type
                         )) as NationalIdentityVC) ?? demoNationalIdentityVC;
 
-                    const request = makeVerifiablePresentationScreenRequest(
-                        SCREEN_DEMO,
-                        undefined,
-                        "demo_accessVP",
-                        {
+                    const request = makeVerifiablePresentationScreenRequest({
+                        fromScreen: SCREEN_DEMO,
+                        method: "demo_accessVP",
+                        params: {
+                            title: "Tillat",
                             verifier: {
                                 id: "https://www.example.com",
                                 name: "Brønnøysundregisteret",
@@ -286,7 +283,10 @@ export function DemoScreen(props: {
                             },
                             verifiableCredentials: [
                                 makeAccessVC({
-                                    delegatedTo: { id: "Forvalt.no" },
+                                    delegatedTo: {
+                                        id: "Forvalt.no",
+                                        name: "Brønnøysundregistrene Aksjeeierbok",
+                                    },
                                     scopes: [
                                         {
                                             id: "example.com/age",
@@ -300,8 +300,8 @@ export function DemoScreen(props: {
                                 }),
                                 nationalIdentityVC,
                             ],
-                        }
-                    );
+                        },
+                    });
 
                     const { result, error } = await navigateWithResult(
                         SCREEN_VERIFIABLE_PRESENTATION,

@@ -209,11 +209,13 @@ function useEffectCreateCapTableVP(
                     return;
                 }
 
-                const screenRequest = makeVerifiablePresentationScreenRequest(
-                    SCREEN_HOME,
-                    NAVIGATOR_TABS,
-                    request.method,
-                    {
+                const screenRequest = makeVerifiablePresentationScreenRequest({
+                    ...request,
+                    fromScreen: SCREEN_HOME,
+                    fromNavigator: NAVIGATOR_TABS,
+                    method: request.method,
+                    params: {
+                        title: "Godkjenn",
                         verifier: {
                             id: params.verifier,
                             name: params.verifier,
@@ -225,8 +227,7 @@ function useEffectCreateCapTableVP(
                             nationalIdentityVC,
                         ],
                     },
-                    request.id
-                );
+                });
 
                 const navigationResult = await navigateWithResult(
                     SCREEN_VERIFIABLE_PRESENTATION,
@@ -324,11 +325,12 @@ function useEffectCapTablePrivateTokenTransferVP(
                 }
 
                 // 3. Make screen request
-                const screenRequest = makeVerifiablePresentationScreenRequest(
-                    SCREEN_HOME,
-                    NAVIGATOR_TABS,
-                    request.method,
-                    {
+                const screenRequest = makeVerifiablePresentationScreenRequest({
+                    ...request,
+                    fromScreen: SCREEN_HOME,
+                    fromNavigator: NAVIGATOR_TABS,
+                    params: {
+                        title: "Tillat",
                         verifier: {
                             id: params.verifier,
                             name: params.verifier,
@@ -342,8 +344,7 @@ function useEffectCapTablePrivateTokenTransferVP(
                             nationalIdentityVC,
                         ],
                     },
-                    request.id
-                );
+                });
 
                 // 4. Navigate and wait for result
                 const screenResult = await navigateWithResult(
@@ -417,11 +418,12 @@ function useEffectCapTableClaimUnclaimed(
                 }
 
                 // 3. Make screen request
-                const screenRequest = makeVerifiablePresentationScreenRequest(
-                    SCREEN_HOME,
-                    NAVIGATOR_TABS,
-                    request.method,
-                    {
+                const screenRequest = makeVerifiablePresentationScreenRequest({
+                    ...request,
+                    fromScreen: SCREEN_HOME,
+                    fromNavigator: NAVIGATOR_TABS,
+                    params: {
+                        title: "Godkjenn",
                         verifier: {
                             id: params.verifier,
                             name: params.verifier,
@@ -432,8 +434,7 @@ function useEffectCapTableClaimUnclaimed(
                             nationalIdentityVC,
                         ],
                     },
-                    request.id
-                );
+                });
 
                 // 4. Navigate and wait for result
                 const screenResult = await navigateWithResult(
@@ -506,11 +507,12 @@ function useEffectAccessVP(
                 }
 
                 // 3. Make screen request
-                const screenRequest = makeVerifiablePresentationScreenRequest(
-                    SCREEN_HOME,
-                    NAVIGATOR_TABS,
-                    request.method,
-                    {
+                const screenRequest = makeVerifiablePresentationScreenRequest({
+                    ...request,
+                    fromScreen: SCREEN_HOME,
+                    fromNavigator: NAVIGATOR_TABS,
+                    params: {
+                        title: "Tillat",
                         verifier: {
                             id: params.verifier,
                             name: "Brønnøysundregistrene Aksjeeierbok",
@@ -524,8 +526,7 @@ function useEffectAccessVP(
                             nationalIdentityVC,
                         ],
                     },
-                    request.id
-                );
+                });
 
                 // 4. Navigate and wait for result
                 const screenResult = await navigateWithResult(
@@ -602,11 +603,12 @@ function useEffectUpdateShareholderVP(
                 }
 
                 // 3. Make screen request
-                const screenRequest = makeVerifiablePresentationScreenRequest(
-                    SCREEN_HOME,
-                    NAVIGATOR_TABS,
-                    request.method,
-                    {
+                const screenRequest = makeVerifiablePresentationScreenRequest({
+                    ...request,
+                    fromScreen: SCREEN_HOME,
+                    fromNavigator: NAVIGATOR_TABS,
+                    params: {
+                        title: "Godkjenn",
                         verifier: {
                             id: params.verifier,
                             name: params.verifier,
@@ -622,8 +624,7 @@ function useEffectUpdateShareholderVP(
                             nationalIdentityVC,
                         ],
                     },
-                    request.id
-                );
+                });
 
                 // 4. Navigate and wait for result
                 const screenResult = await navigateWithResult(

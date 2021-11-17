@@ -153,12 +153,10 @@ export function VerifiablePresentationScreen(props: {
             <Content>
                 <SmallText>For å kunne</SmallText>
                 <BigText>{request.params.verifier.reason}</BigText>
-
-                <SmallText>Legitimasjon (Verifiable Credentials)</SmallText>
                 {cards}
             </Content>
             <PresentButton presentable={presentable} onPress={onPresent}>
-                Tillat
+                {request.params.title ?? "Ok"}
             </PresentButton>
         </Screen>
     );
