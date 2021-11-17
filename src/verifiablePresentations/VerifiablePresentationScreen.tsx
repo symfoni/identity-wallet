@@ -202,7 +202,7 @@ function PresentButton({
 
 const PresentButtonView = styled.TouchableOpacity`
     background-color: ${({ presentable }: { presentable: boolean }) =>
-        presentable ? "rgb(0,122, 255)" : "rgba(0,122, 255, 0.3)"};
+        presentable ? "rgb(52, 199, 89)" : "rgba(0,122, 255, 0.3)"};
     display: flex;
     flex-direction: row;
     justify-content: center;
