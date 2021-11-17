@@ -19,8 +19,10 @@ export function OnboardingAScreen() {
                     />
                 </Figure>
                 <Description>
-                    Symfoni ID kan svare på ID-forespørsler fra digitale
-                    tjenester.
+                    <DescriptionText>
+                        Symfoni ID kan svare på ID-forespørsler fra digitale
+                        tjenester.
+                    </DescriptionText>
                 </Description>
             </>
         </OnboardingContent>
@@ -33,8 +35,10 @@ const Figure = styled.View`
     align-items: center;
 `;
 
-const Description = styled.Text`
+const Description = styled.View`
     flex: 1;
     font-size: 16px;
     text-align: center;
+    justify-content: center;
 `;
+const DescriptionText = styled.Text``;

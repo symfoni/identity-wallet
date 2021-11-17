@@ -46,14 +46,16 @@ export function SignButton({
     }, [onPress, signed]);
 
     const expirationDateText = useMemo(() => {
-        return "";
-        /* if (!expirationDate) {
+        if (!__DEV__) {
+            return "";
+        }
+        if (!expirationDate) {
             return "--/--/----";
         }
         return `Utløper ${
             new Date(expirationDate).toISOString().split("T")[0]
-        }`; */
-    }, []);
+        }`;
+    }, [expirationDate]);
 
     return (
         <DateView>

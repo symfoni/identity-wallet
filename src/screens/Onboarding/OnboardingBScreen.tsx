@@ -44,7 +44,7 @@ export function OnboardingBScreen() {
                     )}
                 </Figure>
                 <Description>
-                    <Text>
+                    <DescriptionText>
                         Koble til{" "}
                         <Hyperlink
                             color={colors.primary.light}
@@ -54,7 +54,7 @@ export function OnboardingBScreen() {
                             tjenester
                         </Hyperlink>{" "}
                         med QR-leseren.
-                    </Text>
+                    </DescriptionText>
                 </Description>
             </>
         </OnboardingContent>
@@ -66,7 +66,6 @@ const Figure = styled.View`
     justify-content: center;
     align-items: center;
 `;
-
 const QrIcon = styled(Icon)``;
 
 const QrButton = styled(SymfoniButton)`
@@ -83,7 +82,10 @@ const Description = styled.View`
     flex: 1;
     font-size: 16px;
     text-align: center;
+    justify-content: center;
 `;
+const DescriptionText = styled.Text``;
+
 const Hyperlink = styled.Text`
     color: ${(props: { color: string }) => props.color};
     text-decoration-line: underline;

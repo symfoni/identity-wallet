@@ -16,7 +16,7 @@ import { TermsOfUseVCCard } from "../../verifiableCredentials/TermsOfUseVCCard";
 import { OnboardingContent } from "./components/OnboardingContent";
 
 export function OnboardingDScreen() {
-    const { navigateToOnboardingB, navigateHome } = useLocalNavigation();
+    const { navigateToOnboardingC, navigateHome } = useLocalNavigation();
     const { checkDeviceAuthentication } = useDeviceAuthentication();
     const { createVC, findVCByType } = useSymfoniContext();
     const [vc, setVC] = useState<SupportedVerifiableCredential | undefined>();
@@ -71,7 +71,7 @@ export function OnboardingDScreen() {
 
     return (
         <OnboardingContent
-            prev={navigateToOnboardingB}
+            prev={navigateToOnboardingC}
             next={signed ? navigateHome : undefined}>
             <>
                 <Figure>
@@ -94,7 +94,11 @@ export function OnboardingDScreen() {
                     </TermsOfUseBody>
                 </Figure>
                 <Description>
-                    Godta brukervilkårene, for å komme i gang.
+                    <DescriptionText>
+                        {!signed
+                            ? "Godta brukervilkårene, for å komme i gang."
+                            : "Brukervilkår godtatt 🎉"}
+                    </DescriptionText>
                 </Description>
             </>
         </OnboardingContent>
@@ -113,11 +117,13 @@ const Figure = styled.View`
     justify-content: center;
 `;
 
-const Description = styled.Text`
+const Description = styled.View`
     flex: 1;
     font-size: 16px;
     text-align: center;
+    justify-content: center;
 `;
+const DescriptionText = styled.Text``;
 
 const Title = styled.Text`
     font-size: 22px;

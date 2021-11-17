@@ -58,7 +58,13 @@ export function OnboardingCScreen() {
                         </FingerPresent>
                     </ExplainPresent>
                 </Figure>
-                <Description>Svar eller avslå forespørsler.</Description>
+                <Description>
+                    <DescriptionText>
+                        {!next
+                            ? "Svar eller avslå forespørsler."
+                            : "Forespørsel besvart 🎉"}
+                    </DescriptionText>
+                </Description>
             </>
         </OnboardingContent>
     );
@@ -70,11 +76,13 @@ const Figure = styled.View`
     justify-content: center;
 `;
 
-const Description = styled.Text`
+const Description = styled.View`
     flex: 1;
     font-size: 16px;
-    text-align: center;
+    text-align: left;
+    justify-content: center;
 `;
+const DescriptionText = styled.Text``;
 
 const Title = styled.Text`
     font-size: 22px;
