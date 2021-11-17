@@ -21,7 +21,6 @@ import {
     ScreenResult,
 } from "../types/ScreenResults";
 import { useNavigateBack } from "../hooks/useNavigationWithResult";
-import { PresentButton } from "../components/PresentButton";
 
 // Screen
 export function VerifiablePresentationScreen(props: {
@@ -133,7 +132,7 @@ export function VerifiablePresentationScreen(props: {
             headerRight: () => (
                 <Button
                     onPress={onReject}
-                    title="Avbryt"
+                    title="Avvis"
                     color="rgb(0,122, 255)"
                 />
             ),
@@ -152,17 +151,13 @@ export function VerifiablePresentationScreen(props: {
     return (
         <Screen>
             <Content>
-                <SmallText>Til</SmallText>
-                <BigText>{request.params.verifier.name}</BigText>
-
                 <SmallText>For å kunne</SmallText>
                 <BigText>{request.params.verifier.reason}</BigText>
-
                 {cards}
             </Content>
-            {presentable && (
-                <PresentButton onPress={onPresent}>Vis</PresentButton>
-            )}
+            <PresentButton presentable={presentable} onPress={onPresent}>
+                Svar
+            </PresentButton>
         </Screen>
     );
 }
@@ -171,17 +166,57 @@ const Screen = styled.ScrollView`
     height: 100%;
     background: white;
     border: 1px solid white;
+    padding-horizontal: 30px;
+    padding-vertical: 30px;
 `;
 const Content = styled.View`
     flex: 1;
-    padding-horizontal: 30px;
-    padding-vertical: 30px;
 `;
 const SmallText = styled.Text`
     margin-left: 5px;
 `;
 const BigText = styled.Text`
     font-size: 22px;
-    padding-bottom: 20px;
+    padding-bottom: 15px;
     margin-left: 5px;
+`;
+
+function PresentButton({
+    children,
+    onPress,
+    presentable,
+}: {
+    children: ReactNode;
+    onPress: () => void;
+    presentable: boolean;
+}) {
+    return (
+        <PresentButtonView
+            presentable={presentable}
+            disabled={!presentable}
+            onPress={() => (presentable ? onPress() : null)}>
+            <PresentButtonText>{children}</PresentButtonText>
+        </PresentButtonView>
+    );
+}
+
+const PresentButtonView = styled.TouchableOpacity`
+    background-color: ${({ presentable }: { presentable: boolean }) =>
+        presentable ? "rgb(52, 199, 89)" : "rgba(0,122, 255, 0.3)"};
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    height: 44px;
+    margin-horizontal: 30px;
+    margin-top: 20px;
+    margin-bottom: 50px;
+    width: 100%;
+    border-radius: 10px;
+    align-self: center;
+`;
+const PresentButtonText = styled.Text`
+    color: rgb(255, 255, 255);
+    font-weight: 500;
+    font-size: 16px;
 `;

@@ -10,10 +10,10 @@ import {
     View,
 } from "react-native";
 import { useAsyncEffect } from "use-async-effect";
-
 // Local
 import { ColorSystem, useColorContext } from "../colorContext";
 import { Scanner } from "../components/scanner";
+import { SymfoniButton } from "../components/ui/button";
 import { useSymfoniContext } from "../context";
 import {
     NAVIGATOR_TABS,
@@ -35,6 +35,7 @@ import { ScreenError, ScreenResult } from "../types/ScreenResults";
 import { makeAccessVC } from "../verifiableCredentials/AccessVC";
 import { makeCapTableClaimTokenVC } from "../verifiableCredentials/CapTableClaimTokenVC";
 import { makeCapTablePrivateTokenTransferVC } from "../verifiableCredentials/CapTablePrivateTokenTransferVC";
+import { makeCapTableUpdateShareholderVC } from "../verifiableCredentials/CapTableUpdateShareholderVC";
 import { makeCapTableVC } from "../verifiableCredentials/CapTableVC";
 import {
     makeNationalIdentityVC,
@@ -46,8 +47,6 @@ import {
     TermsOfUseForvaltVC,
     TermsOfUseSymfoniVC,
 } from "../verifiableCredentials/TermsOfUseVC";
-import { makeCapTableUpdateShareholderVC } from "../verifiableCredentials/CapTableUpdateShareholderVC";
-import { SymfoniButton } from "../components/ui/button";
 
 export const Home = (props: {
     route: {
@@ -88,7 +87,7 @@ export const Home = (props: {
             try {
                 await pair(URI);
             } catch (err) {
-                console.warn("ERROR: await pair(URI): ", err);
+                consoleWarnHome("onScanQR", "await pair(URI): ", err);
                 return;
             }
             setScannerVisible(false);
@@ -191,34 +190,62 @@ function useEffectCreateCapTableVP(
                     "symfoniID_createCapTableVP"
                 );
                 if (!isMounted()) {
+                    consoleWarnHome(
+                        "useEffectCreateCapTableVP",
+                        "!isMounted() 1"
+                    );
                     return;
                 }
 
                 // Get existing VCs if exist.
                 const params = request.params[0] as CreateCapTableVPParams;
-
                 console.log("consumed symfoniID_createCapTableVP:", {
                     request,
                 });
 
-                const termsOfUseForvaltVC =
-                    ((await findVCByType(
-                        makeTermsOfUseForvaltVC().type
-                    )) as TermsOfUseForvaltVC) ?? makeTermsOfUseForvaltVC();
+                let termsOfUseForvaltVC = makeTermsOfUseForvaltVC();
+                try {
+                    termsOfUseForvaltVC =
+                        ((await findVCByType(
+                            makeTermsOfUseForvaltVC().type
+                        )) as TermsOfUseForvaltVC) ?? makeTermsOfUseForvaltVC();
+                } catch (err) {
+                    consoleWarnHome(
+                        "useEffectCreateCapTableVP",
+                        "await findVCByType(makeTermsOfUseForvaltVC().type",
+                        err
+                    );
+                    continue;
+                }
 
-                const nationalIdentityVC =
-                    ((await findVCByType(
-                        makeNationalIdentityVC().type
-                    )) as NationalIdentityVC) ?? makeNationalIdentityVC();
+                let nationalIdentityVC = makeNationalIdentityVC();
+                try {
+                    nationalIdentityVC =
+                        ((await findVCByType(
+                            makeNationalIdentityVC().type
+                        )) as NationalIdentityVC) ?? makeNationalIdentityVC();
+                } catch (err) {
+                    consoleWarnHome(
+                        "useEffectCreateCapTableVP",
+                        "await findVCByType(makeNationalIdentityVC().type)",
+                        err
+                    );
+                    continue;
+                }
                 if (!isMounted()) {
+                    consoleWarnHome(
+                        "useEffectCreateCapTableVP",
+                        "!isMounted() 2"
+                    );
                     return;
                 }
 
-                const screenRequest = makeVerifiablePresentationScreenRequest(
-                    SCREEN_HOME,
-                    NAVIGATOR_TABS,
-                    request.method,
-                    {
+                const screenRequest = makeVerifiablePresentationScreenRequest({
+                    ...request,
+                    fromScreen: SCREEN_HOME,
+                    fromNavigator: NAVIGATOR_TABS,
+                    method: request.method,
+                    params: {
                         verifier: {
                             id: params.verifier,
                             name: params.verifier,
@@ -230,14 +257,17 @@ function useEffectCreateCapTableVP(
                             nationalIdentityVC,
                         ],
                     },
-                    request.id
-                );
+                });
 
                 const navigationResult = await navigateWithResult(
                     SCREEN_VERIFIABLE_PRESENTATION,
                     screenRequest
                 );
                 if (!isMounted()) {
+                    consoleWarnHome(
+                        "useEffectCreateCapTableVP",
+                        "!isMounted() 3"
+                    );
                     return;
                 }
 
@@ -270,6 +300,10 @@ function useEffectCapTablePrivateTokenTransferVP(
                     "symfoniID_capTablePrivateTokenTransferVP"
                 );
                 if (!isMounted()) {
+                    consoleWarnHome(
+                        "useEffectCapTablePrivateTokenTransferVP",
+                        "!isMounted() 1"
+                    );
                     return;
                 }
                 console.info(
@@ -279,29 +313,53 @@ function useEffectCapTablePrivateTokenTransferVP(
                     }
                 );
 
-                // 2. Get existing VCs if exist.
+                // 2. Get VCs if exist.
                 const params = request
                     .params[0] as CapTablePrivateTokenTransferParams;
 
-                const termsOfUseForvaltVC =
-                    ((await findVCByType(
-                        makeTermsOfUseForvaltVC().type
-                    )) as TermsOfUseForvaltVC) ?? makeTermsOfUseForvaltVC();
+                let termsOfUseForvaltVC = makeTermsOfUseForvaltVC();
+                try {
+                    termsOfUseForvaltVC =
+                        ((await findVCByType(
+                            makeTermsOfUseForvaltVC().type
+                        )) as TermsOfUseForvaltVC) ?? makeTermsOfUseForvaltVC();
+                } catch (err) {
+                    consoleWarnHome(
+                        "useEffectCapTablePrivateTokenTransferVP",
+                        "await findVCByType(makeTermsOfUseForvaltVC().type)",
+                        err
+                    );
+                    continue;
+                }
 
-                const nationalIdentityVC =
-                    ((await findVCByType(
-                        makeNationalIdentityVC().type
-                    )) as NationalIdentityVC) ?? makeNationalIdentityVC();
+                let nationalIdentityVC = makeNationalIdentityVC();
+                try {
+                    nationalIdentityVC =
+                        ((await findVCByType(
+                            makeNationalIdentityVC().type
+                        )) as NationalIdentityVC) ?? makeNationalIdentityVC();
+                } catch (err) {
+                    consoleWarnHome(
+                        "useEffectCapTablePrivateTokenTransferVP",
+                        "await findVCByType(makeNationalIdentityVC().type)",
+                        err
+                    );
+                    continue;
+                }
                 if (!isMounted()) {
+                    consoleWarnHome(
+                        "useEffectCapTablePrivateTokenTransferVP",
+                        "!isMounted() 2"
+                    );
                     return;
                 }
 
                 // 3. Make screen request
-                const screenRequest = makeVerifiablePresentationScreenRequest(
-                    SCREEN_HOME,
-                    NAVIGATOR_TABS,
-                    request.method,
-                    {
+                const screenRequest = makeVerifiablePresentationScreenRequest({
+                    ...request,
+                    fromScreen: SCREEN_HOME,
+                    fromNavigator: NAVIGATOR_TABS,
+                    params: {
                         verifier: {
                             id: params.verifier,
                             name: params.verifier,
@@ -315,8 +373,7 @@ function useEffectCapTablePrivateTokenTransferVP(
                             nationalIdentityVC,
                         ],
                     },
-                    request.id
-                );
+                });
 
                 // 4. Navigate and wait for result
                 const screenResult = await navigateWithResult(
@@ -324,6 +381,10 @@ function useEffectCapTablePrivateTokenTransferVP(
                     screenRequest
                 );
                 if (!isMounted()) {
+                    consoleWarnHome(
+                        "useEffectCapTablePrivateTokenTransferVP",
+                        "!isMounted() 3"
+                    );
                     return;
                 }
 
@@ -351,6 +412,10 @@ function useEffectCapTableClaimUnclaimed(
                     "symfoniID_capTableClaimToken"
                 );
                 if (!isMounted()) {
+                    consoleWarnHome(
+                        "useEffectCapTableClaimUnclaimed",
+                        "!isMounted() 1"
+                    );
                     return;
                 }
                 console.info("consumed symfoniID_capTableClaimToken", {
@@ -359,20 +424,34 @@ function useEffectCapTableClaimUnclaimed(
 
                 const params = request.params[0] as CapTableClaimTokenParams;
 
-                const nationalIdentityVC =
-                    ((await findVCByType(
-                        makeNationalIdentityVC().type
-                    )) as NationalIdentityVC) ?? makeNationalIdentityVC();
+                let nationalIdentityVC = makeNationalIdentityVC();
+                try {
+                    nationalIdentityVC =
+                        ((await findVCByType(
+                            makeNationalIdentityVC().type
+                        )) as NationalIdentityVC) ?? makeNationalIdentityVC();
+                } catch (err) {
+                    consoleWarnHome(
+                        "useEffectCapTableClaimUnclaimed",
+                        "await findVCByType(makeNationalIdentityVC().type)",
+                        err
+                    );
+                    continue;
+                }
                 if (!isMounted()) {
+                    consoleWarnHome(
+                        "useEffectCapTableClaimUnclaimed",
+                        "!isMounted() 2"
+                    );
                     return;
                 }
 
                 // 3. Make screen request
-                const screenRequest = makeVerifiablePresentationScreenRequest(
-                    SCREEN_HOME,
-                    NAVIGATOR_TABS,
-                    request.method,
-                    {
+                const screenRequest = makeVerifiablePresentationScreenRequest({
+                    ...request,
+                    fromScreen: SCREEN_HOME,
+                    fromNavigator: NAVIGATOR_TABS,
+                    params: {
                         verifier: {
                             id: params.verifier,
                             name: params.verifier,
@@ -383,8 +462,7 @@ function useEffectCapTableClaimUnclaimed(
                             nationalIdentityVC,
                         ],
                     },
-                    request.id
-                );
+                });
 
                 // 4. Navigate and wait for result
                 const screenResult = await navigateWithResult(
@@ -392,6 +470,10 @@ function useEffectCapTableClaimUnclaimed(
                     screenRequest
                 );
                 if (!isMounted()) {
+                    consoleWarnHome(
+                        "useEffectCapTableClaimUnclaimed",
+                        "!isMounted() 3"
+                    );
                     return;
                 }
 
@@ -422,6 +504,7 @@ function useEffectAccessVP(
                     "symfoniID_accessVP"
                 );
                 if (!isMounted()) {
+                    consoleWarnHome("useEffectAccessVP", "!isMounted() 1");
                     return;
                 }
 
@@ -432,24 +515,35 @@ function useEffectAccessVP(
                 // 2. Get existing VCs if exist.
                 const params = request.params[0] as AccessVPParams;
 
-                const nationalIdentityVC =
-                    ((await findVCByType(
-                        makeNationalIdentityVC().type
-                    )) as NationalIdentityVC) ?? makeNationalIdentityVC();
+                let nationalIdentityVC = makeNationalIdentityVC();
+                try {
+                    nationalIdentityVC =
+                        ((await findVCByType(
+                            makeNationalIdentityVC().type
+                        )) as NationalIdentityVC) ?? makeNationalIdentityVC();
+                } catch (err) {
+                    consoleWarnHome(
+                        "useEffectAccessVP",
+                        "await findVCByType(makeNationalIdentityVC().type)",
+                        err
+                    );
+                    continue;
+                }
                 if (!isMounted()) {
+                    consoleWarnHome("useEffectAccessVP", "!isMounted() 2");
                     return;
                 }
 
                 // 3. Make screen request
-                const screenRequest = makeVerifiablePresentationScreenRequest(
-                    SCREEN_HOME,
-                    NAVIGATOR_TABS,
-                    request.method,
-                    {
+                const screenRequest = makeVerifiablePresentationScreenRequest({
+                    ...request,
+                    fromScreen: SCREEN_HOME,
+                    fromNavigator: NAVIGATOR_TABS,
+                    params: {
                         verifier: {
                             id: params.verifier,
-                            name: params.verifier,
-                            reason: "Dele dine data",
+                            name: "Brønnøysundregistrene Aksjeeierbok",
+                            reason: "Hente dine aksjer",
                         },
                         verifiableCredentials: [
                             makeAccessVC({
@@ -459,8 +553,7 @@ function useEffectAccessVP(
                             nationalIdentityVC,
                         ],
                     },
-                    request.id
-                );
+                });
 
                 // 4. Navigate and wait for result
                 const screenResult = await navigateWithResult(
@@ -468,6 +561,7 @@ function useEffectAccessVP(
                     screenRequest
                 );
                 if (!isMounted()) {
+                    consoleWarnHome("useEffectAccessVP", "!isMounted() 3");
                     return;
                 }
 
@@ -499,6 +593,10 @@ function useEffectUpdateShareholderVP(
                     "symfoniID_updateShareholderVP"
                 );
                 if (!isMounted()) {
+                    consoleWarnHome(
+                        "useEffectUpdateShareholderVP",
+                        "!isMounted() 1"
+                    );
                     return;
                 }
 
@@ -509,39 +607,50 @@ function useEffectUpdateShareholderVP(
                 // 2. Get existing VCs if exist.
                 const params = request.params[0] as UpdateShareholderVPParams;
 
-                const nationalIdentityVC =
-                    ((await findVCByType(
-                        makeNationalIdentityVC().type
-                    )) as NationalIdentityVC) ?? makeNationalIdentityVC();
+                let nationalIdentityVC = makeNationalIdentityVC();
+                try {
+                    nationalIdentityVC =
+                        ((await findVCByType(
+                            makeNationalIdentityVC().type
+                        )) as NationalIdentityVC) ?? makeNationalIdentityVC();
+                } catch (err) {
+                    consoleWarnHome(
+                        "useEffectUpdateShareholderVP",
+                        "await findVCByType(makeNationalIdentityVC().type)",
+                        err
+                    );
+                    continue;
+                }
                 if (!isMounted()) {
+                    consoleWarnHome(
+                        "useEffectUpdateShareholderVP",
+                        "!isMounted() 2"
+                    );
                     return;
                 }
 
                 // 3. Make screen request
-                const screenRequest = makeVerifiablePresentationScreenRequest(
-                    SCREEN_HOME,
-                    NAVIGATOR_TABS,
-                    request.method,
-                    {
+                const screenRequest = makeVerifiablePresentationScreenRequest({
+                    ...request,
+                    fromScreen: SCREEN_HOME,
+                    fromNavigator: NAVIGATOR_TABS,
+                    params: {
                         verifier: {
                             id: params.verifier,
                             name: params.verifier,
                             reason: "Dele dine data",
                         },
+
                         verifiableCredentials: [
                             makeCapTableUpdateShareholderVC(
-                                params.updateShareholderVC.credentialSubject
-                                    .shareholderId,
-                                params.updateShareholderVC.credentialSubject
-                                    .capTableAddress,
-                                params.updateShareholderVC.credentialSubject
-                                    .shareholderData
+                                params.shareholderId,
+                                params.capTableAddress,
+                                params.shareholderData
                             ),
                             nationalIdentityVC,
                         ],
                     },
-                    request.id
-                );
+                });
 
                 // 4. Navigate and wait for result
                 const screenResult = await navigateWithResult(
@@ -549,9 +658,12 @@ function useEffectUpdateShareholderVP(
                     screenRequest
                 );
                 if (!isMounted()) {
+                    consoleWarnHome(
+                        "useEffectUpdateShareholderVP",
+                        "!isMounted() 3"
+                    );
                     return;
                 }
-
                 console.log({ screenResult });
                 // 5. Send response
                 sendResponse(topic, screenResult.result ?? screenResult.error);
@@ -559,4 +671,8 @@ function useEffectUpdateShareholderVP(
         },
         [client]
     );
+}
+
+function consoleWarnHome(functionName: string, ...things: any[]) {
+    console.warn(`ERROR Home.tsx: ${functionName}:`, ...things);
 }

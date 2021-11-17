@@ -1,5 +1,4 @@
-import { CapTableClaimTokenVC } from "./../verifiableCredentials/CapTableClaimTokenVC";
-import { CapTableUpdateShareholderVC } from "../verifiableCredentials/CapTableUpdateShareholderVC";
+import { UpdateShareholderData } from "./requestTypes";
 import { CapTablePrivateTokenTransferVC } from "../verifiableCredentials/CapTablePrivateTokenTransferVC";
 import { CapTableVC } from "../verifiableCredentials/CapTableVC";
 import { NationalIdentityVC } from "../verifiableCredentials/NationalIdentityVC";
@@ -26,6 +25,7 @@ export type AccessVPParams = {
     access: {
         delegatedTo: {
             id: string;
+            name: string;
         };
         scopes: {
             id: string;
@@ -62,5 +62,7 @@ export type CapTableClaimTokenParams = {
 
 export type UpdateShareholderVPParams = {
     verifier: string;
-    updateShareholderVC: CapTableUpdateShareholderVC;
+    capTableAddress: string;
+    shareholderId: string;
+    shareholderData: UpdateShareholderData;
 };

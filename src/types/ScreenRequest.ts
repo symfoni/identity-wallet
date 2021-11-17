@@ -22,13 +22,27 @@ export function makeBankIDScreenRequest(
     } as ScreenRequest<BankIDParams>;
 }
 
-export function makeVerifiablePresentationScreenRequest(
-    fromScreen: string,
-    fromNavigator: string | undefined,
-    method: string,
-    params: VerifiablePresentationParams,
-    id?: number
-) {
+/**
+ * @param fromScreen Screen we want to navigate back to
+ * @param fromNavigator Navigator we want to navigate back to
+ * @param method JsonRPC method
+ * @param params
+ * @param id Optional id for the JsonRPC request
+ * @returns
+ */
+export function makeVerifiablePresentationScreenRequest({
+    fromScreen,
+    method,
+    params,
+    fromNavigator,
+    id,
+}: {
+    fromScreen: string;
+    method: string;
+    params: VerifiablePresentationParams;
+    fromNavigator?: string;
+    id?: number;
+}) {
     const request = formatJsonRpcRequest(method, params, id);
 
     return {

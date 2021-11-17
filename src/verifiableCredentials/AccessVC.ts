@@ -1,6 +1,7 @@
 export function makeAccessVC(access: {
     delegatedTo: {
         id: string;
+        name: string;
     };
     scopes: {
         id: string;
@@ -29,6 +30,7 @@ export type AccessVC = {
         access: {
             delegatedTo: {
                 id: string;
+                name: string;
             };
             scopes: {
                 id: string;

@@ -41,7 +41,7 @@ export const Scanner = ({
     );
 };
 
-const WCText = styled.Text`
+const WCText = styled.TextInput`
     border-color: #ccc;
     background-color: #ccc;
     height: 30px;
