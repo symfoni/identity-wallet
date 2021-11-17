@@ -110,13 +110,10 @@ export const Navigation = () => {
             <Stack.Screen
                 name={SCREEN_VERIFIABLE_PRESENTATION}
                 component={VerifiablePresentationScreen}
-                options={({ route }) => ({
-                    title:
-                        (
-                            route.params as ScreenRequest<VerifiablePresentationParams>
-                        ).request?.params?.title ?? "Missing title",
+                options={{
+                    title: "Forespørsel",
                     presentation: "modal",
-                })}
+                }}
             />
             <Stack.Screen
                 name={SCREEN_BANKID}

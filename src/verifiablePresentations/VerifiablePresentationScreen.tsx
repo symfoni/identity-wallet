@@ -156,7 +156,7 @@ export function VerifiablePresentationScreen(props: {
                 {cards}
             </Content>
             <PresentButton presentable={presentable} onPress={onPresent}>
-                {request.params.title ?? "Ok"}
+                Svar
             </PresentButton>
         </Screen>
     );
@@ -166,18 +166,18 @@ const Screen = styled.ScrollView`
     height: 100%;
     background: white;
     border: 1px solid white;
+    padding-horizontal: 30px;
+    padding-vertical: 30px;
 `;
 const Content = styled.View`
     flex: 1;
-    padding-horizontal: 30px;
-    padding-vertical: 30px;
 `;
 const SmallText = styled.Text`
     margin-left: 5px;
 `;
 const BigText = styled.Text`
     font-size: 22px;
-    padding-bottom: 20px;
+    padding-bottom: 15px;
     margin-left: 5px;
 `;
 
@@ -193,6 +193,7 @@ function PresentButton({
     return (
         <PresentButtonView
             presentable={presentable}
+            disabled={!presentable}
             onPress={() => (presentable ? onPress() : null)}>
             <PresentButtonText>{children}</PresentButtonText>
         </PresentButtonView>
@@ -201,7 +202,7 @@ function PresentButton({
 
 const PresentButtonView = styled.TouchableOpacity`
     background-color: ${({ presentable }: { presentable: boolean }) =>
-        presentable ? "rgb(52, 199, 89)" : "rgba(52, 199, 89, 0.5)"};
+        presentable ? "rgb(0,122, 255)" : "rgba(0,122, 255, 0.3)"};
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -210,8 +211,8 @@ const PresentButtonView = styled.TouchableOpacity`
     margin-horizontal: 30px;
     margin-top: 20px;
     margin-bottom: 50px;
+    width: 100%;
     border-radius: 10px;
-    width: 200px;
     align-self: center;
 `;
 const PresentButtonText = styled.Text`

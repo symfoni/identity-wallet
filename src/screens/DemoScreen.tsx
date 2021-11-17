@@ -54,7 +54,6 @@ export function DemoScreen(props: {
                         fromScreen: SCREEN_DEMO,
                         method: "demo_requestVerifiablePresentation",
                         params: {
-                            title: "Del",
                             verifier: demoVerifier,
                             verifiableCredentials: [
                                 demoNationalIdentityVC,
@@ -79,7 +78,6 @@ export function DemoScreen(props: {
                         fromScreen: SCREEN_DEMO,
                         method: "demo_createCapTableVP",
                         params: {
-                            title: "Godkjenn",
                             verifier: demoVerifier,
                             verifiableCredentials: [
                                 demoCapTableVC,
@@ -122,7 +120,6 @@ export function DemoScreen(props: {
                         fromScreen: SCREEN_DEMO,
                         method: "demo_createCapTableVP-reuseable",
                         params: {
-                            title: "Godkjenn",
                             verifier: demoVerifier,
                             verifiableCredentials: [
                                 demoCapTableVC,
@@ -149,7 +146,6 @@ export function DemoScreen(props: {
                         fromScreen: SCREEN_DEMO,
                         method: "demo_capTablePrivateTokenTransferVP",
                         params: {
-                            title: "Tillat",
                             verifier: demoVerifier,
                             verifiableCredentials: [
                                 demoCapTablePrivateTransferTokenVC,
@@ -189,7 +185,6 @@ export function DemoScreen(props: {
                         fromScreen: SCREEN_DEMO,
                         method: "demo_capTablePrivateTokenTransferVP",
                         params: {
-                            title: "Tillat",
                             verifier: demoVerifier,
                             verifiableCredentials: [
                                 demoCapTablePrivateTransferTokenVC,
@@ -219,7 +214,6 @@ export function DemoScreen(props: {
                         fromScreen: SCREEN_DEMO,
                         method: "demo_capTableClaimToken",
                         params: {
-                            title: "Godkjenn",
                             verifier: demoVerifier,
                             verifiableCredentials: [
                                 demoCapTableClaimTokenVC,
@@ -247,7 +241,6 @@ export function DemoScreen(props: {
                         fromScreen: SCREEN_DEMO,
                         method: "demo_capTableUpdateShareholder",
                         params: {
-                            title: "Godkjenn",
                             verifier: demoVerifier,
                             verifiableCredentials: [
                                 demoCapTableUpdateShareholderVC,
@@ -275,7 +268,6 @@ export function DemoScreen(props: {
                         fromScreen: SCREEN_DEMO,
                         method: "demo_accessVP",
                         params: {
-                            title: "Tillat",
                             verifier: {
                                 id: "https://www.example.com",
                                 name: "Brønnøysundregisteret",

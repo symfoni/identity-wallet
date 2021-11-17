@@ -215,7 +215,6 @@ function useEffectCreateCapTableVP(
                     fromNavigator: NAVIGATOR_TABS,
                     method: request.method,
                     params: {
-                        title: "Godkjenn",
                         verifier: {
                             id: params.verifier,
                             name: params.verifier,
@@ -330,7 +329,6 @@ function useEffectCapTablePrivateTokenTransferVP(
                     fromScreen: SCREEN_HOME,
                     fromNavigator: NAVIGATOR_TABS,
                     params: {
-                        title: "Tillat",
                         verifier: {
                             id: params.verifier,
                             name: params.verifier,
@@ -423,7 +421,6 @@ function useEffectCapTableClaimUnclaimed(
                     fromScreen: SCREEN_HOME,
                     fromNavigator: NAVIGATOR_TABS,
                     params: {
-                        title: "Godkjenn",
                         verifier: {
                             id: params.verifier,
                             name: params.verifier,
@@ -512,7 +509,6 @@ function useEffectAccessVP(
                     fromScreen: SCREEN_HOME,
                     fromNavigator: NAVIGATOR_TABS,
                     params: {
-                        title: "Tillat",
                         verifier: {
                             id: params.verifier,
                             name: "Brønnøysundregistrene Aksjeeierbok",
@@ -608,7 +604,6 @@ function useEffectUpdateShareholderVP(
                     fromScreen: SCREEN_HOME,
                     fromNavigator: NAVIGATOR_TABS,
                     params: {
-                        title: "Godkjenn",
                         verifier: {
                             id: params.verifier,
                             name: params.verifier,

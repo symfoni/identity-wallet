@@ -12,7 +12,6 @@ import { CapTable } from "./capTableTypes";
 export type BankIDParams = {};
 
 export type VerifiablePresentationParams = {
-    title: "Tillat" | "Godkjenn" | "Del";
     verifier: {
         id: string;
         name: string;
