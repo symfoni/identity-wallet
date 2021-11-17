@@ -138,7 +138,7 @@ export const Navigation = () => {
                 name={SCREEN_ONBOARDING_A}
                 component={OnboardingAScreen}
                 options={{
-                    title: "Velkommen til SymfoniID",
+                    headerShown: false,
                     headerBackVisible: false,
                 }}
             />
@@ -146,7 +146,7 @@ export const Navigation = () => {
                 name={SCREEN_ONBOARDING_B}
                 component={OnboardingBScreen}
                 options={{
-                    title: "Koble til",
+                    headerShown: false,
                     headerBackVisible: false,
                 }}
             />
@@ -154,7 +154,7 @@ export const Navigation = () => {
                 name={SCREEN_ONBOARDING_C}
                 component={OnboardingCScreen}
                 options={{
-                    title: "Signer og vis legitimasjon",
+                    headerShown: false,
                     headerBackVisible: false,
                 }}
             />
@@ -162,7 +162,7 @@ export const Navigation = () => {
                 name={SCREEN_ONBOARDING_D}
                 component={OnboardingDScreen}
                 options={{
-                    title: "Brukervilkår",
+                    headerShown: false,
                     headerBackVisible: false,
                 }}
             />

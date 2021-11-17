@@ -19,8 +19,8 @@ export function OnboardingAScreen() {
                     />
                 </Figure>
                 <Description>
-                    Bruk Symfoni ID til å utføre oppgaver i digitale tjenester
-                    som krever legitimasjon.
+                    Bruk Symfoni ID til å godta forespørsler fra digitale
+                    tjenester.
                 </Description>
             </>
         </OnboardingContent>

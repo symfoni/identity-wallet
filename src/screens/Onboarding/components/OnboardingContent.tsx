@@ -15,12 +15,12 @@ export function OnboardingContent({
         <ContentAndButtons>
             <Content>{children}</Content>
             <Buttons>
+                <NextButton disabled={!prev} title={"Forrige"} onPress={prev} />
                 <NextButton
-                    disabled={!prev}
-                    title={"< Forrige"}
-                    onPress={prev}
+                    disabled={!next}
+                    title={`Neste ${!next ? "" : "👉"}`}
+                    onPress={next}
                 />
-                <NextButton disabled={!next} title={"Neste >"} onPress={next} />
             </Buttons>
         </ContentAndButtons>
     );
@@ -30,7 +30,7 @@ const ContentAndButtons = styled.View`
     background-color: white;
     display: flex;
     flex: 1;
-    padding-bottom: 30px;
+    padding-vertical: 30px;
     padding-horizontal: 30px;
 `;
 

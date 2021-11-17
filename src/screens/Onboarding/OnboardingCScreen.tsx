@@ -1,78 +1,155 @@
-import React, { ReactNode, useState } from "react";
+import React, { ReactNode, useEffect, useState } from "react";
 import styled from "styled-components/native";
+import useAsyncEffect from "use-async-effect";
+import { useSymfoniContext } from "../../context";
+import { useDeviceAuthentication } from "../../hooks/useDeviceAuthentication";
 
 // Local
 import { useLocalNavigation } from "../../hooks/useLocalNavigation";
-import { makeNationalIdentityVC } from "../../verifiableCredentials/NationalIdentityVC";
-import { NationalIdentityVCCard } from "../../verifiableCredentials/NationalIdentityVCCard";
+import { SupportedVerifiableCredential } from "../../verifiableCredentials/SupportedVerifiableCredentials";
+import {
+    TermsOfUseSymfoniVC,
+    TermsOfUseVC,
+} from "../../verifiableCredentials/TermsOfUseVC";
+import { makeTermsOfUseSymfoniVC } from "../../verifiableCredentials/TermsOfUseVC";
+import { TermsOfUseVCCard } from "../../verifiableCredentials/TermsOfUseVCCard";
 import { OnboardingContent } from "./components/OnboardingContent";
 
 export function OnboardingCScreen() {
-    const { navigateToOnboardingB, navigateToOnboardingD } =
-        useLocalNavigation();
+    const { navigateToOnboardingB, navigateHome } = useLocalNavigation();
+    const { checkDeviceAuthentication } = useDeviceAuthentication();
+    const { createVC, findVCByType } = useSymfoniContext();
+    const [next, setNext] = useState<(() => void) | undefined>(undefined);
+    const [declined, setDeclined] = useState(false);
+    const [vc, setVC] = useState<SupportedVerifiableCredential | undefined>();
+    const signed = !!vc?.proof;
 
-    const [vc, setVC] = useState(makeNationalIdentityVC());
+    /** Async effect - Load VC */
+    useAsyncEffect(async () => {
+        let termsOfUseSymfoniVC = makeTermsOfUseSymfoniVC();
+        try {
+            termsOfUseSymfoniVC =
+                ((await findVCByType(
+                    makeTermsOfUseSymfoniVC().type
+                )) as TermsOfUseSymfoniVC) ?? makeTermsOfUseSymfoniVC();
+        } catch (err) {
+            console.warn(
+                "ERROR OnboardingCScreen.tsx",
+                "await findVCByType(makeTermsOfUseSymfoniVC().type)",
+                err
+            );
+            return;
+        }
+        setVC(termsOfUseSymfoniVC);
+    }, []);
 
-    vc.credentialSubject.nationalIdentityNumber = "123456 98765";
-    vc.expirationDate = expiresIn24Hours();
-    function onSign() {
-        setVC({
-            ...vc,
-            proof: { type: "www.example.com", jwt: "jwt.example.jwt" },
-        });
+    /** Callback - On press sign terms of use */
+    async function onPressSignTermsOfUse(
+        _vc: TermsOfUseVC,
+        expirationDate: string
+    ) {
+        const authenticated = await checkDeviceAuthentication();
+        if (!authenticated) {
+            console.warn(
+                "useVerifiableCredentialCards.tsx: onPressSignCard(): !authenticated "
+            );
+            return;
+        }
+        try {
+            const signedVC = (await createVC({
+                credential: {
+                    ..._vc,
+                    expirationDate,
+                },
+            })) as SupportedVerifiableCredential;
+            setVC(signedVC);
+        } catch (err) {
+            console.warn(
+                "useVerifiableCredentialCards.tsx: : onPressSignCard(): await veramo.createVC() -> error: ",
+                err
+            );
+        }
     }
+
     function onDecline() {
-        setVC({
-            ...vc,
-            proof: undefined,
-        });
+        setDeclined(true);
+    }
+
+    function onAnswer() {
+        setNext(() => navigateHome);
     }
 
     return (
-        <OnboardingContent
-            prev={navigateToOnboardingB}
-            next={navigateToOnboardingD}>
+        <OnboardingContent prev={navigateToOnboardingB} next={next}>
             <>
                 <Figure>
                     <ExplainCancel>
-                        <Title>Vis legitimasjon</Title>
-                        <DeclineButton title="Avslå" onPress={onDecline} />
-                        <FingerCancel>{"(1)"}</FingerCancel>
+                        <Title>Forespørsel</Title>
+                        <DeclineButton
+                            disabled={!signed}
+                            title="Avslå"
+                            onPress={onDecline}
+                        />
+                        <FingerCancel hidden={!signed || declined}>
+                            {"👈"}
+                        </FingerCancel>
                     </ExplainCancel>
                     <ExplainSignature>
-                        <NationalIdentityVCCard vc={vc} onPressSign={onSign} />
-                        <FingerSignature>{"(2)"}</FingerSignature>
+                        {vc && (
+                            <TermsOfUseVCCard
+                                vc={vc as TermsOfUseVC}
+                                onPressSign={(_vc) =>
+                                    onPressSignTermsOfUse(
+                                        _vc,
+                                        expiresIn50Years()
+                                    )
+                                }
+                                flex={1}
+                            />
+                        )}
+                        <FingerSignature hidden={!!next || signed}>
+                            {"👈"}
+                        </FingerSignature>
                     </ExplainSignature>
                     <ExplainPresent>
-                        <PresentButton disabled={!vc.proof} onPress={() => {}}>
+                        <PresentButton disabled={!signed} onPress={onAnswer}>
                             Svar
                         </PresentButton>
-                        <FingerPresent>{"(3)"}</FingerPresent>
+                        <FingerPresent hidden={!!next || !signed}>
+                            {"👈"}
+                        </FingerPresent>
                     </ExplainPresent>
                 </Figure>
                 <Description>
-                    {" "}
-                    Når en tjeneste ber om legitimasjon, kan du velge avslå (1)
-                    eller svar (3).
+                    <HighlightText highlight={!signed}>
+                        1. Signer brukervilkårene til Symfoni ID.
+                    </HighlightText>
+                    <HighlightText highlight={signed && !next}>
+                        2. Avslå eller Svar på forespørsler fra tilkoblede
+                        tjenester.
+                    </HighlightText>
+                    <HighlightText highlight={!!next}>
+                        3. Forespørsel besvart! 🎉
+                    </HighlightText>
                 </Description>
             </>
         </OnboardingContent>
     );
 }
 
-function expiresIn24Hours() {
-    return new Date(new Date().setDate(new Date().getDate() + 1)).toISOString();
+function expiresIn50Years() {
+    return new Date(
+        new Date().setFullYear(new Date().getFullYear() + 50)
+    ).toISOString();
 }
 
 const Figure = styled.View`
     flex: 3;
+    align-self: stretch;
     justify-content: center;
-    align-items: center;
-    margin-left: 30px;
-    width: 285px;
 `;
 
-const Description = styled.Text`
+const Description = styled.View`
     flex: 1;
     font-size: 16px;
     text-align: center;
@@ -81,47 +158,50 @@ const Description = styled.Text`
 const Title = styled.Text`
     font-size: 22px;
     font-weight: 500;
-    margin-right: 20px;
+    flex: 1;
+`;
+
+const HighlightText = styled.Text`
+    padding-bottom: 5px;
+    ${({ highlight }: { highlight: boolean }) =>
+        highlight ? "opacity: 1;" : "opacity: 0.1;"};
 `;
 
 // Explains
 const ExplainCancel = styled.View`
     display: flex;
     flex-direction: row;
-    justify-content: flex-end;
     align-items: baseline;
-    width: 100%;
-    margin-right: 50px;
 `;
 
 const ExplainSignature = styled.View`
     flex-direction: row;
     align-items: flex-end;
-    width: 100%;
     margin-bottom: 20px;
 `;
 
 const ExplainPresent = styled.View`
     flex-direction: row;
     justify-content: flex-end;
-    margin-right: 50px;
-    width: 100%;
 `;
 
 // Fingers
 const FingerCancel = styled.Text`
-    margin-left: 5px;
     font-size: 18px;
+    margin-left: 5px;
+    ${({ hidden }: { hidden: boolean }) => (hidden ? "opacity: 0;" : "")}
 `;
 const FingerSignature = styled.Text`
     font-size: 18px;
     margin-left: 5px;
     margin-bottom: 15px;
+    ${({ hidden }: { hidden: boolean }) => (hidden ? "opacity: 0;" : "")}
 `;
 const FingerPresent = styled.Text`
     font-size: 18px;
     margin-top: 6px;
     margin-left: 10px;
+    ${({ hidden }: { hidden: boolean }) => (hidden ? "opacity: 0;" : "")}
 `;
 
 // Things
@@ -137,15 +217,15 @@ export function PresentButton({
     onPress: () => void;
 }) {
     return (
-        <PresentButtonView disabled={disabled} onPress={onPress}>
+        <PresentButtonView color={disabled} onPress={onPress}>
             <PresentButtonText>{children}</PresentButtonText>
         </PresentButtonView>
     );
 }
 
 const PresentButtonView = styled.TouchableOpacity`
-    background-color: ${(props: { disabled: boolean }) =>
-        !props.disabled ? "rgb(52, 199, 89)" : "rgb(209, 209, 214)"}
+    background-color: ${(props: { color: boolean }) =>
+        !props.color ? "rgb(52, 199, 89)" : "rgb(209, 209, 214)"}
     
     display: flex;
     flex-direction: row;

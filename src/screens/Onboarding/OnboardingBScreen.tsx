@@ -12,11 +12,10 @@ export function OnboardingBScreen() {
         useLocalNavigation();
 
     const [visible, setVisible] = useState(false);
+    const [next, setNext] = useState<(() => void) | undefined>(undefined);
 
     return (
-        <OnboardingContent
-            prev={navigateToOnboardingA}
-            next={navigateToOnboardingC}>
+        <OnboardingContent prev={navigateToOnboardingA} next={next}>
             <>
                 <Figure>
                     {!visible ? (
@@ -28,17 +27,19 @@ export function OnboardingBScreen() {
                             showMarker={true}
                         />
                     )}
-                    {!visible && <FingerText>{"👆"}</FingerText>}
+                    {!visible && <FingerText>{!next ? "👆" : ""}</FingerText>}
                     <QrButton
                         icon="qr"
                         type="primary"
-                        text={visible ? "Avbryt" : "Scan QR"}
-                        onPress={() => setVisible(!visible)}
+                        text={visible ? "Lukk QR" : "Åpne QR"}
+                        onPress={() => {
+                            setVisible(!visible);
+                            setNext(() => navigateToOnboardingC);
+                        }}
                     />
                 </Figure>
                 <Description>
-                    Bruk QR-leseren i Symfoni ID for å koble til tjenester som
-                    støtter dette.
+                    Åpne QR-leseren i Symfoni ID for å koble til tjenester.
                 </Description>
             </>
         </OnboardingContent>
