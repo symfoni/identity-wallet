@@ -10,16 +10,18 @@ import { SignButton } from "./components/SignButton";
 export function NationalIdentityVCCard({
     vc,
     onPressSign,
+    flex,
 }: {
     vc: NationalIdentityVC;
     onPressSign: (vc: NationalIdentityVC) => void;
+    flex?: number;
 }) {
     const [loading, setLoading] = useState(false);
     const signed = !!vc?.proof;
 
     return (
-        <VCCard>
-            <VCPropLabel>Del fødselsnummer</VCPropLabel>
+        <VCCard flex={flex}>
+            <VCPropLabel>Dele fødselsnummer?</VCPropLabel>
             <VCPropText placeholder={!signed}>
                 {vc?.credentialSubject?.nationalIdentityNumber ??
                     "123456 54321"}
@@ -35,6 +37,7 @@ export function NationalIdentityVCCard({
 }
 
 const VCCard = styled.View`
+    ${({ flex }: { flex?: number }) => (flex ? `flex: ${flex};` : "")}
     background-color: rgb(105, 105, 107);
     border-radius: 8px;
     margin-top: 15px;

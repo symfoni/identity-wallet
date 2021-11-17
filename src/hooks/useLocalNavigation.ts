@@ -16,6 +16,7 @@ export const SCREEN_VERIFIABLE_PRESENTATION = "VerifiablePresentationScreen";
 export const SCREEN_ONBOARDING_A = "OnboardingA";
 export const SCREEN_ONBOARDING_B = "OnboardingB";
 export const SCREEN_ONBOARDING_C = "OnboardingC";
+export const SCREEN_ONBOARDING_D = "OnboardingD";
 
 export function useLocalNavigation() {
     const navigation = useNavigation();
@@ -41,6 +42,8 @@ export function useLocalNavigation() {
         navigation.navigate(SCREEN_ONBOARDING_B);
     const navigateToOnboardingC = () =>
         navigation.navigate(SCREEN_ONBOARDING_C);
+    const navigateToOnboardingD = () =>
+        navigation.navigate(SCREEN_ONBOARDING_D);
 
     return {
         navigateHome,
@@ -50,5 +53,6 @@ export function useLocalNavigation() {
         navigateToOnboardingA,
         navigateToOnboardingB,
         navigateToOnboardingC,
+        navigateToOnboardingD,
     };
 }

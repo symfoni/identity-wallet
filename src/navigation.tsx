@@ -14,6 +14,7 @@ import {
     SCREEN_ONBOARDING_A,
     SCREEN_ONBOARDING_B,
     SCREEN_ONBOARDING_C,
+    SCREEN_ONBOARDING_D,
 } from "./hooks/useLocalNavigation";
 import { DemoScreen } from "./screens/DemoScreen";
 import { Home } from "./screens/Home";
@@ -24,6 +25,7 @@ import { VerifiablePresentationScreen } from "./verifiablePresentations/Verifiab
 import { OnboardingAScreen } from "./screens/Onboarding/OnboardingAScreen";
 import { OnboardingBScreen } from "./screens/Onboarding/OnboardingBScreen";
 import { OnboardingCScreen } from "./screens/Onboarding/OnboardingCScreen";
+import { OnboardingDScreen } from "./screens/Onboarding/OnboardingDScreen";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -151,6 +153,14 @@ export const Navigation = () => {
             <Stack.Screen
                 name={SCREEN_ONBOARDING_C}
                 component={OnboardingCScreen}
+                options={{
+                    headerShown: false,
+                    headerBackVisible: false,
+                }}
+            />
+            <Stack.Screen
+                name={SCREEN_ONBOARDING_D}
+                component={OnboardingDScreen}
                 options={{
                     headerShown: false,
                     headerBackVisible: false,

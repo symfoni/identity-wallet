@@ -19,7 +19,7 @@ export function OnboardingAScreen() {
                     />
                 </Figure>
                 <Description>
-                    Bruk Symfoni ID til å godta forespørsler fra digitale
+                    Symfoni ID kan svare på ID-forespørsler fra digitale
                     tjenester.
                 </Description>
             </>

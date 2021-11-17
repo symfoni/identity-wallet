@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Text } from "react-native";
 import QRCodeScanner from "react-native-qrcode-scanner";
 import styled from "styled-components/native";
 import { Icon } from "../../assets/icons/Icon";
@@ -28,18 +29,20 @@ export function OnboardingBScreen() {
                         />
                     )}
                     {!visible && <FingerText>{!next ? "👆" : ""}</FingerText>}
-                    <QrButton
-                        icon="qr"
-                        type="primary"
-                        text={visible ? "Lukk QR" : "Åpne QR"}
-                        onPress={() => {
-                            setVisible(!visible);
-                            setNext(() => navigateToOnboardingC);
-                        }}
-                    />
+                    {!visible && (
+                        <QrButton
+                            icon="qr"
+                            type="primary"
+                            text={"Åpne QR"}
+                            onPress={() => {
+                                setVisible(true);
+                                setNext(() => navigateToOnboardingC);
+                            }}
+                        />
+                    )}
                 </Figure>
                 <Description>
-                    Åpne QR-leseren i Symfoni ID for å koble til tjenester.
+                    <Text>Koble til tjenester med QR-leseren.</Text>
                 </Description>
             </>
         </OnboardingContent>
@@ -64,7 +67,7 @@ const FingerText = styled.Text`
     font-size: 30px;
 `;
 
-const Description = styled.Text`
+const Description = styled.View`
     flex: 1;
     font-size: 16px;
     text-align: center;

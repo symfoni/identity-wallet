@@ -22,7 +22,7 @@ export function TermsOfUseVCCard({
     const readAndAccepted = vc.credentialSubject?.readAndAccepted?.id;
     return (
         <VCCard flex={flex}>
-            <VCPropLabel>Lest og akseptert</VCPropLabel>
+            <VCPropLabel>Lest og godtatt?</VCPropLabel>
             <VCPropHyperlink
                 onPress={() =>
                     readAndAccepted ? Linking.openURL(readAndAccepted) : null

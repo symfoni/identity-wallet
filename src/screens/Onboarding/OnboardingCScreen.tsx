@@ -1,82 +1,29 @@
-import React, { ReactNode, useEffect, useState } from "react";
+import React, { ReactNode, useState } from "react";
 import styled from "styled-components/native";
-import useAsyncEffect from "use-async-effect";
-import { useSymfoniContext } from "../../context";
-import { useDeviceAuthentication } from "../../hooks/useDeviceAuthentication";
 
 // Local
 import { useLocalNavigation } from "../../hooks/useLocalNavigation";
-import { SupportedVerifiableCredential } from "../../verifiableCredentials/SupportedVerifiableCredentials";
 import {
-    TermsOfUseSymfoniVC,
-    TermsOfUseVC,
-} from "../../verifiableCredentials/TermsOfUseVC";
-import { makeTermsOfUseSymfoniVC } from "../../verifiableCredentials/TermsOfUseVC";
-import { TermsOfUseVCCard } from "../../verifiableCredentials/TermsOfUseVCCard";
+    makeNationalIdentityVC,
+    NationalIdentityVC,
+} from "../../verifiableCredentials/NationalIdentityVC";
+import { NationalIdentityVCCard } from "../../verifiableCredentials/NationalIdentityVCCard";
 import { OnboardingContent } from "./components/OnboardingContent";
 
 export function OnboardingCScreen() {
-    const { navigateToOnboardingB, navigateHome } = useLocalNavigation();
-    const { checkDeviceAuthentication } = useDeviceAuthentication();
-    const { createVC, findVCByType } = useSymfoniContext();
+    const { navigateToOnboardingB, navigateToOnboardingD } =
+        useLocalNavigation();
     const [next, setNext] = useState<(() => void) | undefined>(undefined);
-    const [declined, setDeclined] = useState(false);
-    const [vc, setVC] = useState<SupportedVerifiableCredential | undefined>();
+    const [vc] = useState<NationalIdentityVC>(() => {
+        const _vc = makeNationalIdentityVC();
+        _vc.credentialSubject.nationalIdentityNumber = "123456 98765";
+        _vc.proof = { jwt: "hey", type: "onboarding" };
+        return _vc;
+    });
     const signed = !!vc?.proof;
 
-    /** Async effect - Load VC */
-    useAsyncEffect(async () => {
-        let termsOfUseSymfoniVC = makeTermsOfUseSymfoniVC();
-        try {
-            termsOfUseSymfoniVC =
-                ((await findVCByType(
-                    makeTermsOfUseSymfoniVC().type
-                )) as TermsOfUseSymfoniVC) ?? makeTermsOfUseSymfoniVC();
-        } catch (err) {
-            console.warn(
-                "ERROR OnboardingCScreen.tsx",
-                "await findVCByType(makeTermsOfUseSymfoniVC().type)",
-                err
-            );
-            return;
-        }
-        setVC(termsOfUseSymfoniVC);
-    }, []);
-
-    /** Callback - On press sign terms of use */
-    async function onPressSignTermsOfUse(
-        _vc: TermsOfUseVC,
-        expirationDate: string
-    ) {
-        const authenticated = await checkDeviceAuthentication();
-        if (!authenticated) {
-            console.warn(
-                "useVerifiableCredentialCards.tsx: onPressSignCard(): !authenticated "
-            );
-            return;
-        }
-        try {
-            const signedVC = (await createVC({
-                credential: {
-                    ..._vc,
-                    expirationDate,
-                },
-            })) as SupportedVerifiableCredential;
-            setVC(signedVC);
-        } catch (err) {
-            console.warn(
-                "useVerifiableCredentialCards.tsx: : onPressSignCard(): await veramo.createVC() -> error: ",
-                err
-            );
-        }
-    }
-
-    function onDecline() {
-        setDeclined(true);
-    }
-
     function onAnswer() {
-        setNext(() => navigateHome);
+        setNext(() => (next ? undefined : navigateToOnboardingD));
     }
 
     return (
@@ -88,28 +35,19 @@ export function OnboardingCScreen() {
                         <DeclineButton
                             disabled={!signed}
                             title="Avslå"
-                            onPress={onDecline}
+                            onPress={onAnswer}
                         />
-                        <FingerCancel hidden={!signed || declined}>
-                            {"👈"}
-                        </FingerCancel>
+                        <FingerCancel hidden={!!next}>{"👈"}</FingerCancel>
                     </ExplainCancel>
                     <ExplainSignature>
                         {vc && (
-                            <TermsOfUseVCCard
-                                vc={vc as TermsOfUseVC}
-                                onPressSign={(_vc) =>
-                                    onPressSignTermsOfUse(
-                                        _vc,
-                                        expiresIn50Years()
-                                    )
-                                }
+                            <NationalIdentityVCCard
+                                vc={vc}
+                                onPressSign={(_vc) => setNext(undefined)}
                                 flex={1}
                             />
                         )}
-                        <FingerSignature hidden={!!next || signed}>
-                            {"👈"}
-                        </FingerSignature>
+                        <FingerSignature hidden={true}>{"👈"}</FingerSignature>
                     </ExplainSignature>
                     <ExplainPresent>
                         <PresentButton disabled={!signed} onPress={onAnswer}>
@@ -120,27 +58,10 @@ export function OnboardingCScreen() {
                         </FingerPresent>
                     </ExplainPresent>
                 </Figure>
-                <Description>
-                    <HighlightText highlight={!signed}>
-                        1. Signer brukervilkårene til Symfoni ID.
-                    </HighlightText>
-                    <HighlightText highlight={signed && !next}>
-                        2. Avslå eller Svar på forespørsler fra tilkoblede
-                        tjenester.
-                    </HighlightText>
-                    <HighlightText highlight={!!next}>
-                        3. Forespørsel besvart! 🎉
-                    </HighlightText>
-                </Description>
+                <Description>Svar eller avslå forespørsler.</Description>
             </>
         </OnboardingContent>
     );
-}
-
-function expiresIn50Years() {
-    return new Date(
-        new Date().setFullYear(new Date().getFullYear() + 50)
-    ).toISOString();
 }
 
 const Figure = styled.View`
@@ -149,7 +70,7 @@ const Figure = styled.View`
     justify-content: center;
 `;
 
-const Description = styled.View`
+const Description = styled.Text`
     flex: 1;
     font-size: 16px;
     text-align: center;
@@ -159,12 +80,6 @@ const Title = styled.Text`
     font-size: 22px;
     font-weight: 500;
     flex: 1;
-`;
-
-const HighlightText = styled.Text`
-    padding-bottom: 5px;
-    ${({ highlight }: { highlight: boolean }) =>
-        highlight ? "opacity: 1;" : "opacity: 0.1;"};
 `;
 
 // Explains

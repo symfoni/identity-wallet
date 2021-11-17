@@ -31,7 +31,7 @@ export function SignButton({
         } else if (loading) {
             return <ActivityIndicator />;
         } else {
-            return "Gyldig";
+            return "Ja";
         }
     }, [loading, signed]);
 
@@ -46,13 +46,14 @@ export function SignButton({
     }, [onPress, signed]);
 
     const expirationDateText = useMemo(() => {
-        if (!expirationDate) {
+        return "";
+        /* if (!expirationDate) {
             return "--/--/----";
         }
         return `Utløper ${
             new Date(expirationDate).toISOString().split("T")[0]
-        }`;
-    }, [expirationDate]);
+        }`; */
+    }, []);
 
     return (
         <DateView>
