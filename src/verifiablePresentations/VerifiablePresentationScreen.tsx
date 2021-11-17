@@ -151,7 +151,7 @@ export function VerifiablePresentationScreen(props: {
     return (
         <Screen>
             <Content>
-                <SmallText>Til å kunne</SmallText>
+                <SmallText>For å kunne</SmallText>
                 <BigText>{request.params.verifier.reason}</BigText>
 
                 <SmallText>Legitimasjon (Verifiable Credentials)</SmallText>
@@ -195,7 +195,7 @@ function PresentButton({
     return (
         <PresentButtonView
             presentable={presentable}
-            onPress={() => (presentable ? onPress : null)}>
+            onPress={() => (presentable ? onPress() : null)}>
             <PresentButtonText>{children}</PresentButtonText>
         </PresentButtonView>
     );
@@ -203,7 +203,7 @@ function PresentButton({
 
 const PresentButtonView = styled.TouchableOpacity`
     background-color: ${({ presentable }: { presentable: boolean }) =>
-        presentable ? "rgb(52, 199, 89)" : "rgb(218,218,223)"};
+        presentable ? "rgb(52, 199, 89)" : "rgba(52, 199, 89, 0.5)"};
     display: flex;
     flex-direction: row;
     justify-content: center;

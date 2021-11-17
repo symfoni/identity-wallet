@@ -109,8 +109,7 @@ export const Navigation = () => {
                 name={SCREEN_VERIFIABLE_PRESENTATION}
                 component={VerifiablePresentationScreen}
                 options={{
-                    title: "Gi tillatelse",
-                    headerLargeTitle: true,
+                    title: "Tillat",
                     presentation: "modal",
                 }}
             />

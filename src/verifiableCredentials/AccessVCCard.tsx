@@ -18,11 +18,15 @@ export function AccessVCCard({
 
     return (
         <VCCard>
-            <VCPropLabel>Tillat å</VCPropLabel>
+            <VCPropLabel>Tillat</VCPropLabel>
+            <VCPropText>
+                {vc.credentialSubject.access.delegatedTo.name}
+            </VCPropText>
+            <VCPropLabel>Å kunne</VCPropLabel>
             {(vc.credentialSubject?.access.scopes ?? []).map((scope) => {
                 return (
                     <VCPropText key={scope.id}>
-                        - Hente {scope.name.toLocaleLowerCase()}
+                        - {capitalizeFirstLetter(scope.name)}
                     </VCPropText>
                 );
             })}
@@ -34,6 +38,10 @@ export function AccessVCCard({
             />
         </VCCard>
     );
+}
+
+function capitalizeFirstLetter(string: string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
 const VCCard = styled.View`

@@ -199,6 +199,7 @@ function useEffectCreateCapTableVP(
                         "await findVCByType(makeNationalIdentityVC().type)",
                         err
                     );
+                    continue;
                 }
                 if (!isMounted()) {
                     consoleWarnHome(
@@ -312,6 +313,7 @@ function useEffectCapTablePrivateTokenTransferVP(
                         "await findVCByType(makeNationalIdentityVC().type)",
                         err
                     );
+                    continue;
                 }
                 if (!isMounted()) {
                     consoleWarnHome(
@@ -404,6 +406,7 @@ function useEffectCapTableClaimUnclaimed(
                         "await findVCByType(makeNationalIdentityVC().type)",
                         err
                     );
+                    continue;
                 }
                 if (!isMounted()) {
                     consoleWarnHome(
@@ -495,6 +498,7 @@ function useEffectAccessVP(
                         "await findVCByType(makeNationalIdentityVC().type)",
                         err
                     );
+                    continue;
                 }
                 if (!isMounted()) {
                     consoleWarnHome("useEffectAccessVP", "!isMounted() 2");
@@ -587,6 +591,7 @@ function useEffectUpdateShareholderVP(
                         "await findVCByType(makeNationalIdentityVC().type)",
                         err
                     );
+                    continue;
                 }
                 if (!isMounted()) {
                     consoleWarnHome(
