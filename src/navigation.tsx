@@ -18,6 +18,8 @@ import { Identity } from "./screens/Identity";
 import { ProfileNavigation } from "./screens/Profile/ProfileNavigation";
 import { BankIDScreen } from "./screens/BankIDScreen";
 import { VerifiablePresentationScreen } from "./verifiablePresentations/VerifiablePresentationScreen";
+import { VerifiablePresentationParams } from "./types/paramTypes";
+import { ScreenRequest } from "./types/ScreenRequest";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -108,10 +110,13 @@ export const Navigation = () => {
             <Stack.Screen
                 name={SCREEN_VERIFIABLE_PRESENTATION}
                 component={VerifiablePresentationScreen}
-                options={{
-                    title: "Tillat",
+                options={({ route }) => ({
+                    title:
+                        (
+                            route.params as ScreenRequest<VerifiablePresentationParams>
+                        ).request?.params?.title ?? "Missing title",
                     presentation: "modal",
-                }}
+                })}
             />
             <Stack.Screen
                 name={SCREEN_BANKID}
