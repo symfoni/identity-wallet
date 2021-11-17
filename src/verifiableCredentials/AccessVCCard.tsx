@@ -18,13 +18,17 @@ export function AccessVCCard({
 
     return (
         <VCCard>
-            <VCPropLabel>Hvem vil du dele med?</VCPropLabel>
+            <VCPropLabel>Tillat</VCPropLabel>
             <VCPropText>
-                {vc.credentialSubject?.access.delegatedTo.id}
+                {vc.credentialSubject.access.delegatedTo.name}
             </VCPropText>
-            <VCPropLabel>Hva vil du dele?</VCPropLabel>
+            <VCPropLabel>Å kunne</VCPropLabel>
             {(vc.credentialSubject?.access.scopes ?? []).map((scope) => {
-                return <VCPropText key={scope.id}>{scope.name}</VCPropText>;
+                return (
+                    <VCPropText key={scope.id}>
+                        - {capitalizeFirstLetter(scope.name)}
+                    </VCPropText>
+                );
             })}
             <SignButton
                 signed={signed}
@@ -34,6 +38,10 @@ export function AccessVCCard({
             />
         </VCCard>
     );
+}
+
+function capitalizeFirstLetter(string: string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
 const VCCard = styled.View`
