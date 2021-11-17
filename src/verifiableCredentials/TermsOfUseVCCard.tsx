@@ -10,17 +10,19 @@ import { TermsOfUseVC } from "./TermsOfUseVC";
 export function TermsOfUseVCCard({
     vc,
     onPressSign,
+    flex,
 }: {
     vc: TermsOfUseVC;
     onPressSign: (vc: TermsOfUseVC) => void;
+    flex?: number;
 }) {
     const signed = !!vc.proof;
     const [loading, setLoading] = useState(false);
 
     const readAndAccepted = vc.credentialSubject?.readAndAccepted?.id;
     return (
-        <VCCard>
-            <VCPropLabel>Lest og akseptert</VCPropLabel>
+        <VCCard flex={flex}>
+            <VCPropLabel>Lest og godtatt?</VCPropLabel>
             <VCPropHyperlink
                 onPress={() =>
                     readAndAccepted ? Linking.openURL(readAndAccepted) : null
@@ -38,6 +40,7 @@ export function TermsOfUseVCCard({
 }
 
 const VCCard = styled.View`
+    ${({ flex }: { flex?: number }) => (flex ? `flex: ${flex};` : "")}
     background-color: rgb(105, 105, 107);
     border-radius: 8px;
     margin-top: 15px;

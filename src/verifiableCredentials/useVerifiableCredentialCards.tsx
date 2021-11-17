@@ -7,7 +7,6 @@ import { Text } from "react-native";
 import { useSymfoniContext } from "../context";
 import { useDeviceAuthentication } from "../hooks/useDeviceAuthentication";
 import {
-    NAVIGATOR_ROOT,
     SCREEN_BANKID,
     SCREEN_VERIFIABLE_PRESENTATION,
 } from "../hooks/useLocalNavigation";

@@ -31,7 +31,7 @@ export function SignButton({
         } else if (loading) {
             return <ActivityIndicator />;
         } else {
-            return "Gyldig";
+            return "Ja";
         }
     }, [loading, signed]);
 
@@ -46,6 +46,9 @@ export function SignButton({
     }, [onPress, signed]);
 
     const expirationDateText = useMemo(() => {
+        if (!__DEV__) {
+            return "";
+        }
         if (!expirationDate) {
             return "--/--/----";
         }

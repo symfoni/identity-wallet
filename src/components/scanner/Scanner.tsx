@@ -30,13 +30,13 @@ export const Scanner = ({
                 />
             )}
             <CenterText>
-                Scan QR-kode for å koble til en
+                Koble til{" "}
                 <Hyperlink
                     color={colors.primary.light}
-                    onPress={() => Linking.openURL("https://symfoni.dev")}>
-                    {" "}
-                    nettside som støtter SymfoniID
-                </Hyperlink>
+                    onPress={() => Linking.openURL("https://symfoni.dev/apps")}>
+                    tjenester
+                </Hyperlink>{" "}
+                med QR-leseren.
             </CenterText>
         </>
     );
@@ -49,7 +49,6 @@ const WCText = styled.TextInput`
 `;
 
 const CenterText = styled.Text`
-    font-size: 18px;
     margin-horizontal: 30px;
     margin-vertical: 30px;
 `;

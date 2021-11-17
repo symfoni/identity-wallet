@@ -11,6 +11,10 @@ import {
     NAVIGATOR_TABS,
     SCREEN_HOME,
     SCREEN_VERIFIABLE_PRESENTATION,
+    SCREEN_ONBOARDING_A,
+    SCREEN_ONBOARDING_B,
+    SCREEN_ONBOARDING_C,
+    SCREEN_ONBOARDING_D,
 } from "./hooks/useLocalNavigation";
 import { DemoScreen } from "./screens/DemoScreen";
 import { Home } from "./screens/Home";
@@ -18,8 +22,10 @@ import { Identity } from "./screens/Identity";
 import { ProfileNavigation } from "./screens/Profile/ProfileNavigation";
 import { BankIDScreen } from "./screens/BankIDScreen";
 import { VerifiablePresentationScreen } from "./verifiablePresentations/VerifiablePresentationScreen";
-import { VerifiablePresentationParams } from "./types/paramTypes";
-import { ScreenRequest } from "./types/ScreenRequest";
+import { OnboardingAScreen } from "./screens/Onboarding/OnboardingAScreen";
+import { OnboardingBScreen } from "./screens/Onboarding/OnboardingBScreen";
+import { OnboardingCScreen } from "./screens/Onboarding/OnboardingCScreen";
+import { OnboardingDScreen } from "./screens/Onboarding/OnboardingDScreen";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -107,6 +113,8 @@ export const Navigation = () => {
                     },
                 }}
             />
+
+            {/** Modal screens */}
             <Stack.Screen
                 name={SCREEN_VERIFIABLE_PRESENTATION}
                 component={VerifiablePresentationScreen}
@@ -122,6 +130,40 @@ export const Navigation = () => {
                     title: "Hent BankID",
                     headerLargeTitle: true,
                     presentation: "modal",
+                }}
+            />
+
+            {/** Onboarding screens */}
+            <Stack.Screen
+                name={SCREEN_ONBOARDING_A}
+                component={OnboardingAScreen}
+                options={{
+                    headerShown: false,
+                    headerBackVisible: false,
+                }}
+            />
+            <Stack.Screen
+                name={SCREEN_ONBOARDING_B}
+                component={OnboardingBScreen}
+                options={{
+                    headerShown: false,
+                    headerBackVisible: false,
+                }}
+            />
+            <Stack.Screen
+                name={SCREEN_ONBOARDING_C}
+                component={OnboardingCScreen}
+                options={{
+                    headerShown: false,
+                    headerBackVisible: false,
+                }}
+            />
+            <Stack.Screen
+                name={SCREEN_ONBOARDING_D}
+                component={OnboardingDScreen}
+                options={{
+                    headerShown: false,
+                    headerBackVisible: false,
                 }}
             />
         </Stack.Navigator>

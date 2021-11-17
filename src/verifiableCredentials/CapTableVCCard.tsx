@@ -16,12 +16,28 @@ export function CapTableVCCard({
     const signed = !!vc.proof;
     const [loading, setLoading] = useState(false);
 
+    const boardDirector = (
+        vc.credentialSubject?.capTable.shareholders ?? []
+    ).find((s) => s.isBoardDirector);
+    const shareholders = (
+        vc.credentialSubject?.capTable.shareholders ?? []
+    ).filter((s) => !s.isBoardDirector);
+
     return (
         <VCCard>
+            <VCPropText>Godta aksjeeierbok?</VCPropText>
+
             <VCPropLabel>Organisasjonsnummer</VCPropLabel>
             <VCPropText>
                 {vc.credentialSubject?.capTable.organizationNumber}
             </VCPropText>
+            <VCPropLabel>Styreleder</VCPropLabel>
+            <VCPropText>{boardDirector?.name}</VCPropText>
+
+            <VCPropLabel>Aksjonærer</VCPropLabel>
+            {shareholders.map((s) => (
+                <VCPropText>- {s.name}</VCPropText>
+            ))}
             <SignButton
                 signed={signed}
                 loading={loading}
