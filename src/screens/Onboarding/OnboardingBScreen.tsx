@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import { Text } from "react-native";
+import { Linking, Text } from "react-native";
 import QRCodeScanner from "react-native-qrcode-scanner";
 import styled from "styled-components/native";
 import { Icon } from "../../assets/icons/Icon";
+import { useColorContext } from "../../colorContext";
 import { SymfoniButton } from "../../components/ui/button";
 import { useLocalNavigation } from "../../hooks/useLocalNavigation";
 import { layout } from "../../styles/sizing";
@@ -11,6 +12,7 @@ import { OnboardingContent } from "./components/OnboardingContent";
 export function OnboardingBScreen() {
     const { navigateToOnboardingA, navigateToOnboardingC } =
         useLocalNavigation();
+    const { colors } = useColorContext();
 
     const [visible, setVisible] = useState(false);
     const [next, setNext] = useState<(() => void) | undefined>(undefined);
@@ -42,7 +44,17 @@ export function OnboardingBScreen() {
                     )}
                 </Figure>
                 <Description>
-                    <Text>Koble til tjenester med QR-leseren.</Text>
+                    <Text>
+                        Koble til{" "}
+                        <Hyperlink
+                            color={colors.primary.light}
+                            onPress={() =>
+                                Linking.openURL("https://symfoni.dev/apps")
+                            }>
+                            tjenester
+                        </Hyperlink>{" "}
+                        med QR-leseren.
+                    </Text>
                 </Description>
             </>
         </OnboardingContent>
@@ -71,4 +83,8 @@ const Description = styled.View`
     flex: 1;
     font-size: 16px;
     text-align: center;
+`;
+const Hyperlink = styled.Text`
+    color: ${(props: { color: string }) => props.color};
+    text-decoration-line: underline;
 `;

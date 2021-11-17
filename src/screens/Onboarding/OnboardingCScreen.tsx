@@ -122,7 +122,7 @@ const FingerPresent = styled.Text`
 // Things
 const DeclineButton = styled.Button``;
 
-export function PresentButton({
+function PresentButton({
     children,
     onPress,
     disabled,
