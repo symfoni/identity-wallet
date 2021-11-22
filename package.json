@@ -4,9 +4,9 @@
     "private": true,
     "scripts": {
         "android": "react-native run-android",
-        "ios": "./env.sh dev && react-native run-ios --scheme id.symfoni.app.dev   --configuration id.symfoni.app.dev.Release",
+        "ios": "./env.sh dev && react-native run-ios --scheme id.symfoni.app.dev --configuration id.symfoni.app.dev.Debug",
         "ios:stage": "./env.sh stage && react-native run-ios --scheme id.symfoni.app.stage --configuration id.symfoni.app.stage.Debug",
-        "ios:prod": "./env.sh prod && react-native run-ios --scheme id.symfoni.app       --configuration id.symfoni.app.Release",
+        "ios:prod": "./env.sh prod && react-native run-ios --scheme id.symfoni.app --configuration id.symfoni.app.Debug",
         "start": "./env.sh dev && react-native start",
         "start:stage": "./env.sh stage && react-native start",
         "start:prod": "./env.sh prod && react-native start",

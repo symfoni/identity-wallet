@@ -1,5 +1,5 @@
 set -eou pipefail
 
-ENV="${1:-'dev'}" # dev|stage|prod
+ENV=$1
 
 cp .env.$ENV .env
