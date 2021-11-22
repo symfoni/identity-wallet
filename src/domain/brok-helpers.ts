@@ -7,7 +7,6 @@ import {
 import { VerifiablePresentation } from "@veramo/core";
 import axios, { AxiosResponse } from "axios";
 
-
 export const registerWithBankId = (vp: VerifiablePresentation) => {
     const url = !!USE_LOCAL_ENVIROMENT
         ? "http://localhost:3004"
