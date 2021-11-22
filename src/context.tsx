@@ -1,5 +1,4 @@
-/* eslint-disable no-undef */
-import { APP_ENV, IS_TEST } from "@env";
+import { APP_ENV } from "@env";
 import { JsonRpcResponse } from "@json-rpc-tools/types";
 import {
     IDataStore,
@@ -91,7 +90,7 @@ export function useSymfoniContext() {
 console.log("APP_ENV:", APP_ENV);
 
 export const ContextProvider = (props: any) => {
-    const [isTest] = useState(IS_TEST ? true : false);
+    const [isTest] = useState(__DEV__ ? true : false);
     const [loading, setLoading] = useState<boolean>(true);
     const [chains] = useState<string[]>(
         isTest ? DEFAULT_TEST_CHAINS : DEFAULT_MAIN_CHAINS
