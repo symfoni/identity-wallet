@@ -9,14 +9,14 @@ module.exports = {
                 blacklist: null,
                 whitelist: null,
                 safe: true,
-                allowUndefined: true,
+                allowUndefined: false,
             },
         ],
         [
             "babel-plugin-inline-import",
             {
-                "extensions": [".svg"]
-            }
-        ]
+                extensions: [".svg"],
+            },
+        ],
     ],
 };

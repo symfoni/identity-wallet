@@ -1,6 +1,7 @@
 import React from "react";
 import { Image } from "react-native";
 import styled from "styled-components/native";
+import { Config } from "../../config";
 import { useLocalNavigation } from "../../hooks/useLocalNavigation";
 import { OnboardingContent } from "./components/OnboardingContent";
 
@@ -11,23 +12,25 @@ export function OnboardingAScreen() {
         <OnboardingContent next={navigateToOnboardingB}>
             <>
                 <Figure>
-                    <Image
-                        source={require("../../../icons/SymfoniID-prod-512.png")}
-                        height={10}
-                        width={10}
-                        resizeMode="center"
-                    />
+                    <Logo source={Config.APP_ICON} resizeMode="cover" />
                 </Figure>
                 <Description>
                     <DescriptionText>
-                        Symfoni ID kan svare på ID-forespørsler fra digitale
-                        tjenester.
+                        Symfoni ID hjelper deg å svare på forespørsler om din
+                        identitet.
                     </DescriptionText>
                 </Description>
             </>
         </OnboardingContent>
     );
 }
+
+const Logo = styled(Image)`
+    overflow: hidden;
+    width: 140px;
+    height: 140px;
+    border-radius: 30px;
+`;
 
 const Figure = styled.View`
     flex: 3;
@@ -41,4 +44,6 @@ const Description = styled.View`
     text-align: center;
     justify-content: center;
 `;
-const DescriptionText = styled.Text``;
+const DescriptionText = styled.Text`
+    text-align: center;
+`;
