@@ -72,7 +72,8 @@ export function OnboardingDScreen() {
     return (
         <OnboardingContent
             prev={navigateToOnboardingC}
-            next={signed ? navigateHome : undefined}>
+            next={signed ? navigateHome : undefined}
+            index={4}>
             <>
                 <Figure>
                     <TermsOfUseTitle>
@@ -112,13 +113,12 @@ function expiresIn50Years() {
 }
 
 const Figure = styled.View`
-    flex: 3;
+    flex: 1;
     align-self: stretch;
     justify-content: center;
 `;
 
 const Description = styled.View`
-    flex: 1;
     font-size: 16px;
     text-align: center;
     justify-content: center;

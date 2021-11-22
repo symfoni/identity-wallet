@@ -9,15 +9,15 @@ export function OnboardingAScreen() {
     const { navigateHome, navigateToOnboardingB } = useLocalNavigation();
 
     return (
-        <OnboardingContent next={navigateToOnboardingB}>
+        <OnboardingContent next={navigateToOnboardingB} index={1}>
             <>
                 <Figure>
                     <Logo source={Config.APP_ICON} resizeMode="cover" />
                 </Figure>
                 <Description>
                     <DescriptionText>
-                        Symfoni ID hjelper deg å svare på forespørsler om din
-                        identitet.
+                        Symfoni ID hjelper deg å svare på forespørsler knyttet
+                        til din identitet.
                     </DescriptionText>
                 </Description>
             </>
@@ -33,13 +33,12 @@ const Logo = styled(Image)`
 `;
 
 const Figure = styled.View`
-    flex: 3;
+    flex: 1;
     justify-content: center;
     align-items: center;
 `;
 
 const Description = styled.View`
-    flex: 1;
     font-size: 16px;
     text-align: center;
     justify-content: center;

@@ -18,7 +18,7 @@ export function OnboardingBScreen() {
     const [next, setNext] = useState<(() => void) | undefined>(undefined);
 
     return (
-        <OnboardingContent prev={navigateToOnboardingA} next={next}>
+        <OnboardingContent prev={navigateToOnboardingA} next={next} index={2}>
             <>
                 <Figure>
                     {!visible ? (
@@ -62,7 +62,7 @@ export function OnboardingBScreen() {
 }
 
 const Figure = styled.View`
-    flex: 3;
+    flex: 1;
     justify-content: center;
     align-items: center;
 `;
@@ -79,7 +79,6 @@ const FingerText = styled.Text`
 `;
 
 const Description = styled.View`
-    flex: 1;
     font-size: 16px;
     text-align: center;
     justify-content: center;

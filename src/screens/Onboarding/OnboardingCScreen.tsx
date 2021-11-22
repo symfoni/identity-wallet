@@ -22,12 +22,20 @@ export function OnboardingCScreen() {
     });
     const signed = !!vc?.proof;
 
+    const [text, setText] = useState("Svar på, eller avslå, forespørsler.");
+
+    function onCancel() {
+        setNext(() => navigateToOnboardingD);
+        setText("Du avslo forespørselen!");
+    }
+
     function onAnswer() {
-        setNext(() => (next ? undefined : navigateToOnboardingD));
+        setNext(() => navigateToOnboardingD);
+        setText("Du svarte på forespørselen!");
     }
 
     return (
-        <OnboardingContent prev={navigateToOnboardingB} next={next}>
+        <OnboardingContent prev={navigateToOnboardingB} next={next} index={3}>
             <>
                 <Figure>
                     <ExplainCancel>
@@ -35,7 +43,7 @@ export function OnboardingCScreen() {
                         <DeclineButton
                             disabled={!signed}
                             title="Avslå"
-                            onPress={onAnswer}
+                            onPress={onCancel}
                         />
                         <FingerCancel hidden={!!next}>{"👈"}</FingerCancel>
                     </ExplainCancel>
@@ -59,11 +67,7 @@ export function OnboardingCScreen() {
                     </ExplainPresent>
                 </Figure>
                 <Description>
-                    <DescriptionText>
-                        {!next
-                            ? "Svar eller avslå forespørsler."
-                            : "Forespørsel besvart 🎉"}
-                    </DescriptionText>
+                    <DescriptionText>{text}</DescriptionText>
                 </Description>
             </>
         </OnboardingContent>
@@ -71,13 +75,12 @@ export function OnboardingCScreen() {
 }
 
 const Figure = styled.View`
-    flex: 3;
+    flex: 1;
     align-self: stretch;
     justify-content: center;
 `;
 
 const Description = styled.View`
-    flex: 1;
     font-size: 16px;
     text-align: left;
     justify-content: center;
