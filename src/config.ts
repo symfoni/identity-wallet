@@ -10,7 +10,7 @@ interface IConfig {
  * to be re-configured.
  *
  * Config could change based on:
- * - environment-type (dev,stage,prod)
+ * - environment-type ("dev", "stage", "prod")
  * - build-type (debug,release) e.g. (__DEV__, !__DEV__)
  * - device-type (phone,tablet,laptop,desktop)
  */

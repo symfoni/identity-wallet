@@ -5,7 +5,7 @@ module.exports = {
             "module:react-native-dotenv",
             {
                 moduleName: "@env",
-                path: ".env",
+                path: ".env.stage",
                 blacklist: null,
                 whitelist: null,
                 safe: true,
@@ -15,8 +15,8 @@ module.exports = {
         [
             "babel-plugin-inline-import",
             {
-                "extensions": [".svg"]
-            }
-        ]
+                extensions: [".svg"],
+            },
+        ],
     ],
 };
