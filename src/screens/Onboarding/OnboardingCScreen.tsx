@@ -1,6 +1,5 @@
-import React, { ReactNode, useState } from "react";
+import React, { useState } from "react";
 import styled from "styled-components/native";
-
 // Local
 import { useLocalNavigation } from "../../hooks/useLocalNavigation";
 import {
@@ -13,61 +12,45 @@ import { OnboardingContent } from "./components/OnboardingContent";
 export function OnboardingCScreen() {
     const { navigateToOnboardingB, navigateToOnboardingD } =
         useLocalNavigation();
-    const [next, setNext] = useState<(() => void) | undefined>(undefined);
-    const [vc] = useState<NationalIdentityVC>(() => {
+
+    const [dummyVC] = useState<NationalIdentityVC>(() => {
         const _vc = makeNationalIdentityVC();
         _vc.credentialSubject.nationalIdentityNumber = "123456 98765";
         _vc.proof = { jwt: "hey", type: "onboarding" };
         return _vc;
     });
-    const signed = !!vc?.proof;
-
-    const [text, setText] = useState("Svar på, eller avslå, forespørsler.");
-
-    function onCancel() {
-        setNext(() => navigateToOnboardingD);
-        setText("Du avslo forespørselen!");
-    }
-
-    function onAnswer() {
-        setNext(() => navigateToOnboardingD);
-        setText("Du svarte på forespørselen!");
-    }
 
     return (
-        <OnboardingContent prev={navigateToOnboardingB} next={next} index={3}>
+        <OnboardingContent
+            prev={navigateToOnboardingB}
+            next={navigateToOnboardingD}
+            index={3}>
             <>
                 <Figure>
                     <ExplainCancel>
                         <Title>Forespørsel</Title>
-                        <DeclineButton
-                            disabled={!signed}
-                            title="Avslå"
-                            onPress={onCancel}
-                        />
-                        <FingerCancel hidden={!!next}>{"👈"}</FingerCancel>
+                        <DeclineButton title="Avslå" onPress={() => {}} />
+                        <FingerCancel>👈</FingerCancel>
                     </ExplainCancel>
                     <ExplainSignature>
-                        {vc && (
-                            <NationalIdentityVCCard
-                                vc={vc}
-                                onPressSign={(_vc) => setNext(undefined)}
-                                flex={1}
-                            />
-                        )}
-                        <FingerSignature hidden={true}>{"👈"}</FingerSignature>
+                        <NationalIdentityVCCard
+                            vc={dummyVC}
+                            onPressSign={(_vc) => {}}
+                            flex={1}
+                        />
+                        <FingerSignature hidden={true}>👈</FingerSignature>
                     </ExplainSignature>
                     <ExplainPresent>
-                        <PresentButton disabled={!signed} onPress={onAnswer}>
-                            Svar
-                        </PresentButton>
-                        <FingerPresent hidden={!!next || !signed}>
-                            {"👈"}
-                        </FingerPresent>
+                        <PresentButtonView>
+                            <PresentButtonText>Svar</PresentButtonText>
+                        </PresentButtonView>
+                        <FingerPresent>👈</FingerPresent>
                     </ExplainPresent>
                 </Figure>
                 <Description>
-                    <DescriptionText>{text}</DescriptionText>
+                    <DescriptionText>
+                        Svar på, eller avslå, forespørsler.
+                    </DescriptionText>
                 </Description>
             </>
         </OnboardingContent>
@@ -115,7 +98,6 @@ const ExplainPresent = styled.View`
 const FingerCancel = styled.Text`
     font-size: 18px;
     margin-left: 5px;
-    ${({ hidden }: { hidden: boolean }) => (hidden ? "opacity: 0;" : "")}
 `;
 const FingerSignature = styled.Text`
     font-size: 18px;
@@ -127,32 +109,14 @@ const FingerPresent = styled.Text`
     font-size: 18px;
     margin-top: 6px;
     margin-left: 10px;
-    ${({ hidden }: { hidden: boolean }) => (hidden ? "opacity: 0;" : "")}
 `;
 
 // Things
 const DeclineButton = styled.Button``;
 
-function PresentButton({
-    children,
-    onPress,
-    disabled,
-}: {
-    disabled: boolean;
-    children: ReactNode;
-    onPress: () => void;
-}) {
-    return (
-        <PresentButtonView color={disabled} onPress={onPress}>
-            <PresentButtonText>{children}</PresentButtonText>
-        </PresentButtonView>
-    );
-}
-
 const PresentButtonView = styled.TouchableOpacity`
-    background-color: ${(props: { color: boolean }) =>
-        !props.color ? "rgb(52, 199, 89)" : "rgb(209, 209, 214)"}
-    
+    background-color: rgb(52, 199, 89);
+
     display: flex;
     flex-direction: row;
     justify-content: center;

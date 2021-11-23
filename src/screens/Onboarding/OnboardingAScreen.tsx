@@ -1,6 +1,7 @@
 import React from "react";
 import { Image } from "react-native";
 import styled from "styled-components/native";
+// Local
 import { Config } from "../../config";
 import { useLocalNavigation } from "../../hooks/useLocalNavigation";
 import { OnboardingContent } from "./components/OnboardingContent";

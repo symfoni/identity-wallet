@@ -1,10 +1,9 @@
-import React, { ReactNode, useState } from "react";
+import React, { useState } from "react";
 import styled from "styled-components/native";
 import useAsyncEffect from "use-async-effect";
+// Local
 import { useSymfoniContext } from "../../context";
 import { useDeviceAuthentication } from "../../hooks/useDeviceAuthentication";
-
-// Local
 import { useLocalNavigation } from "../../hooks/useLocalNavigation";
 import { SupportedVerifiableCredential } from "../../verifiableCredentials/SupportedVerifiableCredentials";
 import {

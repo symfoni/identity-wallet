@@ -1,7 +1,7 @@
-import React, { useState } from "react";
-import { Linking, Text } from "react-native";
-import QRCodeScanner from "react-native-qrcode-scanner";
+import React from "react";
+import { Linking } from "react-native";
 import styled from "styled-components/native";
+// Local
 import { Icon } from "../../assets/icons/Icon";
 import { useColorContext } from "../../colorContext";
 import { SymfoniButton } from "../../components/ui/button";
@@ -14,34 +14,16 @@ export function OnboardingBScreen() {
         useLocalNavigation();
     const { colors } = useColorContext();
 
-    const [visible, setVisible] = useState(false);
-    const [next, setNext] = useState<(() => void) | undefined>(undefined);
-
     return (
-        <OnboardingContent prev={navigateToOnboardingA} next={next} index={2}>
+        <OnboardingContent
+            prev={navigateToOnboardingA}
+            next={navigateToOnboardingC}
+            index={2}>
             <>
                 <Figure>
-                    {!visible ? (
-                        <QrIcon type="qr" size={layout.x100} color="black" />
-                    ) : (
-                        <QRCodeScanner
-                            onRead={() => setVisible(false)}
-                            fadeIn={false}
-                            showMarker={true}
-                        />
-                    )}
-                    {!visible && <FingerText>{!next ? "👆" : ""}</FingerText>}
-                    {!visible && (
-                        <QrButton
-                            icon="qr"
-                            type="primary"
-                            text={"Åpne QR"}
-                            onPress={() => {
-                                setVisible(true);
-                                setNext(() => navigateToOnboardingC);
-                            }}
-                        />
-                    )}
+                    <QrIcon type="qr" size={layout.x100} color="black" />
+                    <FingerText>👆</FingerText>
+                    <QrButton icon="qr" type="primary" text={"Åpne QR"} />
                 </Figure>
                 <Description>
                     <DescriptionText>
