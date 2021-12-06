@@ -1,11 +1,14 @@
 {
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.defaultFormatter": "SimonSiefke.prettier-vscode",
     "[typescriptreact]": {
-        "editor.defaultFormatter": "esbenp.prettier-vscode"
+        "editor.defaultFormatter": "SimonSiefke.prettier-vscode"
     },
     "workbench.colorCustomizations": {
         "activityBar.background": "#d47356",
         "titleBar.activeBackground": "#d3974a",
         "titleBar.activeForeground": "#f3f3f3"
+    },
+    "[typescript]": {
+        "editor.defaultFormatter": "SimonSiefke.prettier-vscode"
     }
 }
