@@ -93,7 +93,7 @@ export const useWalletconnect = (
                 return;
             }
 
-            const unsupportedChains = [];
+            const unsupportedChains: string[] = [];
             proposal.permissions.blockchain.chains.forEach((chainId) => {
                 if (supportedChains.includes(chainId)) {
                     return;
@@ -102,7 +102,15 @@ export const useWalletconnect = (
             });
             if (unsupportedChains.length) {
                 console.warn(`handleProposal: unsupportedChains.length`);
-                return client.reject({ proposal });
+                return client.reject({
+                    proposal,
+                    reason: {
+                        code: 0,
+                        message: `Unsupported chain ${unsupportedChains.join(
+                            ","
+                        )}`,
+                    },
+                });
             }
             const unsupportedMethods: string[] = [];
             proposal.permissions.jsonrpc.methods.forEach((method) => {
@@ -114,7 +122,15 @@ export const useWalletconnect = (
             if (unsupportedMethods.length) {
                 console.warn(`handleProposal: unsupportedMethods.length`);
 
-                return client.reject({ proposal: proposal });
+                return client.reject({
+                    proposal,
+                    reason: {
+                        code: 0,
+                        message: `Unsupported method ${unsupportedMethods.join(
+                            ","
+                        )}`,
+                    },
+                });
             }
 
             // Approve connection
@@ -128,6 +144,17 @@ export const useWalletconnect = (
                     `${namespace}:${reference}`
                 );
             });
+
+            // TODO - This should not happen
+            if (_accounts.length === 0) {
+                return client.reject({
+                    proposal,
+                    reason: {
+                        code: 0,
+                        message: `Wallet did not have account supporting this chain.`,
+                    },
+                });
+            }
             const response = {
                 state: { accounts: _accounts },
             };
