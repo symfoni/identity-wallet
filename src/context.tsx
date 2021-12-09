@@ -47,7 +47,6 @@ export type Agent = TAgent<
 export type Dispatch<T = any> = React.Dispatch<React.SetStateAction<T>>;
 
 export interface IContext {
-    isTest: boolean;
     loading: boolean;
     chains: string[];
     accounts: string[];
@@ -90,20 +89,20 @@ export function useSymfoniContext() {
 console.log("APP_ENV:", APP_ENV);
 
 export const ContextProvider = (props: any) => {
-    const [isTest] = useState(__DEV__ ? true : false);
     const [loading, setLoading] = useState<boolean>(true);
     const [chains] = useState<string[]>(
-        isTest ? DEFAULT_TEST_CHAINS : DEFAULT_MAIN_CHAINS
+        APP_ENV !== "prod" ? DEFAULT_TEST_CHAINS : DEFAULT_MAIN_CHAINS
     );
-    const [selectedChain, setSelectedChain] = useState(
-        isTest ? DEFAULT_TEST_CHAINS[0] : DEFAULT_MAIN_CHAINS[0]
-    );
+
+    const selectedChain = APP_ENV !== "prod" ? DEFAULT_TEST_CHAINS[0] : DEFAULT_MAIN_CHAINS[0];
+
     const [provider] = useState(
         () =>
             new ethers.providers.JsonRpcProvider({
-                url: isTest
-                    ? DEFAULT_RPC_PROVIDER_TEST
-                    : DEFAULT_RPC_PROVIDER_MAIN,
+                url:
+                    APP_ENV !== "prod"
+                        ? DEFAULT_RPC_PROVIDER_TEST
+                        : DEFAULT_RPC_PROVIDER_MAIN,
             })
     );
     const veramo = useVeramo(selectedChain);
