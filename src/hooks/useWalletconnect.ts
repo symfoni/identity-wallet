@@ -47,7 +47,7 @@ export const useWalletconnect = (
                 console.log(`Starting Client...`);
                 const _client = await Client.init({
                     controller: true,
-                    relayProvider: DEFAULT_RELAY_PROVIDER,
+                    relayUrl: DEFAULT_RELAY_PROVIDER,
                     metadata: DEFAULT_APP_METADATA,
                     storageOptions: {
                         asyncStorage: AsyncStorage as any,
