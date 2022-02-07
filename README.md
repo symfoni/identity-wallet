@@ -1,4 +1,3 @@
-
 # Symfoni ID
 
 Symfoni ID is an Identity Wallet under development.
