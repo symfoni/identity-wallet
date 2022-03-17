@@ -8,7 +8,6 @@ import {
     TouchableOpacity,
     View,
 } from "react-native";
-import { color } from "react-native-reanimated";
 import { ColorContext, ColorSystem } from "../../colorContext";
 import { Buttons, Colors, Sizing, Typography } from "../../styles";
 import { borderRadius } from "../../styles/outlines";
